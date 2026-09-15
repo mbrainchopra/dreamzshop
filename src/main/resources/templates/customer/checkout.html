@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        /* =========================================================
+           ROOT
+           ========================================================= */
+
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --text-soft: #374151;
+            --muted: #6b7280;
+
+            --border: #e5e7eb;
+            --background: #f7f8f6;
+            --white: #ffffff;
+
+            --danger: #dc2626;
+            --orange: #ea580c;
+
+            --shadow-sm: 0 4px 18px rgba(0, 0, 0, .05);
+            --shadow-md: 0 10px 35px rgba(0, 0, 0, .08);
+        }
+
+
+        /* =========================================================
+           GENERAL
+           ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .05),
+                            transparent 28%
+                    ),
+                    var(--background);
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================================
+           MAIN
+           ========================================================= */
+
+        .checkout-page {
+            min-height: 100vh;
+            padding: 35px 0 65px;
+        }
+
+
+        /* =========================================================
+           CHECKOUT HEADER
+           ========================================================= */
+
+        .checkout-header {
+            position: relative;
+            overflow: hidden;
+
+            background: linear-gradient(
+                    135deg,
+                    #ffffff 0%,
+                    #f0fdf4 100%
+            );
+
+            border: 1px solid #e3f1e6;
+            border-radius: 24px;
+
+            padding: 27px 30px;
+            margin-bottom: 24px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp .45s ease both;
+        }
+
+        .checkout-header::after {
+            content: "";
+
+            position: absolute;
+
+            width: 200px;
+            height: 200px;
+
+            right: -90px;
+            top: -100px;
+
+            border-radius: 50%;
+
+            background: rgba(22, 163, 74, .07);
+        }
+
+        .checkout-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .checkout-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin: 0;
+
+            font-size: 29px;
+            font-weight: 850;
+
+            color: #111827;
+        }
+
+        .heading-icon {
+            width: 49px;
+            height: 49px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+
+            background: var(--green-light);
+            color: var(--green);
+
+            font-size: 23px;
+        }
+
+        .checkout-subtitle {
+            margin: 8px 0 0;
+
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           CHECKOUT STEPS
+           ========================================================= */
+
+        .checkout-progress {
+            display: flex;
+            align-items: center;
+
+            margin-top: 22px;
+            max-width: 600px;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #9ca3af;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+        .progress-step.active {
+            color: var(--green-dark);
+        }
+
+        .step-number {
+            width: 29px;
+            height: 29px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #e5e7eb;
+            color: #6b7280;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--green);
+            color: white;
+        }
+
+        .progress-line {
+            flex: 1;
+
+            height: 2px;
+
+            margin: 0 12px;
+
+            background: #e5e7eb;
+        }
+
+        .progress-line.active {
+            background: var(--green);
+        }
+
+
+        /* =========================================================
+           ALERTS
+           ========================================================= */
+
+        .custom-alert {
+            border: none;
+            border-radius: 14px;
+
+            padding: 14px 17px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp .35s ease both;
+        }
+
+        .custom-alert.alert-success {
+            background: #ecfdf3;
+            color: #166534;
+
+            border-left: 4px solid var(--green);
+        }
+
+        .custom-alert.alert-danger {
+            background: #fef2f2;
+            color: #991b1b;
+
+            border-left: 4px solid var(--danger);
+        }
+
+        .custom-alert.alert-info {
+            background: #eff6ff;
+            color: #1e40af;
+
+            border-left: 4px solid #3b82f6;
+        }
+
+
+        /* =========================================================
+           SECTION CARD
+           ========================================================= */
+
+        .checkout-card {
+            border: 1px solid var(--border);
+            border-radius: 21px;
+
+            background: var(--white);
+
+            box-shadow: var(--shadow-sm);
+
+            overflow: hidden;
+
+            animation: fadeUp .55s ease both;
+        }
+
+        .checkout-card-body {
+            padding: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+        .section-title-wrap {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 12px;
+        }
+
+        .section-number {
+            width: 34px;
+            height: 34px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: var(--green-light);
+            color: var(--green-dark);
+
+            font-size: 13px;
+            font-weight: 900;
+
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            margin: 0;
+
+            color: #111827;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .section-description {
+            margin: 4px 0 0;
+
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           ADDRESS
+           ========================================================= */
+
+        .address-option {
+            position: relative;
+
+            display: block;
+
+            padding: 19px;
+
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+
+            background: white;
+
+            cursor: pointer;
+
+            transition:
+                    border-color .22s ease,
+                    background .22s ease,
+                    transform .22s ease,
+                    box-shadow .22s ease;
+        }
+
+        .address-option:hover {
+            border-color: #86efac;
+
+            background: #fcfffd;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 7px 22px rgba(22, 163, 74, .08);
+        }
+
+        .address-option.selected {
+            border-color: var(--green);
+
+            background: var(--green-soft);
+
+            box-shadow:
+                    0 7px 22px rgba(22, 163, 74, .10);
+        }
+
+        .address-radio {
+            width: 19px;
+            height: 19px;
+
+            accent-color: var(--green);
+
+            cursor: pointer;
+        }
+
+        .address-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            padding: 5px 9px;
+
+            border-radius: 999px;
+
+            background: #f3f4f6;
+            color: #4b5563;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+        .address-option.selected .address-type {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .address-name {
+            color: #111827;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .address-phone {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .address-text {
+            color: #4b5563;
+
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .default-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+
+            padding: 5px 9px;
+
+            border-radius: 999px;
+
+            background: var(--green);
+            color: white;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: .4px;
+        }
+
+
+        /* =========================================================
+           ADD ADDRESS
+           ========================================================= */
+
+        .add-address-btn {
+            border: 1px solid #d1d5db;
+
+            background: white;
+            color: #374151;
+
+            border-radius: 10px;
+
+            padding: 8px 13px;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition: all .2s ease;
+        }
+
+        .add-address-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           EMPTY ADDRESS
+           ========================================================= */
+
+        .empty-address {
+            padding: 40px 20px;
+
+            text-align: center;
+
+            border: 2px dashed #d1d5db;
+            border-radius: 16px;
+
+            background: #fafafa;
+        }
+
+        .empty-address-icon {
+            width: 65px;
+            height: 65px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto;
+
+            border-radius: 50%;
+
+            background: #f3f4f6;
+            color: #9ca3af;
+
+            font-size: 28px;
+        }
+
+
+        /* =========================================================
+           COD
+           ========================================================= */
+
+        .cod-box {
+            position: relative;
+
+            border: 2px solid var(--green);
+            border-radius: 16px;
+
+            padding: 19px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f0fdf4,
+                            #ffffff
+                    );
+        }
+
+        .cod-check {
+            width: 21px;
+            height: 21px;
+
+            accent-color: var(--green);
+        }
+
+        .cod-icon {
+            width: 45px;
+            height: 45px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background: var(--green-light);
+            color: var(--green);
+
+            font-size: 22px;
+        }
+
+        .cod-title {
+            color: #111827;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .cod-description {
+            margin-top: 4px;
+
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .cod-note {
+            margin-top: 14px;
+
+            padding: 12px 14px;
+
+            border-radius: 11px;
+
+            background: white;
+            border: 1px solid #dcfce7;
+
+            color: #166534;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+        /* =========================================================
+           COUPON
+           ========================================================= */
+
+        .coupon-box {
+            border: 2px dashed #d1d5db;
+            border-radius: 16px;
+
+            padding: 19px;
+
+            background: #fafafa;
+        }
+
+        .coupon-box.applied {
+            border-style: solid;
+
+            border-color: var(--green);
+
+            background: var(--green-soft);
+        }
+
+        .coupon-icon {
+            width: 42px;
+            height: 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: white;
+            color: var(--green);
+
+            box-shadow: 0 3px 10px rgba(0,0,0,.04);
+        }
+
+        .coupon-code {
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 850;
+
+            letter-spacing: .6px;
+        }
+
+        .coupon-label {
+            color: var(--green-dark);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: .7px;
+        }
+
+        .coupon-saving {
+            color: #166534;
+            font-size: 12px;
+        }
+
+        .coupon-input {
+            border-radius: 11px;
+
+            border: 1px solid #d1d5db;
+
+            min-height: 43px;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .coupon-input:focus {
+            border-color: var(--green);
+
+            box-shadow:
+                    0 0 0 3px rgba(22, 163, 74, .10);
+        }
+
+        .coupon-apply-btn {
+            min-height: 43px;
+
+            border: none;
+            border-radius: 11px;
+
+            padding: 0 20px;
+
+            background: var(--green);
+            color: white;
+
+            font-size: 13px;
+            font-weight: 800;
+
+            transition: all .2s ease;
+        }
+
+        .coupon-apply-btn:hover {
+            background: var(--green-dark);
+            color: white;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           ITEMS
+           ========================================================= */
+
+        .checkout-item {
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 13px 0;
+
+            border-bottom: 1px solid #eef0f2;
+        }
+
+        .checkout-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .checkout-product-image {
+            width: 66px;
+            height: 66px;
+
+            object-fit: cover;
+
+            border-radius: 13px;
+
+            background: #f3f4f6;
+
+            border: 1px solid #edf0f2;
+
+            flex-shrink: 0;
+        }
+
+        .checkout-product-name {
+            color: #111827;
+
+            font-size: 13px;
+            font-weight: 750;
+
+            line-height: 1.45;
+        }
+
+        .checkout-product-meta {
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+        .checkout-product-total {
+            color: #111827;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           SUMMARY
+           ========================================================= */
+
+        .summary-card {
+            position: sticky;
+            top: 90px;
+
+            border: 1px solid var(--border);
+            border-radius: 21px;
+
+            background: white;
+
+            box-shadow: var(--shadow-md);
+
+            overflow: hidden;
+
+            animation: fadeUp .65s ease both;
+        }
+
+        .summary-header {
+            padding: 21px 23px;
+
+            border-bottom: 1px solid var(--border);
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #ffffff,
+                            #f0fdf4
+                    );
+        }
+
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            margin: 0;
+
+            color: #111827;
+
+            font-size: 18px;
+            font-weight: 850;
+        }
+
+        .summary-title i {
+            color: var(--green);
+        }
+
+        .summary-body {
+            padding: 21px 23px;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 9px 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .summary-row strong {
+            color: #374151;
+        }
+
+        .discount-row {
+            color: var(--green-dark) !important;
+            font-weight: 700;
+        }
+
+        .discount-value {
+            color: var(--green) !important;
+            font-weight: 800;
+        }
+
+        .free-delivery {
+            color: var(--green) !important;
+            font-weight: 800;
+        }
+
+        .summary-divider {
+            margin: 8px 0;
+
+            border: 0;
+            border-top: 1px dashed #d1d5db;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding-top: 14px;
+        }
+
+        .total-label {
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 850;
+        }
+
+        .grand-total {
+            color: var(--green-dark);
+
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+
+        /* =========================================================
+           PLACE ORDER
+           ========================================================= */
+
+        .place-order-btn {
+            width: 100%;
+
+            min-height: 53px;
+
+            margin-top: 18px;
+
+            border: none;
+            border-radius: 13px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            var(--green),
+                            var(--green-dark)
+                    );
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: 850;
+
+            box-shadow:
+                    0 10px 22px rgba(22, 163, 74, .20);
+
+            transition: all .25s ease;
+        }
+
+        .place-order-btn:hover:not(:disabled) {
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 14px 28px rgba(22, 163, 74, .29);
+        }
+
+        .place-order-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            margin-top: 13px;
+
+            color: #9ca3af;
+
+            font-size: 10px;
+        }
+
+        .secure-note i {
+            color: var(--green);
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           TRUST
+           ========================================================= */
+
+        .trust-box {
+            margin-top: 16px;
+
+            padding: 14px;
+
+            border-radius: 14px;
+
+            background: var(--green-soft);
+            border: 1px solid #dcfce7;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            color: #4b5563;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            margin-bottom: 10px;
+        }
+
+        .trust-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .trust-icon {
+            width: 29px;
+            height: 29px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: white;
+            color: var(--green);
+
+            flex-shrink: 0;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .shop-footer {
+            margin-top: 0;
+
+            padding: 40px 0 24px;
+
+            background: #111827;
+
+            color: white;
+        }
+
+        .footer-brand {
+            font-size: 21px;
+            font-weight: 850;
+        }
+
+        .footer-brand span {
+            color: #4ade80;
+        }
+
+        .footer-description {
+            margin-top: 6px;
+
+            color: #9ca3af;
+
+            font-size: 12px;
+        }
+
+        .footer-services {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 28px;
+
+            margin: 25px 0;
+        }
+
+        .footer-service {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            color: #d1d5db;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .footer-service i {
+            color: #4ade80;
+
+            font-size: 16px;
+        }
+
+        .footer-bottom {
+            padding-top: 19px;
+
+            border-top: 1px solid rgba(255,255,255,.08);
+
+            color: #6b7280;
+
+            font-size: 10px;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+           ========================================================= */
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform: translateY(17px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        @keyframes pulseGreen {
+
+            0% {
+                box-shadow: 0 0 0 0 rgba(22,163,74,.20);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(22,163,74,0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(22,163,74,0);
+            }
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 991px) {
+
+            .summary-card {
+                position: static;
+            }
+
+            .checkout-page {
+                padding-top: 25px;
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .checkout-page {
+                padding: 20px 8px 45px;
+            }
+
+            .checkout-header {
+                padding: 21px;
+
+                border-radius: 19px;
+            }
+
+            .checkout-heading {
+                font-size: 23px;
+            }
+
+            .heading-icon {
+                width: 43px;
+                height: 43px;
+
+                border-radius: 12px;
+
+                font-size: 20px;
+            }
+
+            .checkout-progress {
+                overflow-x: auto;
+
+                padding-bottom: 4px;
+            }
+
+            .progress-step {
+                font-size: 10px;
+            }
+
+            .progress-line {
+                min-width: 25px;
+            }
+
+            .checkout-card-body {
+                padding: 19px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .section-header {
+                flex-direction: column;
+            }
+
+            .add-address-btn {
+                width: 100%;
+            }
+
+            .summary-body {
+                padding: 19px;
+            }
+
+            .summary-header {
+                padding: 18px 19px;
+            }
+
+            .footer-services {
+                flex-direction: column;
+                gap: 14px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .checkout-heading {
+                font-size: 21px;
+            }
+
+            .checkout-subtitle {
+                font-size: 12px;
+            }
+
+            .address-option {
+                padding: 15px;
+            }
+
+            .address-name {
+                font-size: 14px;
+            }
+
+            .address-text {
+                font-size: 12px;
+            }
+
+            .coupon-box {
+                padding: 15px;
+            }
+
+            .grand-total {
+                font-size: 22px;
+            }
+
+            .checkout-product-image {
+                width: 58px;
+                height: 58px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+     ========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN CHECKOUT
+     ========================================================= -->
+
+<main class="checkout-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <section class="checkout-header">
+
+            <div class="checkout-header-content">
+
+                <h1 class="checkout-heading">
+
+                    <span class="heading-icon">
+                        <i class="bi bi-bag-check-fill"></i>
+                    </span>
+
+                    Checkout
+
+                </h1>
+
+                <p class="checkout-subtitle">
+                    Confirm your delivery details, review your order,
+                    and place your Cash on Delivery order.
+                </p>
+
+
+                <!-- CHECKOUT PROGRESS -->
+
+                <div class="checkout-progress">
+
+                    <div class="progress-step active">
+
+                        <span class="step-number">
+                            1
+                        </span>
+
+                        Address
+
+                    </div>
+
+
+                    <div class="progress-line active"></div>
+
+
+                    <div class="progress-step active">
+
+                        <span class="step-number">
+                            2
+                        </span>
+
+                        Payment
+
+                    </div>
+
+
+                    <div class="progress-line active"></div>
+
+
+                    <div class="progress-step active">
+
+                        <span class="step-number">
+                            3
+                        </span>
+
+                        Confirm
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ERROR
+             ===================================================== -->
+
+        <div
+                th:if="${param.error}"
+                class="alert alert-danger custom-alert alert-dismissible fade show mb-4"
+                role="alert">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            <span th:text="${param.error}">
+                Something went wrong.
+            </span>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             COUPON SUCCESS
+             ===================================================== -->
+
+        <div
+                th:if="${param.couponApplied}"
+                class="alert alert-success custom-alert alert-dismissible fade show mb-4"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            🎉 Coupon applied successfully!
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             COUPON REMOVED
+             ===================================================== -->
+
+        <div
+                th:if="${param.couponRemoved}"
+                class="alert alert-info custom-alert alert-dismissible fade show mb-4"
+                role="alert">
+
+            <i class="bi bi-info-circle-fill me-2"></i>
+
+            Coupon removed.
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+                 ================================================= -->
+
+            <div class="col-lg-8">
+
+
+                <!-- =================================================
+                     1. DELIVERY ADDRESS
+                     ================================================= -->
+
+                <section class="checkout-card mb-4">
+
+                    <div class="checkout-card-body">
+
+                        <div class="section-header">
+
+                            <div class="section-title-wrap">
+
+                                <span class="section-number">
+                                    1
+                                </span>
+
+                                <div>
+
+                                    <h2 class="section-title">
+                                        Delivery Address
+                                    </h2>
+
+                                    <p class="section-description">
+                                        Choose where you want your order delivered.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <a
+                                    th:href="@{/customer/addresses/add}"
+                                    class="add-address-btn">
+
+                                <i class="bi bi-plus-lg me-1"></i>
+
+                                Add Address
+
+                            </a>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             PLACE ORDER FORM
+                             ========================================= -->
+
+                        <form
+                                id="checkoutForm"
+                                th:action="@{/customer/checkout/place-order}"
+                                method="post">
+
+
+                            <!-- CSRF -->
+
+                            <input
+                                    type="hidden"
+                                    th:name="${_csrf.parameterName}"
+                                    th:value="${_csrf.token}">
+
+
+                            <!-- =====================================
+                                 ADDRESSES
+                                 ===================================== -->
+
+                            <div
+                                    th:if="${addresses != null && !addresses.isEmpty()}"
+                                    class="row g-3">
+
+
+                                <div
+                                        th:each="address : ${addresses}"
+                                        class="col-12">
+
+
+                                    <label
+                                            class="address-option w-100"
+                                            th:classappend="${address.defaultAddress ? 'selected' : ''}">
+
+
+                                        <div class="d-flex gap-3">
+
+
+                                            <!-- RADIO -->
+
+                                            <div>
+
+                                                <input
+                                                        type="radio"
+                                                        name="addressId"
+                                                        class="form-check-input address-radio mt-1"
+                                                        th:value="${address.id}"
+                                                        th:checked="${address.defaultAddress}"
+                                                        required>
+
+                                            </div>
+
+
+                                            <!-- DETAILS -->
+
+                                            <div class="flex-grow-1">
+
+
+                                                <!-- TOP -->
+
+                                                <div class="d-flex
+                                                            justify-content-between
+                                                            align-items-start
+                                                            gap-2
+                                                            flex-wrap">
+
+
+                                                    <div>
+
+                                                        <div class="address-name">
+
+                                                            <span
+                                                                    th:text="${address.fullName}">
+                                                                Customer
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <div class="address-phone mt-1">
+
+                                                            <i class="bi bi-telephone me-1"></i>
+
+                                                            <span
+                                                                    th:text="${address.phone}">
+                                                                0000000000
+                                                            </span>
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <div class="d-flex
+                                                                align-items-center
+                                                                gap-2
+                                                                flex-wrap">
+
+
+                                                        <span
+                                                                class="address-type"
+                                                                th:if="${address.addressType != null}">
+
+                                                            <i class="bi bi-geo-alt"></i>
+
+                                                            <span
+                                                                    th:text="${address.addressType}">
+                                                                HOME
+                                                            </span>
+
+                                                        </span>
+
+
+                                                        <span
+                                                                th:if="${address.defaultAddress}"
+                                                                class="default-badge">
+
+                                                            <i class="bi bi-check-circle-fill"></i>
+
+                                                            DEFAULT
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <!-- ADDRESS -->
+
+                                                <div class="address-text mt-3">
+
+
+                                                    <div
+                                                            th:text="${address.addressLine1}">
+                                                        Address Line 1
+                                                    </div>
+
+
+                                                    <div
+                                                            th:if="${address.addressLine2 != null
+                                                                    && !address.addressLine2.isEmpty()}"
+                                                            th:text="${address.addressLine2}">
+                                                        Address Line 2
+                                                    </div>
+
+
+                                                    <div
+                                                            th:if="${address.landmark != null
+                                                                    && !address.landmark.isEmpty()}"
+                                                            class="mt-1">
+
+                                                        <i class="bi bi-signpost-2 me-1"></i>
+
+                                                        Near
+
+                                                        <span
+                                                                th:text="${address.landmark}">
+                                                            Landmark
+                                                        </span>
+
+                                                    </div>
+
+
+                                                    <div class="mt-1">
+
+                                                        <span
+                                                                th:text="${address.city}">
+                                                            City
+                                                        </span>
+
+                                                        ,
+
+                                                        <span
+                                                                th:text="${address.state}">
+                                                            State
+                                                        </span>
+
+                                                        -
+
+                                                        <span
+                                                                th:text="${address.pincode}">
+                                                            000000
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =====================================
+                                 NO ADDRESS
+                                 ===================================== -->
+
+                            <div
+                                    th:if="${addresses == null || addresses.isEmpty()}"
+                                    class="empty-address">
+
+                                <div class="empty-address-icon">
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                </div>
+
+                                <h3 class="fw-bold mt-3 mb-2">
+                                    No Delivery Address
+                                </h3>
+
+                                <p class="text-muted small mb-4">
+                                    Please add a delivery address before
+                                    placing your order.
+                                </p>
+
+                                <a
+                                        th:href="@{/customer/addresses/add}"
+                                        class="btn btn-dark action-btn">
+
+                                    <i class="bi bi-plus-lg me-1"></i>
+
+                                    Add Address
+
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     2. PAYMENT METHOD
+                     ================================================= -->
+
+                <section class="checkout-card mb-4">
+
+                    <div class="checkout-card-body">
+
+                        <div class="section-header">
+
+                            <div class="section-title-wrap">
+
+                                <span class="section-number">
+                                    2
+                                </span>
+
+                                <div>
+
+                                    <h2 class="section-title">
+                                        Payment Method
+                                    </h2>
+
+                                    <p class="section-description">
+                                        Select your available payment option.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- COD -->
+
+                        <div class="cod-box">
+
+                            <div class="d-flex align-items-center gap-3">
+
+
+                                <input
+                                        type="radio"
+                                        class="form-check-input cod-check"
+                                        checked
+                                        disabled>
+
+
+                                <span class="cod-icon">
+
+                                    <i class="bi bi-cash-coin"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="cod-title">
+
+                                        Cash on Delivery
+
+                                    </div>
+
+                                    <div class="cod-description">
+
+                                        Pay securely when your order
+                                        arrives at your doorstep.
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="cod-note">
+
+                                <i class="bi bi-check-circle-fill me-1"></i>
+
+                                No online payment required.
+                                Pay the delivery partner when your order arrives.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     3. COUPON
+                     ================================================= -->
+
+                <section class="checkout-card mb-4">
+
+                    <div class="checkout-card-body">
+
+                        <div class="section-header">
+
+                            <div class="section-title-wrap">
+
+                                <span class="section-number">
+                                    3
+                                </span>
+
+                                <div>
+
+                                    <h2 class="section-title">
+                                        Coupon & Offers
+                                    </h2>
+
+                                    <p class="section-description">
+                                        Apply an available coupon to save more.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             APPLIED COUPON
+                             ========================================= -->
+
+                        <div
+                                th:if="${appliedCoupon != null}"
+                                class="coupon-box applied">
+
+
+                            <div class="d-flex
+                                        align-items-center
+                                        justify-content-between
+                                        gap-3
+                                        flex-wrap">
+
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <span class="coupon-icon">
+
+                                        <i class="bi bi-ticket-perforated-fill"></i>
+
+                                    </span>
+
+
+                                    <div>
+
+                                        <div class="coupon-label">
+                                            COUPON APPLIED
+                                        </div>
+
+                                        <div
+                                                class="coupon-code mt-1"
+                                                th:text="${appliedCoupon}">
+                                            SAVE10
+                                        </div>
+
+                                        <div class="coupon-saving mt-1">
+
+                                            You saved ₹
+
+                                            <span
+                                                    th:text="${pricing.couponDiscount}">
+                                                0.00
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <form
+                                        th:action="@{/customer/checkout/remove-coupon}"
+                                        method="post">
+
+                                    <input
+                                            type="hidden"
+                                            th:name="${_csrf.parameterName}"
+                                            th:value="${_csrf.token}">
+
+                                    <button
+                                            type="submit"
+                                            class="btn btn-outline-danger btn-sm action-btn">
+
+                                        <i class="bi bi-x-circle me-1"></i>
+
+                                        Remove
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             APPLY COUPON
+                             ========================================= -->
+
+                        <div
+                                th:if="${appliedCoupon == null}"
+                                class="coupon-box">
+
+
+                            <div class="d-flex align-items-center gap-3 mb-3">
+
+                                <span class="coupon-icon">
+
+                                    <i class="bi bi-ticket-perforated"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="fw-bold">
+                                        Have a coupon?
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Enter your coupon code to get an
+                                        additional discount.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <form
+                                    th:action="@{/customer/checkout/apply-coupon}"
+                                    method="post"
+                                    class="row g-2">
+
+                                <input
+                                        type="hidden"
+                                        th:name="${_csrf.parameterName}"
+                                        th:value="${_csrf.token}">
+
+
+                                <div class="col">
+
+                                    <input
+                                            type="text"
+                                            name="couponCode"
+                                            class="form-control coupon-input text-uppercase"
+                                            placeholder="Enter coupon code"
+                                            maxlength="50"
+                                            autocomplete="off"
+                                            required>
+
+                                </div>
+
+
+                                <div class="col-auto">
+
+                                    <button
+                                            type="submit"
+                                            class="coupon-apply-btn">
+
+                                        <i class="bi bi-check-lg me-1"></i>
+
+                                        Apply
+
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     4. YOUR ITEMS
+                     ================================================= -->
+
+                <section class="checkout-card">
+
+                    <div class="checkout-card-body">
+
+                        <div class="section-header">
+
+                            <div class="section-title-wrap">
+
+                                <span class="section-number">
+                                    4
+                                </span>
+
+                                <div>
+
+                                    <h2 class="section-title">
+                                        Your Items
+                                    </h2>
+
+                                    <p class="section-description">
+                                        Review the products in your order.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ITEMS -->
+
+                        <div
+                                th:each="item : ${cart.items}"
+                                class="checkout-item">
+
+
+                            <img
+                                    class="checkout-product-image"
+                                    th:src="${item.product.mainImage != null
+                                            && !item.product.mainImage.isEmpty()
+                                            ? item.product.mainImage
+                                            : '/images/no-image.png'}"
+                                    th:alt="${item.product.name}">
+
+
+                            <div class="flex-grow-1">
+
+                                <div
+                                        class="checkout-product-name"
+                                        th:text="${item.product.name}">
+                                    Product
+                                </div>
+
+                                <div class="checkout-product-meta">
+
+                                    ₹
+
+                                    <span
+                                            th:text="${item.product.sellingPrice}">
+                                        0.00
+                                    </span>
+
+                                    ×
+
+                                    <span
+                                            th:text="${item.quantity}">
+                                        1
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="checkout-product-total">
+
+                                ₹
+
+                                <span
+                                        th:text="${item.subtotal}">
+                                    0.00
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+                 ================================================= -->
+
+            <div class="col-lg-4">
+
+
+                <aside class="summary-card">
+
+
+                    <!-- SUMMARY HEADER -->
+
+                    <div class="summary-header">
+
+                        <h2 class="summary-title">
+
+                            <i class="bi bi-receipt"></i>
+
+                            Order Summary
+
+                        </h2>
+
+                    </div>
+
+
+                    <!-- SUMMARY BODY -->
+
+                    <div class="summary-body">
+
+
+                        <!-- ITEMS -->
+
+                        <div class="summary-row">
+
+                            <span>
+                                Items
+                            </span>
+
+                            <strong
+                                    th:text="${cart.totalItems}">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <!-- ORIGINAL SUBTOTAL -->
+
+                        <div class="summary-row">
+
+                            <span>
+                                Original Subtotal
+                            </span>
+
+                            <strong>
+
+                                ₹
+
+                                <span
+                                        th:text="${pricing.originalSubtotal}">
+                                    0.00
+                                </span>
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- OFFER DISCOUNT -->
+
+                        <div
+                                th:if="${pricing.offerDiscount > 0}"
+                                class="summary-row discount-row">
+
+                            <span>
+
+                                <i class="bi bi-tag-fill me-1"></i>
+
+                                Offer Discount
+
+                            </span>
+
+                            <span class="discount-value">
+
+                                - ₹
+
+                                <span
+                                        th:text="${pricing.offerDiscount}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- AFTER OFFERS -->
+
+                        <div class="summary-row">
+
+                            <span>
+                                After Offers
+                            </span>
+
+                            <strong>
+
+                                ₹
+
+                                <span
+                                        th:text="${pricing.subtotalAfterOffers}">
+                                    0.00
+                                </span>
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- COUPON DISCOUNT -->
+
+                        <div
+                                th:if="${pricing.couponDiscount > 0}"
+                                class="summary-row discount-row">
+
+                            <span>
+
+                                <i class="bi bi-ticket-perforated-fill me-1"></i>
+
+                                Coupon Discount
+
+                            </span>
+
+                            <span class="discount-value">
+
+                                - ₹
+
+                                <span
+                                        th:text="${pricing.couponDiscount}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- TAX -->
+
+                        <div class="summary-row">
+
+                            <span>
+                                Tax
+                            </span>
+
+                            <strong>
+
+                                ₹
+
+                                <span
+                                        th:text="${pricing.taxAmount}">
+                                    0.00
+                                </span>
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- DELIVERY -->
+
+                        <div class="summary-row">
+
+                            <span>
+
+                                <i class="bi bi-truck me-1"></i>
+
+                                Delivery
+
+                            </span>
+
+                            <span class="free-delivery">
+
+                                FREE
+
+                            </span>
+
+                        </div>
+
+
+                        <hr class="summary-divider">
+
+
+                        <!-- GRAND TOTAL -->
+
+                        <div class="total-row">
+
+                            <span class="total-label">
+                                Total
+                            </span>
+
+                            <span class="grand-total">
+
+                                ₹
+
+                                <span
+                                        th:text="${pricing.grandTotal}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- PLACE ORDER -->
+
+                        <button
+                                type="submit"
+                                form="checkoutForm"
+                                class="place-order-btn"
+                                th:disabled="${addresses == null || addresses.isEmpty()}">
+
+                            <i class="bi bi-bag-check-fill me-2"></i>
+
+                            Place COD Order
+
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </button>
+
+
+                        <!-- SECURE -->
+
+                        <div class="secure-note">
+
+                            <i class="bi bi-shield-lock-fill"></i>
+
+                            Secure order processing
+
+                        </div>
+
+
+                        <!-- TRUST -->
+
+                        <div class="trust-box">
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </span>
+
+                                Safe & secure checkout
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-truck"></i>
+                                </span>
+
+                                Reliable doorstep delivery
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-cash-coin"></i>
+                                </span>
+
+                                Cash on Delivery available
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-headset"></i>
+                                </span>
+
+                                Customer support available
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+                Dreamz <span>Shop</span>
+            </div>
+
+            <div class="footer-description">
+                Simple, secure and reliable online shopping.
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-cash-coin"></i>
+
+                Cash on Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            /*
+             * Address selection visual state.
+             */
+
+            const radios =
+                document.querySelectorAll(".address-radio");
+
+
+            radios.forEach(
+                function (radio) {
+
+                    radio.addEventListener(
+                        "change",
+                        function () {
+
+                            document
+                                .querySelectorAll(".address-option")
+                                .forEach(
+                                    function (option) {
+
+                                        option.classList.remove(
+                                            "selected"
+                                        );
+
+                                    }
+                                );
+
+
+                            const selected =
+                                radio.closest(
+                                    ".address-option"
+                                );
+
+
+                            if (selected) {
+
+                                selected.classList.add(
+                                    "selected"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /*
+             * Automatically select the default address visually.
+             */
+
+            const checkedRadio =
+                document.querySelector(
+                    ".address-radio:checked"
+                );
+
+
+            if (checkedRadio) {
+
+                const selected =
+                    checkedRadio.closest(
+                        ".address-option"
+                    );
+
+
+                if (selected) {
+
+                    selected.classList.add(
+                        "selected"
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * Prevent accidental double submission.
+             */
+
+            const checkoutForm =
+                document.getElementById(
+                    "checkoutForm"
+                );
+
+
+            if (checkoutForm) {
+
+                checkoutForm.addEventListener(
+                    "submit",
+                    function () {
+
+                        const button =
+                            document.querySelector(
+                                ".place-order-btn"
+                            );
+
+
+                        if (!button) {
+                            return;
+                        }
+
+
+                        if (button.disabled) {
+                            return;
+                        }
+
+
+                        button.disabled = true;
+
+                        button.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                            'Placing Order...';
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * Automatically uppercase coupon input.
+             */
+
+            const couponInput =
+                document.querySelector(
+                    'input[name="couponCode"]'
+                );
+
+
+            if (couponInput) {
+
+                couponInput.addEventListener(
+                    "input",
+                    function () {
+
+                        couponInput.value =
+                            couponInput.value.toUpperCase();
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

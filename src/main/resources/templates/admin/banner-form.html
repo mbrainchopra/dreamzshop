@@ -1,0 +1,3212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${banner.id == null ? 'Add Banner | Dreamz Shop' : 'Edit Banner | Dreamz Shop'}">Banner | Dreamz Shop</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sidebar-width: 255px;
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --primary-deep: #166534;
+            --primary-light: #dcfce7;
+            --primary-soft: #f0fdf4;
+            --ink: #111827;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --muted-light: #94a3b8;
+            --bg: #f5f7f6;
+            --surface: #ffffff;
+            --border: #e5e7eb;
+            --border-dark: #d1d5db;
+            --danger: #dc2626;
+            --danger-soft: #fef2f2;
+            --warning: #d97706;
+            --shadow-sm: 0 4px 16px rgba(15, 23, 42, .05);
+            --shadow: 0 14px 40px rgba(15, 23, 42, .07);
+            --radius: 16px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                    radial-gradient(circle at 90% 0%, rgba(34, 197, 94, .07), transparent 28%),
+                    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, .025), transparent 25%),
+                    var(--bg);
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        ::selection {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .admin-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: #fff;
+            background:
+                    radial-gradient(circle at 0 0, rgba(34, 197, 94, .14), transparent 28%),
+                    radial-gradient(circle at 100% 90%, rgba(34, 197, 94, .08), transparent 30%),
+                    linear-gradient(180deg, #08111f 0%, #0f172a 48%, #102217 100%);
+            border-right: 1px solid rgba(255, 255, 255, .06);
+            box-shadow: 8px 0 35px rgba(0, 0, 0, .10);
+            transition: transform .3s ease;
+        }
+
+        .admin-sidebar::before {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            left: -160px;
+            top: 30%;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, .07);
+            filter: blur(25px);
+            pointer-events: none;
+            animation: sidebarGlow 7s ease-in-out infinite alternate;
+        }
+
+        .sidebar-brand {
+            position: relative;
+            height: 82px;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .sidebar-brand::after {
+            content: "";
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, .55), transparent);
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            flex: 0 0 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(135deg, #4ade80, #16a34a 55%, #15803d);
+            box-shadow: 0 10px 25px rgba(22, 163, 74, .32);
+        }
+
+        .brand-icon i {
+            font-size: 19px;
+        }
+
+        .brand-name {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .brand-label {
+            margin-top: 3px;
+            color: #94a3b8;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, .15) transparent;
+        }
+
+        .sidebar-section-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 11px 7px;
+            color: #849488;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-section-title::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, .6);
+        }
+
+        .sidebar-link {
+            position: relative;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            padding: 0 13px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            color: #cbd5e1;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: all .2s ease;
+        }
+
+        .sidebar-link i {
+            width: 21px;
+            flex: 0 0 21px;
+            color: #94a3b8;
+            font-size: 16px;
+            text-align: center;
+            transition: all .2s ease;
+        }
+
+        .sidebar-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .055);
+            border-color: rgba(255, 255, 255, .06);
+            transform: translateX(2px);
+        }
+
+        .sidebar-link:hover i {
+            color: #4ade80;
+        }
+
+        .sidebar-link.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(34, 197, 94, .23), rgba(34, 197, 94, .07));
+            border-color: rgba(74, 222, 128, .13);
+            box-shadow: inset 3px 0 0 #22c55e;
+        }
+
+        .sidebar-link.active i {
+            color: #4ade80;
+            text-shadow: 0 0 12px rgba(74, 222, 128, .4);
+        }
+
+        .sidebar-footer {
+            flex: 0 0 auto;
+            padding: 13px;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+            background: rgba(0, 0, 0, .10);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 9px;
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .045);
+        }
+
+        .sidebar-user-avatar {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #fff;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+        }
+
+        .sidebar-user-name {
+            color: #fff;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .sidebar-user-role {
+            margin-top: 2px;
+            color: #94a3b8;
+            font-size: 9px;
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, .09);
+            border-radius: 10px;
+            color: #cbd5e1;
+            background: transparent;
+            font-size: 11.5px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .sidebar-logout:hover {
+            color: #fecaca;
+            background: rgba(220, 38, 38, .12);
+            border-color: rgba(248, 113, 113, .2);
+            transform: translateY(-1px);
+        }
+
+        .admin-main {
+            min-height: 100vh;
+            margin-left: var(--sidebar-width);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            background: rgba(255, 255, 255, .92);
+            border-bottom: 1px solid rgba(229, 231, 235, .85);
+            box-shadow: 0 5px 22px rgba(15, 23, 42, .035);
+            backdrop-filter: blur(18px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .mobile-menu-btn {
+            width: 40px;
+            height: 40px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 19px;
+        }
+
+        .topbar-title {
+            margin: 0;
+            color: var(--ink);
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .topbar-subtitle {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 10.5px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .view-store-btn {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: #374151;
+            font-size: 11.5px;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .view-store-btn:hover {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            border-color: #bbf7d0;
+            transform: translateY(-1px);
+        }
+
+        .admin-avatar {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary-deep);
+            background: var(--primary-light);
+            border: 1px solid #bbf7d0;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .admin-avatar::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 1px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+            border: 2px solid #fff;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            background: rgba(15, 23, 42, .5);
+            backdrop-filter: blur(3px);
+            transition: all .25s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 28px 30px 60px;
+            animation: pageIn .45s ease both;
+        }
+
+        .page-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: #4b5563;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: var(--shadow-sm);
+            transition: all .2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            border-color: #bbf7d0;
+            transform: translateX(-2px);
+        }
+
+        .workspace-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .workspace-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, .1);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .page-icon {
+            width: 50px;
+            height: 50px;
+            flex: 0 0 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-light), #bbf7d0);
+            color: var(--primary-deep);
+            font-size: 20px;
+            box-shadow: 0 8px 20px rgba(22, 163, 74, .1);
+        }
+
+        .eyebrow {
+            margin: 2px 0 4px;
+            color: var(--primary-dark);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.15px;
+        }
+
+        .page-title {
+            margin: 0;
+            color: var(--ink);
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -.8px;
+        }
+
+        .page-subtitle {
+            max-width: 690px;
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 11px;
+            border: 1px solid #bbf7d0;
+            border-radius: 9px;
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            font-size: 9px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .error-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 13px 15px;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            background: var(--danger-soft);
+            color: #991b1b;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .form-card,
+        .preview-card,
+        .tips-card,
+        .quick-item {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-card {
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #fff, #fcfdfc);
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .card-heading-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .card-heading h2 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            margin: 2px 0 0;
+            color: var(--muted-light);
+            font-size: 9px;
+        }
+
+        .required-note {
+            color: var(--muted-light);
+            font-size: 9px;
+        }
+
+        .required-note span {
+            color: var(--danger);
+            font-weight: 800;
+        }
+
+        .form-body {
+            padding: 24px 22px 8px;
+        }
+
+        .form-section {
+            margin-bottom: 23px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 15px;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .section-title-icon {
+            width: 27px;
+            height: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 12px;
+        }
+
+        .section-title-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title-text small {
+            margin-top: 2px;
+            color: var(--muted-light);
+            font-size: 8px;
+            font-weight: 500;
+        }
+
+        .section-divider {
+            height: 1px;
+            margin: 22px 0;
+            background: #edf0ee;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 7px;
+            color: #374151;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .field-label-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .required {
+            color: var(--danger);
+            font-weight: 800;
+        }
+
+        .counter {
+            color: var(--muted-light);
+            font-size: 8px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            z-index: 2;
+            width: 16px;
+            color: #9ca3af;
+            font-size: 12px;
+            text-align: center;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .styled-input,
+        .styled-textarea {
+            width: 100%;
+            border: 1px solid #dfe4e1;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 11px;
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .styled-input {
+            height: 44px;
+            padding: 0 12px 0 37px;
+        }
+
+        .styled-textarea {
+            min-height: 108px;
+            padding: 12px;
+            resize: vertical;
+            line-height: 1.55;
+        }
+
+        .styled-input::placeholder,
+        .styled-textarea::placeholder {
+            color: #b5bbc2;
+        }
+
+        .styled-input:hover,
+        .styled-textarea:hover {
+            border-color: #cbd5ce;
+        }
+
+        .styled-input:focus,
+        .styled-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, .08);
+        }
+
+        .field-bottom {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 5px;
+            color: var(--muted-light);
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .validation-error {
+            margin-top: 5px;
+            color: var(--danger);
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .image-upload-area {
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #f8faf9;
+        }
+
+        .image-preview {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ecfdf5, #f8fafc);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            display: none;
+            object-fit: cover;
+            transition: transform .35s ease;
+        }
+
+        .image-preview:hover img {
+            transform: scale(1.015);
+        }
+
+        .image-preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            color: #9ca3af;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .image-preview-placeholder i {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: #fff;
+            color: #c4cbc6;
+            box-shadow: var(--shadow-sm);
+            font-size: 22px;
+        }
+
+        .image-preview-label,
+        .image-preview-overlay {
+            position: absolute;
+            top: 10px;
+            z-index: 4;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 8px;
+            border-radius: 7px;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+
+        .image-preview-label {
+            left: 10px;
+            background: rgba(15, 23, 42, .75);
+        }
+
+        .image-preview-overlay {
+            right: 10px;
+            display: none;
+            background: rgba(22, 163, 74, .9);
+        }
+
+        .image-preview.has-image .image-preview-overlay {
+            display: inline-flex;
+        }
+
+        .image-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 9px 11px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .image-meta strong {
+            color: #4b5563;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .visibility-control {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fafcfb;
+        }
+
+        .visibility-copy {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .visibility-icon {
+            width: 27px;
+            height: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 11px;
+        }
+
+        .visibility-text strong {
+            display: block;
+            color: #374151;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .visibility-text span {
+            display: block;
+            margin-top: 1px;
+            color: var(--muted-light);
+            font-size: 7px;
+        }
+
+        .switch{
+            position:relative;
+            width:46px;
+            height:26px;
+            flex:0 0 46px;
+            cursor:pointer;
+            user-select:none;
+        }
+
+        .switch input{
+            position:absolute;
+            width:1px;
+            height:1px;
+            opacity:0;
+            pointer-events:none;
+        }
+
+        .switch-slider{
+            position:absolute;
+            inset:0;
+            display:block;
+            border-radius:999px;
+            background:#cbd5e1;
+            cursor:pointer;
+            transition:background .25s ease, box-shadow .25s ease;
+        }
+
+        .switch-slider::before{
+            content:"";
+            position:absolute;
+            top:3px;
+            left:3px;
+            width:20px;
+            height:20px;
+            border-radius:50%;
+            background:#fff;
+            box-shadow:0 2px 7px rgba(15,23,42,.25);
+            transition:transform .25s cubic-bezier(.4,0,.2,1);
+        }
+
+        .switch.active .switch-slider{
+            background:#16a34a;
+            box-shadow:0 4px 12px rgba(22,163,74,.25);
+        }
+
+        .switch.active .switch-slider::before{
+            transform:translateX(20px);
+        }
+
+        .switch:hover .switch-slider{
+            box-shadow:0 0 0 4px rgba(22,163,74,.08);
+        }
+        .date-hint {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+            color: var(--muted-light);
+            font-size: 8px;
+        }
+
+        .action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 16px 22px;
+            border-top: 1px solid var(--border);
+            background: #fafcfb;
+        }
+
+        .action-note {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .action-note i {
+            color: var(--primary);
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .cancel-button,
+        .submit-button {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 15px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .cancel-button {
+            border: 1px solid var(--border-dark);
+            background: #fff;
+            color: #4b5563;
+        }
+
+        .cancel-button:hover {
+            background: #f9fafb;
+            color: var(--ink);
+            transform: translateY(-1px);
+        }
+
+        .submit-button {
+            min-width: 150px;
+            border: 1px solid var(--primary);
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            box-shadow: 0 7px 17px rgba(22, 163, 74, .18);
+        }
+
+        .submit-button:hover {
+            border-color: var(--primary-dark);
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(22, 163, 74, .24);
+        }
+
+        .submit-button:disabled {
+            cursor: not-allowed;
+            opacity: .75;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .preview-column {
+            position: sticky;
+            top: 94px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .preview-card {
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 17px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-header-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .preview-icon {
+            width: 33px;
+            height: 33px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 14px;
+        }
+
+        .preview-header h3 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .preview-header p {
+            margin: 2px 0 0;
+            color: var(--muted-light);
+            font-size: 8px;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 7px;
+            border-radius: 7px;
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            font-size: 7px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .1);
+        }
+
+        .store-preview {
+            padding: 15px;
+        }
+
+        .preview-window {
+            overflow: hidden;
+            border: 1px solid #dfe4e1;
+            border-radius: 13px;
+            background: #f3f4f6;
+        }
+
+        .browser-bar {
+            height: 28px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0 10px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .browser-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d1d5db;
+        }
+
+        .browser-dot.red {
+            background: #f87171;
+        }
+
+        .browser-dot.yellow {
+            background: #fbbf24;
+        }
+
+        .browser-dot.green {
+            background: #4ade80;
+        }
+
+        .browser-url {
+            flex: 1;
+            height: 15px;
+            margin-left: 4px;
+            border-radius: 4px;
+            background: #eef2f7;
+        }
+
+        .storefront {
+            padding: 10px;
+            background: #fff;
+        }
+
+        .storefront-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 9px;
+            padding: 0 2px;
+        }
+
+        .store-logo {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--ink);
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .store-logo-icon {
+            width: 17px;
+            height: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 8px;
+        }
+
+        .store-menu {
+            display: flex;
+            gap: 7px;
+            color: #9ca3af;
+            font-size: 6px;
+            font-weight: 600;
+        }
+
+        .store-banner {
+            position: relative;
+            min-height: 215px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #166534, #16a34a);
+        }
+
+        .store-banner-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+
+        .store-banner.has-image .store-banner-image {
+            opacity: 1;
+        }
+
+        .store-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(0, 0, 0, .72), rgba(0, 0, 0, .35) 48%, rgba(0, 0, 0, .08));
+        }
+
+        .store-banner-content {
+            position: relative;
+            z-index: 2;
+            width: 76%;
+            padding: 19px;
+        }
+
+        .store-kicker {
+            margin-bottom: 6px;
+            color: #bbf7d0;
+            font-size: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .store-title {
+            max-width: 235px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.12;
+            letter-spacing: -.4px;
+            overflow-wrap: anywhere;
+        }
+
+        .store-subtitle {
+            max-width: 225px;
+            margin-top: 7px;
+            color: rgba(255, 255, 255, .82);
+            font-size: 7px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .store-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            min-height: 26px;
+            margin-top: 11px;
+            padding: 0 9px;
+            border-radius: 6px;
+            background: #fff;
+            color: var(--primary-deep);
+            font-size: 7px;
+            font-weight: 800;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, .12);
+        }
+
+        .preview-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 2px 1px;
+            color: var(--muted-light);
+            font-size: 7px;
+        }
+
+        .preview-size {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tips-card {
+            padding: 17px;
+            border-radius: 16px;
+            border-color: #d7f0df;
+            background: linear-gradient(145deg, #f0fdf4, #f7fff9);
+        }
+
+        .tips-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-deep);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .tips-heading-icon {
+            width: 29px;
+            height: 29px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #dcfce7;
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin: 13px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .tips-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: #52705c;
+            font-size: 8px;
+            line-height: 1.5;
+        }
+
+        .tip-check {
+            width: 15px;
+            height: 15px;
+            flex: 0 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--primary);
+            font-size: 7px;
+            box-shadow: 0 2px 5px rgba(22, 163, 74, .08);
+        }
+
+        .quick-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .quick-item {
+            padding: 11px;
+            border-radius: 11px;
+        }
+
+        .quick-item-icon {
+            margin-bottom: 5px;
+            color: var(--primary);
+            font-size: 12px;
+        }
+
+        .quick-item strong {
+            display: block;
+            color: var(--ink);
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .quick-item span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted-light);
+            font-size: 7px;
+            line-height: 1.4;
+        }
+
+        @keyframes sidebarGlow {
+            from {
+                transform: translate(0, 0) scale(.85);
+                opacity: .4;
+            }
+
+            to {
+                transform: translate(120px, 20px) scale(1.2);
+                opacity: .9;
+            }
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(34, 197, 94, .25);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 1199px) {
+            :root {
+                --sidebar-width: 235px;
+            }
+
+            .topbar {
+                padding: 0 24px;
+            }
+
+            .content-grid {
+                grid-template-columns: minmax(0, 1fr) 350px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
+            .view-store-btn {
+                display: none;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-column {
+                position: static;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(260px, .7fr);
+                align-items: start;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .topbar {
+                height: 68px;
+                padding: 0 14px;
+            }
+
+            .topbar-subtitle {
+                display: none;
+            }
+
+            .topbar-title {
+                font-size: 17px;
+            }
+
+            .page {
+                padding: 20px 16px 45px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+            }
+
+            .mode-badge {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .page-subtitle {
+                font-size: 10px;
+            }
+
+            .preview-column {
+                display: flex;
+            }
+
+            .field-grid {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 14px 17px;
+            }
+
+            .action-note {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .cancel-button,
+            .submit-button {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .topbar {
+                padding: 0 11px;
+            }
+
+            .admin-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .page {
+                padding: 17px 12px 38px;
+            }
+
+            .page-top {
+                margin-bottom: 18px;
+            }
+
+            .workspace-status {
+                display: none;
+            }
+
+            .header-content {
+                gap: 11px;
+            }
+
+            .page-icon {
+                width: 42px;
+                height: 42px;
+                flex-basis: 42px;
+                border-radius: 11px;
+                font-size: 17px;
+            }
+
+            .page-title {
+                font-size: 21px;
+            }
+
+            .card-head {
+                padding: 16px 17px;
+            }
+
+            .form-body {
+                padding: 21px 17px 8px;
+            }
+
+            .image-preview {
+                height: 185px;
+            }
+
+            .store-banner {
+                min-height: 190px;
+            }
+
+            .store-title {
+                font-size: 17px;
+            }
+
+            .quick-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="bi bi-bag-heart-fill"></i>
+        </div>
+
+        <div>
+            <div class="brand-name">Dreamz Shop</div>
+            <div class="brand-label">Admin Panel</div>
+        </div>
+    </div>
+
+    <div class="sidebar-content">
+
+        <div class="sidebar-section-title">Overview</div>
+
+        <a class="sidebar-link" th:href="@{/admin/dashboard}">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Store Management</div>
+
+        <a class="sidebar-link" th:href="@{/admin/products}">
+            <i class="bi bi-box-seam"></i>
+            <span>Products</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/categories}">
+            <i class="bi bi-folder2-open"></i>
+            <span>Categories</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/subcategories}">
+            <i class="bi bi-diagram-3"></i>
+            <span>Subcategories</span>
+        </a>
+
+        <a class="sidebar-link active" th:href="@{/admin/banners}">
+            <i class="bi bi-images"></i>
+            <span>Banners</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/brands}">
+            <i class="bi bi-tags"></i>
+            <span>Brands</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/inventory}">
+            <i class="bi bi-clipboard-data"></i>
+            <span>Inventory</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Sales</div>
+
+        <a class="sidebar-link" th:href="@{/admin/orders}">
+            <i class="bi bi-bag-check"></i>
+            <span>Orders</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/offers}">
+            <i class="bi bi-percent"></i>
+            <span>Offers</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/coupons}">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Coupons</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Customers</div>
+
+        <a class="sidebar-link" th:href="@{/admin/customers}">
+            <i class="bi bi-people"></i>
+            <span>Customers</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/reviews}">
+            <i class="bi bi-star"></i>
+            <span>Reviews</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/returns}">
+            <i class="bi bi-arrow-return-left"></i>
+            <span>Returns</span>
+        </a>
+
+        <a class="sidebar-link" th:href="@{/admin/refunds}">
+            <i class="bi bi-cash-stack"></i>
+            <span>Refunds</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Analytics</div>
+
+        <a class="sidebar-link" th:href="@{/admin/reports}">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Reports</span>
+        </a>
+
+    </div>
+
+    <div class="sidebar-footer">
+
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div>
+                <div class="sidebar-user-name">Administrator</div>
+                <div class="sidebar-user-role">Store Management</div>
+            </div>
+        </div>
+
+        <form method="post" th:action="@{/logout}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden">
+
+            <button class="sidebar-logout" type="submit">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+</aside>
+
+<main class="admin-main">
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                    aria-label="Open navigation"
+                    class="mobile-menu-btn"
+                    id="mobileMenuBtn"
+                    type="button">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+            <div>
+                <h2 class="topbar-title">Banner Management</h2>
+                <div class="topbar-subtitle">
+                    Create, preview and manage storefront banners
+                </div>
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <a
+                    class="view-store-btn"
+                    target="_blank"
+                    th:href="@{/}">
+
+                <i class="bi bi-shop"></i>
+                View Store
+                <i class="bi bi-box-arrow-up-right"></i>
+
+            </a>
+
+            <div class="admin-avatar" title="Administrator">
+                A
+            </div>
+
+        </div>
+
+    </header>
+
+    <section class="page">
+
+        <div class="page-top">
+
+            <a
+                    class="back-link"
+                    th:href="@{/admin/banners}">
+
+                <i class="bi bi-arrow-left"></i>
+                Back to Banners
+
+            </a>
+
+            <div class="workspace-status">
+                <span class="workspace-dot"></span>
+                Admin Workspace
+            </div>
+
+        </div>
+
+        <header class="page-header">
+
+            <div class="header-content">
+
+                <div class="page-icon">
+
+                    <i
+                            class="bi bi-plus-lg"
+                            th:if="${banner.id == null}">
+                    </i>
+
+                    <i
+                            class="bi bi-pencil-square"
+                            th:unless="${banner.id == null}">
+                    </i>
+
+                </div>
+
+                <div>
+
+                    <div class="eyebrow">
+                        Banner Management
+                    </div>
+
+                    <h1 class="page-title">
+
+                        <span
+                                th:text="${banner.id == null ? 'Create New Banner' : 'Edit Banner'}">
+                            Create New Banner
+                        </span>
+
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Design a promotional banner for your Dreamz Shop storefront
+                        and preview the result before saving.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="mode-badge">
+
+                <i class="bi bi-shield-check"></i>
+
+                <span
+                        th:text="${banner.id == null ? 'New Banner' : 'Editing Banner'}">
+                    New Banner
+                </span>
+
+            </div>
+
+        </header>
+
+        <div
+                class="error-alert"
+                role="alert"
+                th:if="${error}">
+
+            <i class="bi bi-exclamation-triangle-fill"></i>
+
+            <span th:text="${error}">
+                Something went wrong.
+            </span>
+
+        </div>
+
+        <div class="content-grid">
+
+            <section class="form-card">
+
+                <div class="card-head">
+
+                    <div class="card-heading">
+
+                        <div class="card-heading-icon">
+                            <i class="bi bi-layers"></i>
+                        </div>
+
+                        <div>
+                            <h2>Banner Configuration</h2>
+                            <p>Add the content and display settings.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="required-note">
+                        <span>*</span> Required
+                    </div>
+
+                </div>
+
+                <form
+                        id="bannerForm"
+                        method="post"
+                        th:action="${banner.id == null ? '/admin/banners/save' : '/admin/banners/update/' + banner.id}"
+                        th:object="${banner}">
+
+                    <input
+                            name="_csrf"
+                            th:value="${_csrf.token}"
+                            type="hidden">
+
+                    <div class="form-body">
+
+                        <section class="form-section">
+
+                            <div class="section-title">
+
+                                <span class="section-title-icon">
+                                    <i class="bi bi-pencil"></i>
+                                </span>
+
+                                <span class="section-title-text">
+                                    <span>Basic Information</span>
+                                    <small>Give your promotion a clear message.</small>
+                                </span>
+
+                            </div>
+
+                            <div class="field">
+
+                                <label class="field-label" for="title">
+
+                                    <span class="field-label-left">
+                                        Banner Title
+                                        <span class="required">*</span>
+                                    </span>
+
+                                    <span
+                                            class="counter"
+                                            id="titleCounter">
+                                        0 / 150
+                                    </span>
+
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <i class="bi bi-type input-icon"></i>
+
+                                    <input
+                                            class="styled-input"
+                                            id="title"
+                                            maxlength="150"
+                                            placeholder="Example: Summer Sale is Here!"
+                                            required
+                                            th:field="*{title}"
+                                            type="text">
+
+                                </div>
+
+                                <div
+                                        class="validation-error"
+                                        th:errors="*{title}"
+                                        th:if="${#fields.hasErrors('title')}">
+                                </div>
+
+                            </div>
+
+                            <div class="field">
+
+                                <label class="field-label" for="subtitle">
+
+                                    <span class="field-label-left">
+                                        Subtitle
+                                    </span>
+
+                                    <span
+                                            class="counter"
+                                            id="subtitleCounter">
+                                        0 / 300
+                                    </span>
+
+                                </label>
+
+                                <textarea
+                                        class="styled-textarea"
+                                        id="subtitle"
+                                        maxlength="300"
+                                        placeholder="Describe your promotion in a short and attractive sentence..."
+                                        th:field="*{subtitle}"></textarea>
+
+                                <div class="field-bottom">
+                                    <span>Keep it short and easy to understand.</span>
+                                </div>
+
+                                <div
+                                        class="validation-error"
+                                        th:errors="*{subtitle}"
+                                        th:if="${#fields.hasErrors('subtitle')}">
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <div class="section-divider"></div>
+
+                        <section class="form-section">
+
+                            <div class="section-title">
+
+                                <span class="section-title-icon">
+                                    <i class="bi bi-image"></i>
+                                </span>
+
+                                <span class="section-title-text">
+                                    <span>Banner Image</span>
+                                    <small>Use a high-quality landscape image.</small>
+                                </span>
+
+                            </div>
+
+                            <div class="field">
+
+                                <label class="field-label" for="imageUrl">
+
+                                    <span class="field-label-left">
+                                        Image URL
+                                        <span class="required">*</span>
+                                    </span>
+
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <i class="bi bi-link-45deg input-icon"></i>
+
+                                    <input
+                                            class="styled-input"
+                                            id="imageUrl"
+                                            maxlength="1000"
+                                            placeholder="https://example.com/banner.jpg"
+                                            required
+                                            th:field="*{imageUrl}"
+                                            type="url">
+
+                                </div>
+
+                                <div class="field-bottom">
+                                    <span>Recommended: wide landscape artwork.</span>
+                                    <span>HTTPS preferred</span>
+                                </div>
+
+                                <div
+                                        class="validation-error"
+                                        th:errors="*{imageUrl}"
+                                        th:if="${#fields.hasErrors('imageUrl')}">
+                                </div>
+
+                                <div class="image-upload-area">
+
+                                    <div
+                                            class="image-preview"
+                                            id="imagePreview">
+
+                                        <span class="image-preview-label">
+                                            <i class="bi bi-eye"></i>
+                                            Image Preview
+                                        </span>
+
+                                        <span
+                                                class="image-preview-overlay"
+                                                id="imageLoadedBadge">
+
+                                            <i class="bi bi-check-circle"></i>
+                                            Loaded
+
+                                        </span>
+
+                                        <img
+                                                alt="Banner image preview"
+                                                id="imagePreviewImg"
+                                                th:if="${banner.imageUrl != null and !banner.imageUrl.isEmpty()}"
+                                                th:src="${banner.imageUrl}">
+
+                                        <div
+                                                class="image-preview-placeholder"
+                                                id="imagePlaceholder">
+
+                                            <i class="bi bi-image"></i>
+
+                                            <span>
+                                                Enter an image URL to see the preview
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="image-meta">
+
+                                        <span>
+                                            <i class="bi bi-aspect-ratio me-1"></i>
+                                            Landscape recommended
+                                        </span>
+
+                                        <strong id="imageStatus">
+                                            Waiting for image
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <div class="section-divider"></div>
+
+                        <section class="form-section">
+
+                            <div class="section-title">
+
+                                <span class="section-title-icon">
+                                    <i class="bi bi-cursor"></i>
+                                </span>
+
+                                <span class="section-title-text">
+                                    <span>Call-to-Action</span>
+                                    <small>Tell customers where to go next.</small>
+                                </span>
+
+                            </div>
+
+                            <div class="field-grid">
+
+                                <div class="field">
+
+                                    <label class="field-label" for="buttonText">
+
+                                        <span class="field-label-left">
+                                            Button Text
+                                        </span>
+
+                                        <span
+                                                class="counter"
+                                                id="buttonCounter">
+                                            0 / 100
+                                        </span>
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-hand-index input-icon"></i>
+
+                                        <input
+                                                class="styled-input"
+                                                id="buttonText"
+                                                maxlength="100"
+                                                placeholder="Shop Now"
+                                                th:field="*{buttonText}"
+                                                type="text">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label class="field-label" for="buttonUrl">
+
+                                        <span class="field-label-left">
+                                            Button URL
+                                        </span>
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-box-arrow-up-right input-icon"></i>
+
+                                        <input
+                                                class="styled-input"
+                                                id="buttonUrl"
+                                                maxlength="500"
+                                                placeholder="/products"
+                                                th:field="*{buttonUrl}"
+                                                type="text">
+
+                                    </div>
+
+                                    <div class="field-bottom">
+                                        <span>Example: /products</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <div class="section-divider"></div>
+
+                        <section class="form-section">
+
+                            <div class="section-title">
+
+                                <span class="section-title-icon">
+                                    <i class="bi bi-sliders"></i>
+                                </span>
+
+                                <span class="section-title-text">
+                                    <span>Display Settings</span>
+                                    <small>Control order and storefront visibility.</small>
+                                </span>
+
+                            </div>
+
+                            <div class="field-grid">
+
+                                <div class="field">
+
+                                    <label
+                                            class="field-label"
+                                            for="displayOrder">
+
+                                        <span class="field-label-left">
+                                            Display Order
+                                        </span>
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-sort-numeric-down input-icon"></i>
+
+                                        <input
+                                                class="styled-input"
+                                                id="displayOrder"
+                                                min="0"
+                                                step="1"
+                                                th:field="*{displayOrder}"
+                                                type="number">
+
+                                    </div>
+
+                                    <div class="field-bottom">
+                                        <span>Lower numbers appear first.</span>
+                                    </div>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label class="field-label">
+
+                                        <span class="field-label-left">
+                                            Visibility
+                                        </span>
+
+                                    </label>
+                                    <div class="visibility-control">
+                                        <div class="visibility-copy">
+        <span class="visibility-icon">
+            <i class="bi bi-eye" id="visibilityIcon"></i>
+        </span>
+
+                                            <span class="visibility-text">
+            <strong id="visibilityText">Show Banner</strong>
+            <span id="visibilitySubtext">Visible on storefront</span>
+        </span>
+                                        </div>
+
+                                        <div class="switch" id="visibilitySwitch">
+                                            <input id="enabled" th:field="*{enabled}" type="checkbox">
+                                            <span class="switch-slider"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <div class="section-divider"></div>
+
+                        <section class="form-section">
+
+                            <div class="section-title">
+
+                                <span class="section-title-icon">
+                                    <i class="bi bi-calendar-event"></i>
+                                </span>
+
+                                <span class="section-title-text">
+                                    <span>Schedule</span>
+                                    <small>Automatically control when the banner appears.</small>
+                                </span>
+
+                            </div>
+
+                            <div class="field-grid">
+
+                                <div class="field">
+
+                                    <label
+                                            class="field-label"
+                                            for="startDate">
+
+                                        <span class="field-label-left">
+                                            Start Date &amp; Time
+                                        </span>
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-calendar-plus input-icon"></i>
+
+                                        <input
+                                                class="styled-input"
+                                                id="startDate"
+                                                name="startDate"
+                                                th:value="${banner.startDate != null ? #temporals.format(banner.startDate, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                                                type="datetime-local">
+
+                                    </div>
+
+                                    <div class="date-hint">
+                                        <i class="bi bi-info-circle"></i>
+                                        Leave empty to display immediately.
+                                    </div>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label
+                                            class="field-label"
+                                            for="endDate">
+
+                                        <span class="field-label-left">
+                                            End Date &amp; Time
+                                        </span>
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-calendar-x input-icon"></i>
+
+                                        <input
+                                                class="styled-input"
+                                                id="endDate"
+                                                name="endDate"
+                                                th:value="${banner.endDate != null ? #temporals.format(banner.endDate, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                                                type="datetime-local">
+
+                                    </div>
+
+                                    <div class="date-hint">
+                                        <i class="bi bi-info-circle"></i>
+                                        Leave empty for no expiry.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                    <div class="action-bar">
+
+                        <div class="action-note">
+                            <i class="bi bi-shield-check"></i>
+                            Changes are saved securely.
+                        </div>
+
+                        <div class="action-buttons">
+
+                            <a
+                                    class="cancel-button"
+                                    th:href="@{/admin/banners}">
+
+                                <i class="bi bi-x-lg"></i>
+                                Cancel
+
+                            </a>
+
+                            <button
+                                    class="submit-button"
+                                    id="submitButton"
+                                    type="submit">
+
+                                <i
+                                        id="submitIcon"
+                                        th:class="${banner.id == null ? 'bi bi-check-lg' : 'bi bi-save'}">
+                                </i>
+
+                                <span
+                                        id="submitText"
+                                        th:text="${banner.id == null ? 'Create Banner' : 'Update Banner'}">
+                                    Create Banner
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <aside class="preview-column">
+
+                <section class="preview-card">
+
+                    <div class="preview-header">
+
+                        <div class="preview-header-left">
+
+                            <div class="preview-icon">
+                                <i class="bi bi-display"></i>
+                            </div>
+
+                            <div>
+                                <h3>Storefront Preview</h3>
+                                <p>Updates as you type</p>
+                            </div>
+
+                        </div>
+
+                        <div class="live-badge">
+                            <span class="live-dot"></span>
+                            Live
+                        </div>
+
+                    </div>
+
+                    <div class="store-preview">
+
+                        <div class="preview-window">
+
+                            <div class="browser-bar">
+
+                                <span class="browser-dot red"></span>
+                                <span class="browser-dot yellow"></span>
+                                <span class="browser-dot green"></span>
+                                <span class="browser-url"></span>
+
+                            </div>
+
+                            <div class="storefront">
+
+                                <div class="storefront-top">
+
+                                    <div class="store-logo">
+
+                                        <span class="store-logo-icon">
+                                            <i class="bi bi-bag-check"></i>
+                                        </span>
+
+                                        Dreamz Shop
+
+                                    </div>
+
+                                    <div class="store-menu">
+                                        <span>SHOP</span>
+                                        <span>NEW</span>
+                                        <span>SALE</span>
+                                        <span>ACCOUNT</span>
+                                    </div>
+
+                                </div>
+
+                                <div
+                                        class="store-banner"
+                                        id="storeBanner">
+
+                                    <img
+                                            alt="Storefront banner preview"
+                                            class="store-banner-image"
+                                            id="storeBannerImage">
+
+                                    <div class="store-banner-overlay"></div>
+
+                                    <div class="store-banner-content">
+
+                                        <div class="store-kicker">
+                                            DREAMZ SHOP
+                                        </div>
+
+                                        <div
+                                                class="store-title"
+                                                id="previewTitle">
+                                            Your Banner Title
+                                        </div>
+
+                                        <div
+                                                class="store-subtitle"
+                                                id="previewSubtitle">
+                                            Your promotional message will appear here.
+                                        </div>
+
+                                        <div
+                                                class="store-button"
+                                                id="previewButton">
+
+                                            Shop Now
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="preview-footer">
+
+                                    <span class="preview-size">
+                                        <i class="bi bi-aspect-ratio"></i>
+                                        Desktop banner preview
+                                    </span>
+
+                                    <span>
+                                        Live mockup
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="tips-card">
+
+                    <div class="tips-heading">
+
+                        <span class="tips-heading-icon">
+                            <i class="bi bi-lightbulb"></i>
+                        </span>
+
+                        Banner Tips
+
+                    </div>
+
+                    <ul class="tips-list">
+
+                        <li>
+                            <span class="tip-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+                            Use a strong landscape image with good contrast.
+                        </li>
+
+                        <li>
+                            <span class="tip-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+                            Keep the title short enough to scan quickly.
+                        </li>
+
+                        <li>
+                            <span class="tip-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+                            Use action-focused button text like "Shop Now".
+                        </li>
+
+                        <li>
+                            <span class="tip-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+                            Use scheduling for limited-time campaigns.
+                        </li>
+
+                        <li>
+                            <span class="tip-check">
+                                <i class="bi bi-check"></i>
+                            </span>
+                            Lower display order numbers appear first.
+                        </li>
+
+                    </ul>
+
+                </section>
+
+                <div class="quick-info">
+
+                    <div class="quick-item">
+
+                        <div class="quick-item-icon">
+                            <i class="bi bi-phone"></i>
+                        </div>
+
+                        <strong>Responsive</strong>
+
+                        <span>
+                            Preview adapts to mobile layouts.
+                        </span>
+
+                    </div>
+
+                    <div class="quick-item">
+
+                        <div class="quick-item-icon">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+
+                        <strong>Live Preview</strong>
+
+                        <span>
+                            Content updates instantly.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const titleInput = document.getElementById("title");
+        const subtitleInput = document.getElementById("subtitle");
+        const buttonTextInput = document.getElementById("buttonText");
+        const imageUrlInput = document.getElementById("imageUrl");
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+        const enabledInput = document.getElementById("enabled");
+        const visibilitySwitch = document.getElementById("visibilitySwitch");
+        const titleCounter = document.getElementById("titleCounter");
+        const subtitleCounter = document.getElementById("subtitleCounter");
+        const buttonCounter = document.getElementById("buttonCounter");
+
+        const previewTitle = document.getElementById("previewTitle");
+        const previewSubtitle = document.getElementById("previewSubtitle");
+        const previewButton = document.getElementById("previewButton");
+
+        const storeBanner = document.getElementById("storeBanner");
+        const storeBannerImage = document.getElementById("storeBannerImage");
+
+        const imagePreview = document.getElementById("imagePreview");
+        const imagePreviewImg = document.getElementById("imagePreviewImg");
+        const imagePlaceholder = document.getElementById("imagePlaceholder");
+        const imageStatus = document.getElementById("imageStatus");
+
+        const visibilityText = document.getElementById("visibilityText");
+        const visibilitySubtext = document.getElementById("visibilitySubtext");
+        const visibilityIcon = document.getElementById("visibilityIcon");
+
+        const form = document.getElementById("bannerForm");
+        const submitButton = document.getElementById("submitButton");
+        const submitIcon = document.getElementById("submitIcon");
+        const submitText = document.getElementById("submitText");
+
+        function updateCounter(input, counter, max) {
+            if (!input || !counter) {
+                return;
+            }
+
+            const length = input.value.length;
+
+            counter.textContent = length + " / " + max;
+
+            counter.style.color =
+                length >= max * .9
+                    ? "#d97706"
+                    : "#94a3b8";
+        }
+
+        function updateTextPreview(input, target, fallback) {
+            if (!input || !target) {
+                return;
+            }
+
+            target.textContent =
+                input.value.trim() || fallback;
+        }
+
+        function refreshTextPreviews() {
+
+            updateTextPreview(
+                titleInput,
+                previewTitle,
+                "Your Banner Title"
+            );
+
+            updateTextPreview(
+                subtitleInput,
+                previewSubtitle,
+                "Your promotional message will appear here."
+            );
+
+            const buttonText =
+                buttonTextInput.value.trim();
+
+            previewButton.innerHTML = "";
+
+            previewButton.appendChild(
+                document.createTextNode(
+                    buttonText || "Shop Now"
+                )
+            );
+
+            const arrow =
+                document.createElement("i");
+
+            arrow.className =
+                "bi bi-arrow-right";
+
+            previewButton.appendChild(arrow);
+
+            updateCounter(
+                titleInput,
+                titleCounter,
+                150
+            );
+
+            updateCounter(
+                subtitleInput,
+                subtitleCounter,
+                300
+            );
+
+            updateCounter(
+                buttonTextInput,
+                buttonCounter,
+                100
+            );
+        }
+
+        function setImageState(
+            url,
+            imageElement,
+            placeholderElement,
+            statusElement,
+            containerElement
+        ) {
+
+            const cleanUrl =
+                (url || "").trim();
+
+            if (!cleanUrl) {
+
+                imageElement.style.display = "none";
+
+                placeholderElement.style.display =
+                    "flex";
+
+                statusElement.textContent =
+                    "Waiting for image";
+
+                statusElement.style.color =
+                    "#4b5563";
+
+                containerElement.classList.remove(
+                    "has-image"
+                );
+
+                return;
+            }
+
+            imageElement.onload = function () {
+
+                imageElement.style.display =
+                    "block";
+
+                placeholderElement.style.display =
+                    "none";
+
+                statusElement.textContent =
+                    "Image loaded";
+
+                statusElement.style.color =
+                    "#16a34a";
+
+                containerElement.classList.add(
+                    "has-image"
+                );
+            };
+
+            imageElement.onerror = function () {
+
+                imageElement.style.display =
+                    "none";
+
+                placeholderElement.style.display =
+                    "flex";
+
+                statusElement.textContent =
+                    "Unable to load image";
+
+                statusElement.style.color =
+                    "#dc2626";
+
+                containerElement.classList.remove(
+                    "has-image"
+                );
+            };
+
+            imageElement.src = cleanUrl;
+        }
+
+        function updateImagePreviews() {
+
+            const url =
+                imageUrlInput.value.trim();
+
+            setImageState(
+                url,
+                imagePreviewImg,
+                imagePlaceholder,
+                imageStatus,
+                imagePreview
+            );
+
+            if (!url) {
+
+                storeBanner.classList.remove(
+                    "has-image"
+                );
+
+                storeBannerImage.removeAttribute(
+                    "src"
+                );
+
+                return;
+            }
+
+            storeBannerImage.onload =
+                function () {
+
+                    storeBanner.classList.add(
+                        "has-image"
+                    );
+                };
+
+            storeBannerImage.onerror =
+                function () {
+
+                    storeBanner.classList.remove(
+                        "has-image"
+                    );
+                };
+
+            storeBannerImage.src = url;
+        }
+        function updateVisibility() {
+            if (!enabledInput) return;
+
+            const isEnabled = enabledInput.checked;
+
+            if (visibilitySwitch) {
+                visibilitySwitch.classList.toggle("active", isEnabled);
+            }
+
+            if (visibilityText) {
+                visibilityText.textContent = isEnabled
+                    ? "Show Banner"
+                    : "Hide Banner";
+            }
+
+            if (visibilitySubtext) {
+                visibilitySubtext.textContent = isEnabled
+                    ? "Visible on storefront"
+                    : "Hidden from storefront";
+            }
+
+            if (visibilityIcon) {
+                visibilityIcon.className = isEnabled
+                    ? "bi bi-eye"
+                    : "bi bi-eye-slash";
+            }
+        }
+
+        function validateDates() {
+
+            if (!startDateInput || !endDateInput) {
+                return true;
+            }
+
+            startDateInput.setCustomValidity("");
+            endDateInput.setCustomValidity("");
+
+            if (
+                !startDateInput.value ||
+                !endDateInput.value
+            ) {
+                return true;
+            }
+
+            const start =
+                new Date(startDateInput.value);
+
+            const end =
+                new Date(endDateInput.value);
+
+            if (end <= start) {
+
+                endDateInput.setCustomValidity(
+                    "End date must be later than the start date."
+                );
+
+                return false;
+            }
+
+            return true;
+        }
+
+        if (titleInput) {
+            titleInput.addEventListener(
+                "input",
+                refreshTextPreviews
+            );
+        }
+
+        if (subtitleInput) {
+            subtitleInput.addEventListener(
+                "input",
+                refreshTextPreviews
+            );
+        }
+
+        if (buttonTextInput) {
+            buttonTextInput.addEventListener(
+                "input",
+                refreshTextPreviews
+            );
+        }
+
+        if (imageUrlInput) {
+            imageUrlInput.addEventListener(
+                "input",
+                updateImagePreviews
+            );
+        }
+
+        if (enabledInput) {
+            enabledInput.addEventListener("change", updateVisibility);
+        }
+
+        if (visibilitySwitch) {
+            visibilitySwitch.addEventListener("click", function () {
+                enabledInput.checked = !enabledInput.checked;
+                enabledInput.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+        }
+
+        if (startDateInput) {
+            startDateInput.addEventListener(
+                "change",
+                validateDates
+            );
+        }
+
+        if (endDateInput) {
+            endDateInput.addEventListener(
+                "change",
+                validateDates
+            );
+        }
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    if (!validateDates()) {
+
+                        event.preventDefault();
+
+                        endDateInput.reportValidity();
+
+                        return;
+                    }
+
+                    if (!form.checkValidity()) {
+
+                        event.preventDefault();
+
+                        form.reportValidity();
+
+                        return;
+                    }
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                    }
+
+                    if (submitIcon) {
+
+                        submitIcon.className =
+                            "bi bi-arrow-repeat";
+
+                        submitIcon.style.animation =
+                            "spin 1s linear infinite";
+                    }
+
+                    if (submitText) {
+                        submitText.textContent =
+                            "Saving...";
+                    }
+                }
+            );
+        }
+
+        refreshTextPreviews();
+        updateImagePreviews();
+        updateVisibility();
+        validateDates();
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const sidebar =
+            document.getElementById("adminSidebar");
+
+        const overlay =
+            document.getElementById("sidebarOverlay");
+
+        const toggle =
+            document.getElementById("mobileMenuBtn");
+
+        function closeSidebar() {
+
+            if (sidebar) {
+                sidebar.classList.remove("show");
+            }
+
+            if (overlay) {
+                overlay.classList.remove("show");
+            }
+
+            document.body.style.overflow = "";
+        }
+
+        function openSidebar() {
+
+            if (sidebar) {
+                sidebar.classList.add("show");
+            }
+
+            if (overlay) {
+                overlay.classList.add("show");
+            }
+
+            document.body.style.overflow =
+                "hidden";
+        }
+
+        if (toggle) {
+
+            toggle.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        sidebar &&
+                        sidebar.classList.contains("show")
+                    ) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+
+                }
+            );
+        }
+
+        if (overlay) {
+            overlay.addEventListener(
+                "click",
+                closeSidebar
+            );
+        }
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+                    closeSidebar();
+                }
+
+            }
+        );
+
+        document
+            .querySelectorAll(".sidebar-link")
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            window.innerWidth <= 991
+                        ) {
+                            closeSidebar();
+                        }
+
+                    }
+                );
+
+            });
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                if (
+                    window.innerWidth > 991
+                ) {
+                    closeSidebar();
+                }
+
+            }
+        );
+    });
+</script>
+
+</body>
+</html>

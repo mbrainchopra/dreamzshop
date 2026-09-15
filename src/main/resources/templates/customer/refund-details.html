@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Refund Details | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        :root {
+
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --muted: #6b7280;
+
+            --border: #e5e7eb;
+
+            --bg: #f7f8f6;
+
+            --yellow: #d97706;
+            --yellow-soft: #fffbeb;
+
+            --blue: #2563eb;
+            --blue-soft: #eff6ff;
+
+            --red: #dc2626;
+            --red-soft: #fef2f2;
+
+            --gray-soft: #f3f4f6;
+
+            --shadow:
+                    0 8px 28px rgba(0, 0, 0, .055);
+
+            --shadow-hover:
+                    0 15px 35px rgba(0, 0, 0, .09);
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .045),
+                            transparent 30%
+                    ),
+                    var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .refund-page {
+
+            padding-top: 28px;
+
+            padding-bottom: 65px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .page-header {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 23px 26px;
+
+            margin-bottom: 20px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+
+        .page-header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 190px;
+
+            height: 190px;
+
+            right: -80px;
+
+            top: -105px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(22, 163, 74, .055);
+        }
+
+
+        .header-content {
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        .header-icon {
+
+            width: 43px;
+
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            border-radius: 12px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+
+            font-size: 20px;
+        }
+
+
+        .page-title {
+
+            margin: 0;
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+
+        .refund-number {
+
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+        }
+
+
+        .refund-number strong {
+
+            color: var(--text);
+
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           ALERTS
+        ===================================================== */
+
+        .custom-alert {
+
+            border: none;
+
+            border-radius: 11px;
+
+            font-size: 9px;
+
+            font-weight: 650;
+
+            box-shadow:
+                    0 4px 15px rgba(0, 0, 0, .035);
+
+            animation:
+                    slideDown .35s ease both;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .details-card {
+
+            height: 100%;
+
+            padding: 22px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 17px;
+
+            box-shadow: var(--shadow);
+
+            transition:
+                    transform .22s ease,
+                    box-shadow .22s ease;
+        }
+
+
+        .details-card:hover {
+
+            box-shadow:
+                    var(--shadow-hover);
+        }
+
+
+        .section-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding-bottom: 13px;
+
+            margin-bottom: 18px;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            font-weight: 850;
+        }
+
+
+        .section-title i {
+
+            color:
+                    var(--green);
+
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           REFUND SUMMARY
+        ===================================================== */
+
+        .summary-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(2, 1fr);
+
+            gap: 14px;
+        }
+
+
+        .summary-item {
+
+            padding: 13px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px solid #edf1ee;
+
+            border-radius: 11px;
+
+            transition:
+                    transform .2s ease,
+                    border-color .2s ease;
+        }
+
+
+        .summary-item:hover {
+
+            transform:
+                    translateY(-2px);
+
+            border-color:
+                    #d7e9db;
+        }
+
+
+        .info-label {
+
+            margin-bottom: 4px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+
+            font-weight: 750;
+
+            text-transform: uppercase;
+
+            letter-spacing: .35px;
+        }
+
+
+        .info-value {
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+
+        .refund-amount {
+
+            color:
+                    var(--green-deep);
+
+            font-size: 25px;
+
+            font-weight: 950;
+        }
+
+
+        /* =====================================================
+           STATUS BADGES
+        ===================================================== */
+
+        .status-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding:
+                    6px 10px;
+
+            border-radius: 30px;
+
+            font-size: 8px;
+
+            font-weight: 850;
+
+            white-space: nowrap;
+        }
+
+
+        .status-pending {
+
+            background:
+                    #fef3c7;
+
+            color:
+                    #92400e;
+        }
+
+
+        .status-initiated {
+
+            background:
+                    #e0f2fe;
+
+            color:
+                    #075985;
+        }
+
+
+        .status-processing {
+
+            background:
+                    #dbeafe;
+
+            color:
+                    #1d4ed8;
+        }
+
+
+        .status-completed {
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+        }
+
+
+        .status-failed {
+
+            background:
+                    var(--red-soft);
+
+            color:
+                    #991b1b;
+        }
+
+
+        .status-cancelled {
+
+            background:
+                    var(--gray-soft);
+
+            color:
+                    #4b5563;
+        }
+
+
+        /* =====================================================
+           STATUS MESSAGE
+        ===================================================== */
+
+        .status-message {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 11px;
+
+            padding: 15px;
+
+            border-radius: 13px;
+
+            font-size: 9px;
+
+            line-height: 1.6;
+        }
+
+
+        .status-message i {
+
+            margin-top: 1px;
+
+            font-size: 18px;
+        }
+
+
+        .success-message {
+
+            background:
+                    var(--green-soft);
+
+            border:
+                    1px solid #d6eddc;
+
+            color:
+                    var(--green-deep);
+        }
+
+
+        .progress-message {
+
+            background:
+                    var(--yellow-soft);
+
+            border:
+                    1px solid #fce7a9;
+
+            color:
+                    #92400e;
+        }
+
+
+        .failed-message {
+
+            background:
+                    var(--red-soft);
+
+            border:
+                    1px solid #fecaca;
+
+            color:
+                    #991b1b;
+        }
+
+
+        .message-title {
+
+            margin-bottom: 2px;
+
+            font-size: 10px;
+
+            font-weight: 850;
+        }
+
+
+        /* =====================================================
+           TRANSACTION
+        ===================================================== */
+
+        .reference-box {
+
+            padding: 14px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px dashed #d5e4d8;
+
+            border-radius: 11px;
+
+            word-break: break-word;
+        }
+
+
+        .reference-value {
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+
+        .reference-empty {
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           TIMELINE
+        ===================================================== */
+
+        .timeline {
+
+            position: relative;
+
+            padding-top: 3px;
+        }
+
+
+        .timeline-item {
+
+            position: relative;
+
+            min-height: 68px;
+
+            padding-left: 42px;
+
+            padding-bottom: 20px;
+        }
+
+
+        .timeline-item:last-child {
+
+            min-height: auto;
+
+            padding-bottom: 0;
+        }
+
+
+        .timeline-item::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 12px;
+
+            top: 18px;
+
+            width: 2px;
+
+            height: calc(100% - 7px);
+
+            background:
+                    #e5e7eb;
+        }
+
+
+        .timeline-item:last-child::before {
+
+            display: none;
+        }
+
+
+        .timeline-dot {
+
+            position: absolute;
+
+            left: 5px;
+
+            top: 1px;
+
+            width: 16px;
+
+            height: 16px;
+
+            border:
+                    3px solid white;
+
+            border-radius: 50%;
+
+            background:
+                    #d1d5db;
+
+            box-shadow:
+                    0 0 0 1px #d1d5db;
+        }
+
+
+        .timeline-item.active .timeline-dot {
+
+            background:
+                    var(--green);
+
+            box-shadow:
+                    0 0 0 1px var(--green),
+                    0 0 0 5px rgba(22, 163, 74, .08);
+        }
+
+
+        .timeline-item.failed .timeline-dot {
+
+            background:
+                    var(--red);
+
+            box-shadow:
+                    0 0 0 1px var(--red);
+        }
+
+
+        .timeline-item.cancelled .timeline-dot {
+
+            background:
+                    #6b7280;
+
+            box-shadow:
+                    0 0 0 1px #6b7280;
+        }
+
+
+        .timeline-label {
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+
+        .timeline-description {
+
+            margin-top: 3px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+
+            line-height: 1.5;
+        }
+
+
+        .timeline-item.active .timeline-label {
+
+            color:
+                    var(--green-deep);
+        }
+
+
+        /* =====================================================
+           SIDE INFORMATION
+        ===================================================== */
+
+        .side-info {
+
+            padding: 12px;
+
+            margin-bottom: 12px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px solid #edf1ee;
+
+            border-radius: 11px;
+        }
+
+
+        .side-label {
+
+            color: #9ca3af;
+
+            font-size: 7px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .4px;
+        }
+
+
+        .side-value {
+
+            margin-top: 4px;
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           RELATED CARDS
+        ===================================================== */
+
+        .related-card {
+
+            padding: 14px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px solid #edf1ee;
+
+            border-radius: 12px;
+        }
+
+
+        .related-number {
+
+            color: var(--text);
+
+            font-size: 12px;
+
+            font-weight: 850;
+        }
+
+
+        .related-status {
+
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+
+            min-height: 39px;
+
+            border-radius: 9px;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background .2s ease;
+        }
+
+
+        .btn-outline-dark:hover,
+        .btn-outline-primary:hover {
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        .btn-green {
+
+            border: none;
+
+            background:
+                    var(--green);
+
+            color: white;
+        }
+
+
+        .btn-green:hover {
+
+            background:
+                    var(--green-dark);
+
+            color: white;
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(22, 163, 74, .18);
+        }
+
+
+        /* =====================================================
+           SUPPORT
+        ===================================================== */
+
+        .support-box {
+
+            padding: 15px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f8faf9,
+                            #f0fdf4
+                    );
+
+            border:
+                    1px solid #e1eee4;
+
+            border-radius: 12px;
+        }
+
+
+        .support-icon {
+
+            width: 35px;
+
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 9px;
+
+            border-radius: 10px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+
+            font-size: 16px;
+        }
+
+
+        .support-title {
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 850;
+        }
+
+
+        .support-text {
+
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .shop-footer {
+
+            padding:
+                    35px 0 18px;
+
+            background:
+                    #111827;
+
+            color: white;
+        }
+
+
+        .footer-brand {
+
+            font-size: 20px;
+
+            font-weight: 950;
+        }
+
+
+        .footer-brand span {
+
+            color:
+                    #4ade80;
+        }
+
+
+        .footer-text {
+
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+        }
+
+
+        .footer-services {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 24px;
+
+            margin: 20px 0;
+        }
+
+
+        .footer-service {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: #d1d5db;
+
+            font-size: 8px;
+
+            font-weight: 650;
+        }
+
+
+        .footer-service i {
+
+            color:
+                    #4ade80;
+
+            font-size: 12px;
+        }
+
+
+        .footer-bottom {
+
+            padding-top: 14px;
+
+            border-top:
+                    1px solid rgba(255,255,255,.08);
+
+            color: #6b7280;
+
+            font-size: 7px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+        ===================================================== */
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        @keyframes slideDown {
+
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 767px) {
+
+            .refund-page {
+
+                padding:
+                        15px 8px 45px;
+            }
+
+
+            .page-header {
+
+                padding: 19px;
+
+                border-radius: 15px;
+            }
+
+
+            .page-title {
+
+                font-size: 18px;
+            }
+
+
+            .details-card {
+
+                padding: 17px;
+
+                border-radius: 15px;
+            }
+
+
+            .summary-grid {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+
+            .refund-amount {
+
+                font-size: 23px;
+            }
+
+
+            .footer-services {
+
+                gap: 13px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .page-header {
+
+                padding: 17px;
+            }
+
+
+            .header-icon {
+
+                width: 39px;
+
+                height: 39px;
+
+                font-size: 18px;
+            }
+
+
+            .timeline-item {
+
+                padding-left: 37px;
+            }
+
+
+            .timeline-dot {
+
+                left: 3px;
+            }
+
+
+            .timeline-item::before {
+
+                left: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container refund-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <section class="page-header">
+
+        <div
+                class="header-content
+                       d-flex
+                       justify-content-between
+                       align-items-center
+                       flex-wrap
+                       gap-3">
+
+
+            <div>
+
+                <div class="header-icon">
+
+                    <i class="bi bi-wallet2"></i>
+
+                </div>
+
+
+                <h1 class="page-title">
+
+                    Refund Details
+
+                </h1>
+
+
+                <div class="refund-number">
+
+                    Refund #
+
+                    <strong th:text="${refund.refundNumber}">
+
+                        REF-20260906-12345678
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <a
+                    th:href="@{/customer/refunds}"
+                    class="btn btn-outline-dark">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                My Refunds
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUCCESS
+    ====================================================== -->
+
+    <div
+            th:if="${successMessage}"
+            class="alert alert-success alert-dismissible fade show custom-alert"
+            role="alert">
+
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        <span th:text="${successMessage}">
+            Refund updated successfully.
+        </span>
+
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible fade show custom-alert"
+            role="alert">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        <span th:text="${errorMessage}">
+            Something went wrong.
+        </span>
+
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             LEFT
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+
+            <!-- =================================================
+                 REFUND SUMMARY
+            ================================================== -->
+
+            <section class="details-card mb-4">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                    Refund Summary
+
+                </div>
+
+
+                <div class="summary-grid">
+
+
+                    <!-- AMOUNT -->
+
+                    <div class="summary-item">
+
+                        <div class="info-label">
+                            Refund Amount
+                        </div>
+
+                        <div class="refund-amount">
+
+                            ₹
+
+                            <span
+                                    th:text="${#numbers.formatDecimal(
+                                        refund.refundAmount,
+                                        1,
+                                        2
+                                    )}">
+
+                                999.00
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="summary-item">
+
+                        <div class="info-label">
+                            Refund Status
+                        </div>
+
+
+                        <span
+                                class="status-badge"
+                                th:classappend="${refund.status.name() == 'PENDING'
+                                    ? ' status-pending'
+                                    : refund.status.name() == 'INITIATED'
+                                    ? ' status-initiated'
+                                    : refund.status.name() == 'PROCESSING'
+                                    ? ' status-processing'
+                                    : refund.status.name() == 'COMPLETED'
+                                    ? ' status-completed'
+                                    : refund.status.name() == 'FAILED'
+                                    ? ' status-failed'
+                                    : ' status-cancelled'}">
+
+                            <i
+                                    th:class="${refund.status.name() == 'COMPLETED'
+                                        ? 'bi bi-check-circle-fill'
+                                        : refund.status.name() == 'FAILED'
+                                        ? 'bi bi-x-circle-fill'
+                                        : refund.status.name() == 'CANCELLED'
+                                        ? 'bi bi-slash-circle-fill'
+                                        : 'bi bi-clock-fill'}">
+                            </i>
+
+                            <span
+                                    th:text="${refund.status.name().replace('_', ' ')}">
+
+                                PENDING
+
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- METHOD -->
+
+                    <div class="summary-item">
+
+                        <div class="info-label">
+                            Refund Method
+                        </div>
+
+                        <div class="info-value">
+
+                            <i class="bi bi-bank me-1"></i>
+
+                            <span
+                                    th:text="${refund.refundMethod != null
+                                        ? refund.refundMethod.replace('_', ' ')
+                                        : 'Manual'}">
+
+                                COD BANK TRANSFER
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CREATED -->
+
+                    <div class="summary-item">
+
+                        <div class="info-label">
+                            Created On
+                        </div>
+
+                        <div class="info-value">
+
+                            <span
+                                    th:text="${#temporals.format(
+                                        refund.createdAt,
+                                        'dd MMM yyyy, hh:mm a'
+                                    )}">
+
+                                06 Sep 2026, 10:30 AM
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- COMPLETED -->
+
+                    <div
+                            th:if="${refund.completedAt != null}"
+                            class="summary-item">
+
+                        <div class="info-label">
+                            Completed On
+                        </div>
+
+                        <div class="info-value">
+
+                            <span
+                                    th:text="${#temporals.format(
+                                        refund.completedAt,
+                                        'dd MMM yyyy, hh:mm a'
+                                    )}">
+
+                                07 Sep 2026, 05:30 PM
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 COMPLETED
+            ================================================== -->
+
+            <div
+                    th:if="${refund.status.name() == 'COMPLETED'}"
+                    class="status-message success-message mb-4">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                <div>
+
+                    <div class="message-title">
+                        Refund Completed
+                    </div>
+
+                    Your refund has been successfully processed.
+                    Please check your selected refund method/account
+                    for the credited amount.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROCESSING
+            ================================================== -->
+
+            <div
+                    th:if="${refund.status.name() == 'PROCESSING'
+                        || refund.status.name() == 'INITIATED'
+                        || refund.status.name() == 'PENDING'}"
+                    class="status-message progress-message mb-4">
+
+                <i class="bi bi-hourglass-split"></i>
+
+                <div>
+
+                    <div class="message-title">
+                        Refund In Progress
+                    </div>
+
+                    Your refund is currently being processed.
+                    We will update the status once the refund progresses.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FAILED
+            ================================================== -->
+
+            <div
+                    th:if="${refund.status.name() == 'FAILED'}"
+                    class="status-message failed-message mb-4">
+
+                <i class="bi bi-x-circle-fill"></i>
+
+                <div>
+
+                    <div class="message-title">
+                        Refund Failed
+                    </div>
+
+                    The refund could not be completed.
+                    Please contact Dreamz Shop support for assistance.
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TRANSACTION
+            ================================================== -->
+
+            <section class="details-card mb-4">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-upc-scan"></i>
+
+                    Transaction Information
+
+                </div>
+
+
+                <div
+                        th:if="${refund.transactionReference != null
+                            && !refund.transactionReference.isEmpty()}"
+                        class="reference-box">
+
+                    <div class="info-label">
+                        Transaction Reference
+                    </div>
+
+                    <div class="reference-value">
+
+                        <span th:text="${refund.transactionReference}">
+                            TXN123456789
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                        th:unless="${refund.transactionReference != null
+                            && !refund.transactionReference.isEmpty()}"
+                        class="reference-empty">
+
+                    <i class="bi bi-info-circle me-1"></i>
+
+                    Transaction reference will appear here once
+                    the refund transaction is processed.
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REMARKS
+            ================================================== -->
+
+            <section
+                    th:if="${refund.remarks != null
+                        && !refund.remarks.isEmpty()}"
+                    class="details-card mb-4">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-chat-left-text"></i>
+
+                    Remarks
+
+                </div>
+
+
+                <div
+                        class="text-muted small"
+                        style="white-space: pre-line;"
+                        th:text="${refund.remarks}">
+
+                    Refund is being processed.
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REFUND TIMELINE
+            ================================================== -->
+
+            <section class="details-card">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-clock-history"></i>
+
+                    Refund Progress
+
+                </div>
+
+
+                <div class="timeline">
+
+
+                    <!-- CREATED -->
+
+                    <div
+                            class="timeline-item active">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label">
+
+                            Refund Created
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            Your refund request has been created.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INITIATED -->
+
+                    <div
+                            class="timeline-item"
+                            th:classappend="${refund.status.name() == 'INITIATED'
+                                || refund.status.name() == 'PROCESSING'
+                                || refund.status.name() == 'COMPLETED'
+                                ? ' active'
+                                : ''}">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label">
+
+                            Refund Initiated
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            Refund processing has started.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROCESSING -->
+
+                    <div
+                            class="timeline-item"
+                            th:classappend="${refund.status.name() == 'PROCESSING'
+                                || refund.status.name() == 'COMPLETED'
+                                ? ' active'
+                                : ''}">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label">
+
+                            Refund Processing
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            Your refund is being processed.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- COMPLETED -->
+
+                    <div
+                            class="timeline-item"
+                            th:classappend="${refund.status.name() == 'COMPLETED'
+                                ? ' active'
+                                : ''}">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label">
+
+                            Refund Completed
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            The refund has been successfully completed.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAILED -->
+
+                    <div
+                            th:if="${refund.status.name() == 'FAILED'}"
+                            class="timeline-item failed">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label text-danger">
+
+                            Refund Failed
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            Refund processing failed.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CANCELLED -->
+
+                    <div
+                            th:if="${refund.status.name() == 'CANCELLED'}"
+                            class="timeline-item cancelled">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-label text-secondary">
+
+                            Refund Cancelled
+
+                        </div>
+
+                        <div class="timeline-description">
+
+                            This refund has been cancelled.
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+
+            <!-- =================================================
+                 RELATED ORDER
+            ================================================== -->
+
+            <section class="details-card mb-4">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-box-seam"></i>
+
+                    Related Order
+
+                </div>
+
+
+                <div
+                        th:if="${refund.order != null}">
+
+
+                    <div class="related-card mb-3">
+
+
+                        <div class="info-label">
+                            Order Number
+                        </div>
+
+                        <div class="related-number">
+
+                            <span
+                                    th:text="${refund.order.orderNumber}">
+                                DZ-100001
+                            </span>
+
+                        </div>
+
+
+                        <div class="mt-3 info-label">
+                            Order Total
+                        </div>
+
+                        <div class="info-value">
+
+                            ₹
+
+                            <span
+                                    th:text="${#numbers.formatDecimal(
+                                        refund.order.grandTotal,
+                                        1,
+                                        2
+                                    )}">
+                                999.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="mt-3 info-label">
+                            Order Status
+                        </div>
+
+                        <span
+                                class="status-badge status-completed">
+
+                            <i class="bi bi-box-seam"></i>
+
+                            <span
+                                    th:text="${refund.order.orderStatus}">
+                                REFUNDED
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <a
+                            th:href="@{/customer/orders/{id}(
+                                id=${refund.order.id}
+                            )}"
+                            class="btn btn-outline-dark w-100">
+
+                        <i class="bi bi-eye me-1"></i>
+
+                        View Order
+
+                    </a>
+
+                </div>
+
+
+                <div
+                        th:unless="${refund.order != null}"
+                        class="text-muted small">
+
+                    Related order information is unavailable.
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RETURN REQUEST
+            ================================================== -->
+
+            <section class="details-card mb-4">
+
+
+                <div class="section-title">
+
+                    <i class="bi bi-arrow-return-left"></i>
+
+                    Return Request
+
+                </div>
+
+
+                <div
+                        th:if="${refund.returnRequest != null}">
+
+
+                    <div class="side-info">
+
+                        <div class="side-label">
+                            Return Request ID
+                        </div>
+
+                        <div class="side-value">
+
+                            #
+
+                            <span
+                                    th:text="${refund.returnRequest.id}">
+                                1001
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="side-info">
+
+                        <div class="side-label">
+                            Return Status
+                        </div>
+
+                        <div class="side-value">
+
+                            <span
+                                    class="status-badge"
+                                    th:text="${refund.returnRequest.status}">
+                                REFUND_INITIATED
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <a
+                            th:href="@{/customer/returns/{id}(
+                                id=${refund.returnRequest.id}
+                            )}"
+                            class="btn btn-outline-dark w-100">
+
+                        <i class="bi bi-eye me-1"></i>
+
+                        View Return
+
+                    </a>
+
+                </div>
+
+
+                <div
+                        th:unless="${refund.returnRequest != null}"
+                        class="text-muted small">
+
+                    Return request information is unavailable.
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SUPPORT
+            ================================================== -->
+
+            <section class="details-card">
+
+
+                <div class="support-box">
+
+                    <div class="support-icon">
+
+                        <i class="bi bi-headset"></i>
+
+                    </div>
+
+
+                    <div class="support-title">
+
+                        Need Help?
+
+                    </div>
+
+
+                    <div class="support-text">
+
+                        If your refund is delayed or you have questions
+                        about the transaction, please contact Dreamz Shop
+                        support.
+
+                    </div>
+
+
+                    <div class="mt-3 text-muted"
+                         style="font-size:8px;">
+
+                        <i class="bi bi-info-circle me-1"></i>
+
+                        Keep your refund number for future reference.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                Dreamz <span>Shop</span>
+
+            </div>
+
+            <div class="footer-text">
+
+                Quality products. Simple shopping.
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-cash-coin"></i>
+
+                Cash on Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2636 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${subCategory.id == null ? 'Add Subcategory' : 'Edit Subcategory'} + ' | Dreamz Shop'">
+        Subcategory | Dreamz Shop
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --primary-light: #22c55e;
+            --primary-soft: #dcfce7;
+
+            --ink: #111827;
+            --ink-soft: #26342b;
+            --muted: #6b7280;
+
+            --bg: #f5f7f6;
+            --surface: #ffffff;
+            --border: #e4e9e6;
+
+            --sidebar: #0b1220;
+            --sidebar-2: #101827;
+            --sidebar-text: #94a3b8;
+
+            --danger: #dc2626;
+
+            --shadow: 0 12px 35px rgba(15,23,42,.065);
+            --shadow-lg: 0 20px 50px rgba(15,23,42,.11);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--ink);
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+            animation: pageIn .45s ease both;
+        }
+
+        a,
+        button,
+        input,
+        textarea,
+        select,
+        .sidebar-link,
+        .admin-card,
+        .preview-image,
+        .btn {
+            transition: all .22s cubic-bezier(.2,.7,.2,1);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-shell {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 1100;
+
+            width: 258px;
+            height: 100vh;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            background:
+                    radial-gradient(
+                            circle at 15% 0%,
+                            rgba(34,197,94,.10),
+                            transparent 28%
+                    ),
+                    linear-gradient(
+                            180deg,
+                            var(--sidebar),
+                            var(--sidebar-2)
+                    );
+
+            border-right:
+                    1px solid rgba(255,255,255,.06);
+
+            scrollbar-width: thin;
+            scrollbar-color:
+                    rgba(255,255,255,.12)
+                    transparent;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background:
+                    rgba(255,255,255,.12);
+            border-radius: 20px;
+        }
+
+        .brand {
+            height: 76px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 0 22px;
+
+            color: #fff;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            letter-spacing: -.3px;
+
+            border-bottom:
+                    1px solid rgba(255,255,255,.07);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+
+            flex: 0 0 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color: #fff;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #22c55e,
+                            #15803d
+                    );
+
+            box-shadow:
+                    0 8px 22px
+                    rgba(34,197,94,.25);
+        }
+
+        .nav-section {
+            padding: 19px 12px 6px;
+        }
+
+        .nav-section-title {
+            padding:
+                    0 12px 8px;
+
+            color: #64748b;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+
+        .sidebar-link {
+            position: relative;
+
+            width: 100%;
+            min-height: 43px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin: 3px 0;
+
+            padding:
+                    10px 13px;
+
+            border: 0;
+            border-radius: 11px;
+
+            color: var(--sidebar-text);
+
+            background: transparent;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            text-align: left;
+
+            cursor: pointer;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+
+            flex: 0 0 20px;
+
+            text-align: center;
+
+            font-size: 16px;
+        }
+
+        .sidebar-link:hover {
+            color: #fff;
+
+            background:
+                    rgba(255,255,255,.055);
+
+            transform:
+                    translateX(2px);
+        }
+
+        .sidebar-link.active {
+            color: #86efac;
+
+            background:
+                    rgba(34,197,94,.14);
+        }
+
+        .sidebar-link.active::before {
+            content: "";
+
+            position: absolute;
+
+            left: -12px;
+            top: 8px;
+            bottom: 8px;
+
+            width: 3px;
+
+            border-radius:
+                    0 4px 4px 0;
+
+            background:
+                    #4ade80;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+
+            margin:
+                    14px 18px;
+
+            background:
+                    rgba(255,255,255,.07);
+        }
+
+        .sidebar-bottom {
+            padding:
+                    7px 12px 18px;
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1050;
+
+            display: none;
+
+            background:
+                    rgba(2,6,23,.48);
+
+            backdrop-filter:
+                    blur(2px);
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        .main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+
+            min-height: 76px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding:
+                    12px 30px;
+
+            background:
+                    rgba(255,255,255,.88);
+
+            border-bottom:
+                    1px solid rgba(229,231,235,.9);
+
+            backdrop-filter:
+                    blur(16px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .mobile-menu-btn {
+            width: 42px;
+            height: 42px;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 11px;
+
+            color: var(--ink);
+
+            background: #fff;
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--primary);
+
+            border-color:
+                    #bbf7d0;
+        }
+
+        .page-title {
+            margin: 0;
+
+            color: var(--ink);
+
+            font-size: 20px;
+            font-weight: 800;
+
+            letter-spacing: -.4px;
+        }
+
+        .page-subtitle {
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            padding:
+                    6px 11px;
+
+            border:
+                    1px solid #eef0f2;
+
+            border-radius: 12px;
+
+            color: #374151;
+
+            background:
+                    #f8fafc;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .admin-avatar {
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            color: var(--primary-dark);
+
+            background:
+                    var(--primary-soft);
+
+            font-size: 15px;
+        }
+
+        .admin-page {
+            max-width: 1480px;
+
+            margin: 0 auto;
+
+            padding:
+                    32px 30px 55px;
+        }
+
+        .admin-page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            margin-bottom: 27px;
+        }
+
+        .admin-breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-bottom: 10px;
+
+            color: #8a948e;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .admin-breadcrumb a {
+            color: #66736b;
+        }
+
+        .admin-breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .admin-breadcrumb i {
+            color: #aab2ad;
+            font-size: 9px;
+        }
+
+        .admin-page-header h1 {
+            margin: 0;
+
+            color: #142018;
+
+            font-size:
+                    clamp(27px,3vw,35px);
+
+            line-height: 1.15;
+
+            font-weight: 800;
+
+            letter-spacing: -.7px;
+        }
+
+        .admin-page-header p {
+            margin:
+                    8px 0 0;
+
+            max-width: 680px;
+
+            color: #6b756f;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        .admin-back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            min-height: 42px;
+
+            padding:
+                    9px 14px;
+
+            border:
+                    1px solid #dfe5e1 !important;
+
+            border-radius:
+                    11px !important;
+
+            color: #526058 !important;
+
+            background:
+                    #fff !important;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .admin-back-btn:hover {
+            transform:
+                    translateY(-1px);
+
+            color:
+                    #37443c !important;
+
+            border-color:
+                    #cbd5ce !important;
+        }
+
+        .admin-form-layout {
+            display: grid;
+
+            grid-template-columns:
+                    minmax(0,1fr)
+                    340px;
+
+            gap: 24px;
+
+            align-items: start;
+        }
+
+        .admin-card {
+            overflow: hidden;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            background:
+                    var(--surface);
+
+            box-shadow:
+                    var(--shadow);
+        }
+
+        .admin-card:hover {
+            box-shadow:
+                    var(--shadow-lg);
+        }
+
+        .admin-card-head {
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+
+            padding:
+                    22px 25px;
+
+            border-bottom:
+                    1px solid #e8ece9;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+
+            flex: 0 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color:
+                    #15803d;
+
+            background:
+                    #ecfdf3;
+
+            font-size: 19px;
+        }
+
+        .admin-card-head h2 {
+            margin: 0;
+
+            color: #17221b;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .admin-card-head p {
+            margin:
+                    4px 0 0;
+
+            color: #7a847e;
+
+            font-size: 11px;
+        }
+
+        .admin-form {
+            padding: 26px;
+        }
+
+        .form-section {
+            padding-bottom: 26px;
+
+            border-bottom:
+                    1px solid #edf0ee;
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+
+            color: #26342b;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #344139;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-group label span {
+            color: var(--danger);
+        }
+
+        .form-control,
+        .form-select {
+            width: 100%;
+
+            min-height: 44px;
+
+            padding:
+                    10px 12px !important;
+
+            border:
+                    1px solid #dce3df !important;
+
+            border-radius:
+                    10px !important;
+
+            color: #26342b !important;
+
+            background:
+                    #fff !important;
+
+            font-size:
+                    12px !important;
+
+            box-shadow:
+                    none !important;
+        }
+
+        .form-control::placeholder {
+            color: #a5ada8;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color:
+                    #4ade80 !important;
+
+            box-shadow:
+                    0 0 0 .22rem
+                    rgba(34,197,94,.12) !important;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .field-error {
+            margin-top: 6px;
+
+            color: var(--danger);
+
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .form-help {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-top: 7px;
+
+            color: #8a948e;
+
+            font-size: 10px;
+        }
+
+        .form-help i {
+            color: var(--primary);
+        }
+
+        .settings-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 25px;
+
+            padding-top: 22px;
+        }
+
+        .settings-section .section-title {
+            margin-bottom: 4px;
+        }
+
+        .settings-description {
+            margin: 0;
+
+            color: #87918b;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+        .switch-row {
+            display: flex;
+            align-items: center;
+
+            gap: 17px;
+
+            margin: 0;
+
+            cursor: pointer;
+        }
+
+        .switch-copy {
+            display: flex;
+            flex-direction: column;
+
+            gap: 3px;
+
+            text-align: right;
+        }
+
+        .switch-copy strong {
+            color: #334139;
+
+            font-size: 11px;
+        }
+
+        .switch-copy small {
+            color: #929b96;
+
+            font-size: 9px;
+
+            white-space: nowrap;
+        }
+
+        .switch {
+            position: relative;
+
+            width: 48px;
+            height: 27px;
+
+            flex: 0 0 auto;
+        }
+
+        .switch input {
+            position: absolute;
+
+            opacity: 0;
+
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+
+            border-radius: 999px;
+
+            background:
+                    #d7ded9;
+
+            cursor: pointer;
+        }
+
+        .slider::before {
+            content: "";
+
+            position: absolute;
+
+            width: 21px;
+            height: 21px;
+
+            left: 3px;
+            top: 3px;
+
+            border-radius: 50%;
+
+            background: #fff;
+
+            box-shadow:
+                    0 2px 6px
+                    rgba(15,23,42,.15);
+        }
+
+        .switch input:checked + .slider {
+            background:
+                    var(--primary);
+        }
+
+        .switch input:checked + .slider::before {
+            transform:
+                    translateX(21px);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            padding-top: 24px;
+        }
+
+        .form-actions .btn {
+            min-height: 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            padding:
+                    9px 16px;
+
+            border-radius:
+                    10px !important;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .btn-light {
+            color: #59665e !important;
+
+            background:
+                    #f7f9f8 !important;
+
+            border:
+                    1px solid #e1e7e3 !important;
+        }
+
+        .btn-light:hover {
+            color: #37443c !important;
+
+            background:
+                    #eef2ef !important;
+        }
+
+        .btn-primary {
+            color: #fff !important;
+
+            border: 0 !important;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            var(--primary),
+                            var(--primary-dark)
+                    ) !important;
+
+            box-shadow:
+                    0 7px 18px
+                    rgba(22,163,74,.20);
+        }
+
+        .btn-primary:hover {
+            color: #fff !important;
+
+            transform:
+                    translateY(-1px);
+
+            box-shadow:
+                    0 11px 23px
+                    rgba(22,163,74,.25);
+        }
+
+        .preview-card {
+            position: sticky;
+            top: 96px;
+        }
+
+        .preview-top {
+            padding:
+                    18px 20px;
+
+            border-bottom:
+                    1px solid #edf0ee;
+        }
+
+        .preview-label {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            color: #5f6c64;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .06em;
+        }
+
+        .preview-label i {
+            color:
+                    var(--primary);
+        }
+
+        .preview-image {
+            height: 205px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            margin: 18px;
+
+            border:
+                    1px solid #e4eae6;
+
+            border-radius: 14px;
+
+            color: #a1aaa5;
+
+            background:
+                    #f1f5f2;
+
+            font-size: 35px;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+        .preview-image:hover img {
+            transform:
+                    scale(1.04);
+        }
+
+        .preview-content {
+            padding:
+                    0 20px 20px;
+        }
+
+        .preview-category {
+            display: inline-block;
+
+            padding:
+                    5px 8px;
+
+            border-radius: 7px;
+
+            color: #15803d;
+
+            background:
+                    #ecfdf3;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .preview-content h3 {
+            margin:
+                    11px 0 6px;
+
+            color: #17221b;
+
+            font-size: 19px;
+            font-weight: 800;
+
+            word-break: break-word;
+        }
+
+        .preview-content p {
+            margin:
+                    0 0 13px;
+
+            color: #77827b;
+
+            font-size: 11px;
+
+            line-height: 1.6;
+
+            word-break: break-word;
+        }
+
+        .preview-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                    6px 9px;
+
+            border-radius: 999px;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .preview-status > span:first-child {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+        }
+
+        .preview-status.is-active {
+            color: #15803d;
+            background: #ecfdf3;
+        }
+
+        .preview-status.is-active > span:first-child {
+            background: #22c55e;
+        }
+
+        .preview-status.is-inactive {
+            color: #6b7280;
+            background: #f3f4f6;
+        }
+
+        .preview-status.is-inactive > span:first-child {
+            background: #9ca3af;
+        }
+
+        .preview-tip {
+            display: flex;
+
+            gap: 10px;
+
+            margin:
+                    0 18px 18px;
+
+            padding: 13px;
+
+            border:
+                    1px solid #e8eeea;
+
+            border-radius: 11px;
+
+            background:
+                    #f8faf9;
+        }
+
+        .preview-tip > i {
+            margin-top: 1px;
+
+            color:
+                    var(--primary);
+
+            font-size: 14px;
+        }
+
+        .preview-tip strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: #39463e;
+
+            font-size: 10px;
+        }
+
+        .preview-tip p {
+            margin: 0;
+
+            color: #8a948e;
+
+            font-size: 9px;
+
+            line-height: 1.5;
+        }
+
+        .footer {
+            padding:
+                    25px 0 3px;
+
+            color: #9ca3af;
+
+            text-align: center;
+
+            font-size: 9px;
+        }
+
+        @media (max-width: 1150px) {
+
+            .sidebar {
+                width: 235px;
+            }
+
+            .main {
+                margin-left: 235px;
+            }
+
+            .admin-form-layout {
+                grid-template-columns:
+                        minmax(0,1fr)
+                        310px;
+            }
+
+        }
+
+        @media (max-width: 991.98px) {
+
+            .sidebar {
+                width: 258px;
+
+                transform:
+                        translateX(-100%);
+
+                transition:
+                        transform .28s
+                        cubic-bezier(.2,.7,.2,1);
+
+                box-shadow:
+                        18px 0 45px
+                        rgba(0,0,0,.18);
+            }
+
+            .sidebar.mobile-open {
+                transform:
+                        translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
+            .topbar {
+                min-height: 70px;
+
+                padding:
+                        11px 18px;
+            }
+
+            .admin-page {
+                padding:
+                        25px 18px 45px;
+            }
+
+            .admin-form-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-card {
+                position: static;
+            }
+
+        }
+
+        @media (max-width: 760px) {
+
+            .admin-page {
+                padding:
+                        22px 15px 40px;
+            }
+
+            .admin-page-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .admin-back-btn {
+                width: 100%;
+            }
+
+            .admin-form {
+                padding: 21px;
+            }
+
+            .settings-section {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .switch-copy {
+                text-align: left;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 575.98px) {
+
+            .topbar {
+                padding:
+                        10px 13px;
+            }
+
+            .mobile-menu-btn {
+                width: 38px;
+                height: 38px;
+            }
+
+            .topbar-left {
+                gap: 9px;
+            }
+
+            .page-title {
+                font-size: 16px;
+            }
+
+            .page-subtitle {
+                display: none;
+            }
+
+            .admin-name {
+                display: none;
+            }
+
+            .admin-avatar {
+                width: 32px;
+                height: 32px;
+            }
+
+            .admin-page {
+                padding:
+                        18px 12px 30px;
+            }
+
+            .admin-page-header h1 {
+                font-size: 25px;
+            }
+
+            .admin-page-header p {
+                font-size: 11px;
+            }
+
+            .admin-card {
+                border-radius: 15px;
+            }
+
+            .admin-card-head {
+                padding:
+                        18px;
+            }
+
+            .admin-card-head h2 {
+                font-size: 15px;
+            }
+
+            .admin-form {
+                padding:
+                        18px;
+            }
+
+            .preview-image {
+                height: 190px;
+            }
+
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration:
+                        .01ms !important;
+
+                animation-iteration-count:
+                        1 !important;
+
+                transition-duration:
+                        .01ms !important;
+
+                scroll-behavior:
+                        auto !important;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="admin-shell">
+
+    <aside
+            class="sidebar"
+            id="adminSidebar">
+
+        <div class="brand">
+
+            <span class="brand-icon">
+                <i class="bi bi-bag-heart-fill"></i>
+            </span>
+
+            <span>
+                Dreamz Shop
+            </span>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <div class="nav-section-title">
+                Overview
+            </div>
+
+            <a
+                    th:href="@{/admin/dashboard}"
+                    class="sidebar-link">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <div class="nav-section-title">
+                Catalog
+            </div>
+
+            <a
+                    th:href="@{/admin/products}"
+                    class="sidebar-link">
+
+                <i class="bi bi-box-seam"></i>
+
+                <span>
+                    Products
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/categories}"
+                    class="sidebar-link">
+
+                <i class="bi bi-grid"></i>
+
+                <span>
+                    Categories
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/subcategories}"
+                    class="sidebar-link active">
+
+                <i class="bi bi-diagram-3"></i>
+
+                <span>
+                    Subcategories
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/brands}"
+                    class="sidebar-link">
+
+                <i class="bi bi-tags"></i>
+
+                <span>
+                    Brands
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/banners}"
+                    class="sidebar-link">
+
+                <i class="bi bi-images"></i>
+
+                <span>
+                    Banners
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/inventory}"
+                    class="sidebar-link">
+
+                <i class="bi bi-boxes"></i>
+
+                <span>
+                    Inventory
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <div class="nav-section-title">
+                Sales
+            </div>
+
+            <a
+                    th:href="@{/admin/orders}"
+                    class="sidebar-link">
+
+                <i class="bi bi-cart3"></i>
+
+                <span>
+                    Orders
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/offers}"
+                    class="sidebar-link">
+
+                <i class="bi bi-percent"></i>
+
+                <span>
+                    Offers
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/coupons}"
+                    class="sidebar-link">
+
+                <i class="bi bi-ticket-perforated"></i>
+
+                <span>
+                    Coupons
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/returns}"
+                    class="sidebar-link">
+
+                <i class="bi bi-arrow-return-left"></i>
+
+                <span>
+                    Returns
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/refunds}"
+                    class="sidebar-link">
+
+                <i class="bi bi-cash-coin"></i>
+
+                <span>
+                    Refunds
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <div class="nav-section-title">
+                Customers
+            </div>
+
+            <a
+                    th:href="@{/admin/customers}"
+                    class="sidebar-link">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    Customers
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/reviews}"
+                    class="sidebar-link">
+
+                <i class="bi bi-star"></i>
+
+                <span>
+                    Reviews
+                </span>
+
+            </a>
+
+            <a
+                    th:href="@{/admin/staff}"
+                    class="sidebar-link">
+
+                <i class="bi bi-person-badge"></i>
+
+                <span>
+                    Staff
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <div class="nav-section-title">
+                Analytics
+            </div>
+
+            <a
+                    th:href="@{/admin/reports}"
+                    class="sidebar-link">
+
+                <i class="bi bi-bar-chart-line"></i>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-divider"></div>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                    th:href="@{/}"
+                    class="sidebar-link">
+
+                <i class="bi bi-shop"></i>
+
+                <span>
+                    Visit Store
+                </span>
+
+            </a>
+
+
+            <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="m-0">
+
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+                <button
+                        type="submit"
+                        class="sidebar-link">
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <div
+            class="mobile-overlay"
+            id="mobileOverlay">
+    </div>
+
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                        type="button"
+                        class="mobile-menu-btn"
+                        id="mobileMenuBtn"
+                        aria-label="Open navigation">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <div>
+
+                    <h1 class="page-title"
+                        th:text="${subCategory.id == null ? 'Add Subcategory' : 'Edit Subcategory'}">
+
+                        Add Subcategory
+
+                    </h1>
+
+                    <div class="page-subtitle">
+
+                        Manage your product catalog structure
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <span class="admin-avatar">
+
+                    <i class="bi bi-shield-check"></i>
+
+                </span>
+
+                <span
+                        class="admin-name"
+                        sec:authentication="name">
+
+                    Administrator
+
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <section class="admin-page">
+
+            <div class="admin-page-header">
+
+                <div>
+
+                    <div class="admin-breadcrumb">
+
+                        <a th:href="@{/admin/dashboard}">
+
+                            <i class="bi bi-grid-1x2-fill"></i>
+
+                            Dashboard
+
+                        </a>
+
+                        <i class="bi bi-chevron-right"></i>
+
+                        <a th:href="@{/admin/subcategories}">
+
+                            Subcategories
+
+                        </a>
+
+                        <i class="bi bi-chevron-right"></i>
+
+                        <span
+                                th:text="${subCategory.id == null ? 'Add' : 'Edit'}">
+
+                            Add
+
+                        </span>
+
+                    </div>
+
+
+                    <h1
+                            th:text="${subCategory.id == null ? 'Add Subcategory' : 'Edit Subcategory'}">
+
+                        Add Subcategory
+
+                    </h1>
+
+
+                    <p
+                            th:text="${subCategory.id == null
+                            ? 'Create a new subcategory and organize it under the right category.'
+                            : 'Update the subcategory details, status and category assignment.'}">
+
+                        Create a new subcategory and organize it under the right category.
+
+                    </p>
+
+                </div>
+
+
+                <a
+                        class="btn admin-back-btn"
+                        th:href="@{/admin/subcategories}">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Back to Subcategories
+
+                </a>
+
+            </div>
+
+
+            <div class="admin-form-layout">
+
+
+                <section class="admin-card">
+
+                    <div class="admin-card-head">
+
+                        <div class="section-icon">
+
+                            <i class="bi bi-diagram-3"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2
+                                    th:text="${subCategory.id == null
+                                    ? 'Subcategory Details'
+                                    : 'Edit Details'}">
+
+                                Subcategory Details
+
+                            </h2>
+
+                            <p>
+
+                                Fill in the information below.
+                                Fields marked with * are required.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                            th:if="${subCategory.id == null}"
+                            th:action="@{/admin/subcategories/save}"
+                            th:object="${subCategory}"
+                            method="post"
+                            class="admin-form">
+
+                        <input
+                                type="hidden"
+                                th:name="${_csrf.parameterName}"
+                                th:value="${_csrf.token}">
+
+
+                        <div class="form-section">
+
+                            <div class="section-title">
+                                Basic Information
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="categoryId">
+
+                                    Category
+                                    <span>*</span>
+
+                                </label>
+
+                                <select
+                                        id="categoryId"
+                                        name="categoryId"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Select Category
+                                    </option>
+
+                                    <option
+                                            th:each="category : ${categories}"
+                                            th:value="${category.id}"
+                                            th:text="${category.name}">
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="name">
+
+                                    Subcategory Name
+                                    <span>*</span>
+
+                                </label>
+
+                                <input
+                                        id="name"
+                                        type="text"
+                                        th:field="*{name}"
+                                        class="form-control"
+                                        placeholder="e.g. Fresh Vegetables"
+                                        required>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${#fields.hasErrors('name')}"
+                                        th:errors="*{name}">
+                                </div>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${nameError}"
+                                        th:text="${nameError}">
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="description">
+                                    Description
+                                </label>
+
+                                <textarea
+                                        id="description"
+                                        th:field="*{description}"
+                                        class="form-control"
+                                        rows="5"
+                                        placeholder="Describe this subcategory..."></textarea>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${#fields.hasErrors('description')}"
+                                        th:errors="*{description}">
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="image">
+                                    Image URL
+                                </label>
+
+                                <input
+                                        id="image"
+                                        type="text"
+                                        th:field="*{image}"
+                                        class="form-control"
+                                        placeholder="https://example.com/image.jpg">
+
+                                <div class="form-help">
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    Use a direct URL to the subcategory image.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="settings-section">
+
+                            <div>
+
+                                <div class="section-title">
+                                    Visibility
+                                </div>
+
+                                <p class="settings-description">
+
+                                    Control whether customers can currently see this subcategory.
+
+                                </p>
+
+                            </div>
+
+
+                            <label class="switch-row">
+
+                                <span class="switch-copy">
+
+                                    <strong>
+                                        Active
+                                    </strong>
+
+                                    <small>
+                                        Make this subcategory visible and available.
+                                    </small>
+
+                                </span>
+
+
+                                <span class="switch">
+
+                                    <input
+                                            type="checkbox"
+                                            th:field="*{enabled}">
+
+                                    <span class="slider"></span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <a
+                                    class="btn btn-light"
+                                    th:href="@{/admin/subcategories}">
+
+                                Cancel
+
+                            </a>
+
+                            <button
+                                    class="btn btn-primary"
+                                    type="submit">
+
+                                <i class="bi bi-check2"></i>
+
+                                Save Subcategory
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+
+                    <form
+                            th:unless="${subCategory.id == null}"
+                            th:action="@{/admin/subcategories/update/{id}(id=${subCategory.id})}"
+                            th:object="${subCategory}"
+                            method="post"
+                            class="admin-form">
+
+                        <input
+                                type="hidden"
+                                th:name="${_csrf.parameterName}"
+                                th:value="${_csrf.token}">
+
+
+                        <div class="form-section">
+
+                            <div class="section-title">
+                                Basic Information
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editCategoryId">
+
+                                    Category
+                                    <span>*</span>
+
+                                </label>
+
+                                <select
+                                        id="editCategoryId"
+                                        name="categoryId"
+                                        class="form-select"
+                                        required>
+
+                                    <option
+                                            th:each="category : ${categories}"
+                                            th:value="${category.id}"
+                                            th:text="${category.name}"
+                                            th:selected="${category.id == subCategory.category.id}">
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editName">
+
+                                    Subcategory Name
+                                    <span>*</span>
+
+                                </label>
+
+                                <input
+                                        id="editName"
+                                        type="text"
+                                        th:field="*{name}"
+                                        class="form-control"
+                                        placeholder="Enter subcategory name"
+                                        required>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${#fields.hasErrors('name')}"
+                                        th:errors="*{name}">
+                                </div>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${nameError}"
+                                        th:text="${nameError}">
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editDescription">
+                                    Description
+                                </label>
+
+                                <textarea
+                                        id="editDescription"
+                                        th:field="*{description}"
+                                        class="form-control"
+                                        rows="5"
+                                        placeholder="Describe this subcategory..."></textarea>
+
+                                <div
+                                        class="field-error"
+                                        th:if="${#fields.hasErrors('description')}"
+                                        th:errors="*{description}">
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editImage">
+                                    Image URL
+                                </label>
+
+                                <input
+                                        id="editImage"
+                                        type="text"
+                                        th:field="*{image}"
+                                        class="form-control"
+                                        placeholder="https://example.com/image.jpg">
+
+                                <div class="form-help">
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    Use a direct URL to the subcategory image.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="settings-section">
+
+                            <div>
+
+                                <div class="section-title">
+                                    Visibility
+                                </div>
+
+                                <p class="settings-description">
+
+                                    Control whether customers can currently see this subcategory.
+
+                                </p>
+
+                            </div>
+
+
+                            <label class="switch-row">
+
+                                <span class="switch-copy">
+
+                                    <strong>
+                                        Active
+                                    </strong>
+
+                                    <small>
+                                        Make this subcategory visible and available.
+                                    </small>
+
+                                </span>
+
+
+                                <span class="switch">
+
+                                    <input
+                                            type="checkbox"
+                                            th:field="*{enabled}">
+
+                                    <span class="slider"></span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <a
+                                    class="btn btn-light"
+                                    th:href="@{/admin/subcategories}">
+
+                                Cancel
+
+                            </a>
+
+                            <button
+                                    class="btn btn-primary"
+                                    type="submit">
+
+                                <i class="bi bi-check2"></i>
+
+                                Update Subcategory
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+                <aside class="admin-card preview-card">
+
+                    <div class="preview-top">
+
+                        <span class="preview-label">
+
+                            <i class="bi bi-eye"></i>
+
+                            Quick Preview
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="preview-image">
+
+                        <img
+                                th:if="${subCategory.image != null and !subCategory.image.isEmpty()}"
+                                th:src="${subCategory.image}"
+                                alt="Subcategory preview">
+
+                        <i
+                                th:unless="${subCategory.image != null and !subCategory.image.isEmpty()}"
+                                class="bi bi-image">
+                        </i>
+
+                    </div>
+
+
+                    <div class="preview-content">
+
+                        <span
+                                class="preview-category"
+                                th:text="${subCategory.category != null
+                                ? subCategory.category.name
+                                : 'Category'}">
+
+                            Category
+
+                        </span>
+
+
+                        <h3
+                                th:text="${subCategory.name != null
+                                and !subCategory.name.isEmpty()
+                                ? subCategory.name
+                                : 'Subcategory Name'}">
+
+                            Subcategory Name
+
+                        </h3>
+
+
+                        <p
+                                th:text="${subCategory.description != null
+                                and !subCategory.description.isEmpty()
+                                ? subCategory.description
+                                : 'Your subcategory description will appear here.'}">
+
+                            Your subcategory description will appear here.
+
+                        </p>
+
+
+                        <span
+                                class="preview-status"
+                                th:classappend="${subCategory.enabled
+                                ? ' is-active'
+                                : ' is-inactive'}">
+
+                            <span></span>
+
+                            <span
+                                    th:text="${subCategory.enabled
+                                    ? 'Active'
+                                    : 'Inactive'}">
+
+                                Active
+
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="preview-tip">
+
+                        <i class="bi bi-lightbulb"></i>
+
+                        <div>
+
+                            <strong>
+                                Tip
+                            </strong>
+
+                            <p>
+                                Use a clear name and concise description
+                                so customers can find products quickly.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+
+            <div class="footer">
+
+                © 2026 Dreamz Shop. All rights reserved.
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    (() => {
+
+        const sidebar =
+            document.getElementById("adminSidebar");
+
+        const overlay =
+            document.getElementById("mobileOverlay");
+
+        const menuButton =
+            document.getElementById("mobileMenuBtn");
+
+
+        function openSidebar() {
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            sidebar.classList.add(
+                "mobile-open"
+            );
+
+            overlay.classList.add(
+                "show"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        function closeSidebar() {
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            sidebar.classList.remove(
+                "mobile-open"
+            );
+
+            overlay.classList.remove(
+                "show"
+            );
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        if (menuButton) {
+
+            menuButton.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        sidebar.classList.contains(
+                            "mobile-open"
+                        )
+                    ) {
+
+                        closeSidebar();
+
+                    } else {
+
+                        openSidebar();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        if (overlay) {
+
+            overlay.addEventListener(
+                "click",
+                closeSidebar
+            );
+
+        }
+
+
+        document
+            .querySelectorAll(".sidebar-link")
+            .forEach(link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            window.innerWidth <= 991
+                        ) {
+
+                            closeSidebar();
+
+                        }
+
+                    }
+                );
+
+            });
+
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                if (
+                    window.innerWidth > 991
+                ) {
+
+                    closeSidebar();
+
+                }
+
+            }
+        );
+
+
+        const currentPath =
+            window.location.pathname
+                .replace(/\/$/, "")
+            || "/";
+
+
+        document
+            .querySelectorAll(".sidebar-link")
+            .forEach(link => {
+
+                const href =
+                    link.getAttribute("href");
+
+                if (
+                    !href ||
+                    href.startsWith("#") ||
+                    href.startsWith("javascript:")
+                ) {
+                    return;
+                }
+
+                const normalized =
+                    href.replace(/\/$/, "");
+
+                if (
+                    normalized === currentPath ||
+                    (
+                        normalized !== "/admin/dashboard" &&
+                        currentPath.startsWith(
+                            normalized + "/"
+                        )
+                    )
+                ) {
+
+                    link.classList.add(
+                        "active"
+                    );
+
+                }
+
+            });
+
+
+        const imageInputs =
+            document.querySelectorAll(
+                "#image, #editImage"
+            );
+
+        const previewImage =
+            document.querySelector(
+                ".preview-image img"
+            );
+
+
+        imageInputs.forEach(input => {
+
+            input.addEventListener(
+                "input",
+                () => {
+
+                    if (
+                        !previewImage ||
+                        !input.value.trim()
+                    ) {
+                        return;
+                    }
+
+                    previewImage.src =
+                        input.value.trim();
+
+                }
+            );
+
+        });
+
+
+        document
+            .querySelectorAll(".btn")
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            button.type === "submit"
+                        ) {
+
+                            button.style.transform =
+                                "scale(.98)";
+
+                            setTimeout(
+                                () => {
+
+                                    button.style.transform =
+                                        "";
+
+                                },
+                                120
+                            );
+
+                        }
+
+                    }
+                );
+
+            });
+
+    })();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            min-height: 100vh;
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f0fdf4 0%,
+                            #ffffff 45%,
+                            #ecfdf5 100%
+                    );
+
+            color: #111827;
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .register-page {
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 35px 18px;
+        }
+
+
+        .register-wrapper {
+            width: 100%;
+
+            max-width: 1050px;
+
+            display: grid;
+
+            grid-template-columns:
+                    0.9fr 1.1fr;
+
+            background: white;
+
+            border-radius: 26px;
+
+            overflow: hidden;
+
+            box-shadow:
+                    0 25px 70px
+                    rgba(15, 23, 42, .12);
+
+            border:
+                    1px solid #e5e7eb;
+        }
+
+
+        /* =====================================================
+           LEFT PANEL
+        ===================================================== */
+
+        .register-left {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 55px 45px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
+            background:
+                    linear-gradient(
+                            145deg,
+                            #052e16,
+                            #14532d 55%,
+                            #166534
+                    );
+
+            color: white;
+        }
+
+
+        .register-left::before {
+            content: "";
+
+            position: absolute;
+
+            width: 320px;
+            height: 320px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(255,255,255,.06);
+
+            top: -130px;
+            right: -130px;
+        }
+
+
+        .register-left::after {
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            border-radius: 50%;
+
+            border:
+                    55px solid
+                    rgba(255,255,255,.035);
+
+            bottom: -120px;
+            left: -100px;
+        }
+
+
+        .brand {
+            position: relative;
+
+            z-index: 2;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            color: white;
+
+            font-size: 23px;
+
+            font-weight: 850;
+        }
+
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background: white;
+
+            color: #15803d;
+
+            font-size: 20px;
+        }
+
+
+        .left-content {
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 70px;
+        }
+
+
+        .left-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 12px;
+
+            border-radius: 50px;
+
+            background:
+                    rgba(255,255,255,.1);
+
+            border:
+                    1px solid
+                    rgba(255,255,255,.18);
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            margin-bottom: 18px;
+        }
+
+
+        .left-content h1 {
+            margin: 0 0 17px;
+
+            font-size:
+                    clamp(34px, 4vw, 48px);
+
+            line-height: 1.08;
+
+            font-weight: 850;
+
+            letter-spacing: -1px;
+        }
+
+
+        .left-content h1 span {
+            color: #86efac;
+        }
+
+
+        .left-content p {
+            max-width: 420px;
+
+            margin: 0;
+
+            color: #d1fae5;
+
+            font-size: 15px;
+
+            line-height: 1.75;
+        }
+
+
+        .benefits {
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 45px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 15px;
+        }
+
+
+        .benefit {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: #ecfdf5;
+
+            font-size: 13px;
+        }
+
+
+        .benefit-icon {
+            width: 34px;
+            height: 34px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                    rgba(255,255,255,.1);
+
+            color: #86efac;
+        }
+
+
+        .copyright {
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 50px;
+
+            color:
+                    rgba(255,255,255,.45);
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           RIGHT FORM
+        ===================================================== */
+
+        .register-right {
+            padding:
+                    48px 55px;
+        }
+
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+
+        .form-header h2 {
+            margin: 0 0 7px;
+
+            color: #111827;
+
+            font-size: 30px;
+
+            font-weight: 850;
+
+            letter-spacing: -.7px;
+        }
+
+
+        .form-header p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           ALERT
+        ===================================================== */
+
+        .form-alert {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            background: #fef2f2;
+
+            border:
+                    1px solid #fecaca;
+
+            color: #b91c1c;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+
+        .form-label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 13px;
+
+            font-weight: 750;
+        }
+
+
+        .input-wrapper {
+            position: relative;
+        }
+
+
+        .input-icon {
+            position: absolute;
+
+            left: 14px;
+
+            top: 50%;
+
+            transform:
+                    translateY(-50%);
+
+            color: #9ca3af;
+
+            pointer-events: none;
+
+            font-size: 16px;
+        }
+
+
+        .form-control {
+            height: 48px;
+
+            width: 100%;
+
+            padding:
+                    0 14px 0 43px;
+
+            border:
+                    1px solid #d1d5db;
+
+            border-radius: 11px;
+
+            color: #111827;
+
+            font-size: 14px;
+
+            background: white;
+
+            box-shadow: none;
+
+            transition:
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+        }
+
+
+        .form-control:focus {
+            border-color: #16a34a;
+
+            box-shadow:
+                    0 0 0 4px
+                    rgba(22,163,74,.10);
+
+            outline: none;
+        }
+
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+
+        .password-input {
+            padding-right: 45px;
+        }
+
+
+        .password-toggle {
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform:
+                    translateY(-50%);
+
+            border: 0;
+
+            background: transparent;
+
+            color: #9ca3af;
+
+            cursor: pointer;
+
+            padding: 5px;
+
+            font-size: 17px;
+        }
+
+
+        .password-toggle:hover {
+            color: #374151;
+        }
+
+
+        /* =====================================================
+           VALIDATION
+        ===================================================== */
+
+        .field-error {
+            margin-top: 6px;
+
+            color: #dc2626;
+
+            font-size: 12px;
+
+            line-height: 1.4;
+        }
+
+
+        .field-error::before {
+            content: "• ";
+
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           SUBMIT
+        ===================================================== */
+
+        .register-button {
+            width: 100%;
+
+            height: 49px;
+
+            border: 0;
+
+            border-radius: 11px;
+
+            background: #16a34a;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            transition:
+                    background .2s ease,
+                    transform .2s ease,
+                    box-shadow .2s ease;
+        }
+
+
+        .register-button:hover {
+            background: #15803d;
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 9px 20px
+                    rgba(22,163,74,.22);
+        }
+
+
+        .register-button:active {
+            transform:
+                    translateY(0);
+        }
+
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        .login-divider {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin:
+                    25px 0 18px;
+
+            color: #9ca3af;
+
+            font-size: 12px;
+        }
+
+
+        .login-divider::before,
+        .login-divider::after {
+            content: "";
+
+            flex: 1;
+
+            height: 1px;
+
+            background: #e5e7eb;
+        }
+
+
+        .login-link {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            color: #374151;
+
+            font-size: 13px;
+
+            font-weight: 650;
+        }
+
+
+        .login-link a {
+            color: #16a34a;
+
+            font-weight: 800;
+        }
+
+
+        .login-link a:hover {
+            color: #15803d;
+
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           PASSWORD HINT
+        ===================================================== */
+
+        .password-hint {
+            margin-top: 6px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .register-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .register-left {
+                padding: 35px 35px;
+            }
+
+            .left-content {
+                margin-top: 45px;
+            }
+
+            .benefits {
+                margin-top: 30px;
+
+                display: grid;
+
+                grid-template-columns:
+                        repeat(2, 1fr);
+            }
+
+            .copyright {
+                margin-top: 35px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .register-page {
+                padding: 15px;
+            }
+
+            .register-wrapper {
+                border-radius: 20px;
+            }
+
+            .register-left {
+                padding: 30px 25px;
+            }
+
+            .left-content {
+                margin-top: 35px;
+            }
+
+            .left-content h1 {
+                font-size: 35px;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .register-right {
+                padding: 35px 24px;
+            }
+
+            .form-header h2 {
+                font-size: 26px;
+            }
+
+        }
+
+
+        @media (max-width: 400px) {
+
+            .register-right {
+                padding:
+                        30px 18px;
+            }
+
+            .register-left {
+                padding:
+                        27px 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="register-page">
+
+
+    <div class="register-wrapper">
+
+
+        <!-- =================================================
+             LEFT PANEL
+        ================================================== -->
+
+        <div class="register-left">
+
+
+            <!-- BRAND -->
+
+            <div>
+
+                <div class="brand">
+
+                    <div class="brand-icon">
+
+                        <i class="bi bi-bag-heart-fill"></i>
+
+                    </div>
+
+                    Dreamz Shop
+
+                </div>
+
+
+                <div class="left-content">
+
+
+                    <span class="left-badge">
+
+                        <i class="bi bi-stars"></i>
+
+                        JOIN DREAMZ SHOP
+
+                    </span>
+
+
+                    <h1>
+
+                        Your shopping
+                        <span>
+                            journey starts here.
+                        </span>
+
+                    </h1>
+
+
+                    <p>
+
+                        Create your Dreamz Shop account and
+                        enjoy a smoother way to discover,
+                        save and shop for your favourite products.
+
+                    </p>
+
+
+                    <div class="benefits">
+
+
+                        <div class="benefit">
+
+                            <span class="benefit-icon">
+
+                                <i class="bi bi-heart"></i>
+
+                            </span>
+
+                            Save products to your wishlist
+
+                        </div>
+
+
+                        <div class="benefit">
+
+                            <span class="benefit-icon">
+
+                                <i class="bi bi-bag-check"></i>
+
+                            </span>
+
+                            Faster checkout experience
+
+                        </div>
+
+
+                        <div class="benefit">
+
+                            <span class="benefit-icon">
+
+                                <i class="bi bi-truck"></i>
+
+                            </span>
+
+                            Track all your orders easily
+
+                        </div>
+
+
+                        <div class="benefit">
+
+                            <span class="benefit-icon">
+
+                                <i class="bi bi-tag"></i>
+
+                            </span>
+
+                            Get access to exclusive offers
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="copyright">
+
+                © 2026 Dreamz Shop. All rights reserved.
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT PANEL
+        ================================================== -->
+
+        <div class="register-right">
+
+
+            <div class="form-header">
+
+                <h2>
+                    Create your account
+                </h2>
+
+                <p>
+                    Enter your details to get started.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 EMAIL ERROR
+            ================================================== -->
+
+            <div
+                    th:if="${emailError}"
+                    class="form-alert">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span
+                        th:text="${emailError}">
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 PHONE ERROR
+            ================================================== -->
+
+            <div
+                    th:if="${phoneError}"
+                    class="form-alert">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span
+                        th:text="${phoneError}">
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD ERROR
+            ================================================== -->
+
+            <div
+                    th:if="${passwordError}"
+                    class="form-alert">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span
+                        th:text="${passwordError}">
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 REGISTER FORM
+            ================================================== -->
+
+            <form
+                    th:action="@{/register}"
+
+                    th:object="${registerRequest}"
+
+                    method="post">
+
+
+                <!-- CSRF -->
+
+                <input
+                        type="hidden"
+
+                        th:name="${_csrf.parameterName}"
+
+                        th:value="${_csrf.token}">
+
+
+                <!-- =================================================
+                     FULL NAME
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label">
+
+                        Full Name
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i
+                                class="bi bi-person input-icon">
+                        </i>
+
+
+                        <input
+                                type="text"
+
+                                th:field="*{fullName}"
+
+                                class="form-control"
+
+                                placeholder="Enter your full name"
+
+                                autocomplete="name">
+
+
+                    </div>
+
+
+                    <p
+                            th:if="${#fields.hasErrors('fullName')}"
+
+                            th:errors="*{fullName}"
+
+                            class="field-error">
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     EMAIL
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label">
+
+                        Email Address
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i
+                                class="bi bi-envelope input-icon">
+                        </i>
+
+
+                        <input
+                                type="email"
+
+                                th:field="*{email}"
+
+                                class="form-control"
+
+                                placeholder="Enter your email address"
+
+                                autocomplete="email">
+
+
+                    </div>
+
+
+                    <p
+                            th:if="${#fields.hasErrors('email')}"
+
+                            th:errors="*{email}"
+
+                            class="field-error">
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     PHONE
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label">
+
+                        Phone Number
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i
+                                class="bi bi-phone input-icon">
+                        </i>
+
+
+                        <input
+                                type="tel"
+
+                                th:field="*{phone}"
+
+                                class="form-control"
+
+                                placeholder="Enter your phone number"
+
+                                maxlength="15"
+
+                                autocomplete="tel">
+
+
+                    </div>
+
+
+                    <p
+                            th:if="${#fields.hasErrors('phone')}"
+
+                            th:errors="*{phone}"
+
+                            class="field-error">
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     PASSWORD
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label">
+
+                        Password
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i
+                                class="bi bi-lock input-icon">
+                        </i>
+
+
+                        <input
+                                type="password"
+
+                                id="password"
+
+                                th:field="*{password}"
+
+                                class="form-control password-input"
+
+                                placeholder="Create a password"
+
+                                autocomplete="new-password">
+
+
+                        <button
+                                type="button"
+
+                                class="password-toggle"
+
+                                onclick="togglePassword(
+                                    'password',
+                                    'passwordIcon'
+                                )"
+
+                                aria-label="Show password">
+
+                            <i
+                                    id="passwordIcon"
+
+                                    class="bi bi-eye">
+                            </i>
+
+                        </button>
+
+
+                    </div>
+
+
+                    <p
+                            class="password-hint">
+
+                        Use a strong password for better security.
+
+                    </p>
+
+
+                    <p
+                            th:if="${#fields.hasErrors('password')}"
+
+                            th:errors="*{password}"
+
+                            class="field-error">
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONFIRM PASSWORD
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label">
+
+                        Confirm Password
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i
+                                class="bi bi-shield-lock input-icon">
+                        </i>
+
+
+                        <input
+                                type="password"
+
+                                id="confirmPassword"
+
+                                th:field="*{confirmPassword}"
+
+                                class="form-control password-input"
+
+                                placeholder="Confirm your password"
+
+                                autocomplete="new-password">
+
+
+                        <button
+                                type="button"
+
+                                class="password-toggle"
+
+                                onclick="togglePassword(
+                                    'confirmPassword',
+                                    'confirmPasswordIcon'
+                                )"
+
+                                aria-label="Show password">
+
+                            <i
+                                    id="confirmPasswordIcon"
+
+                                    class="bi bi-eye">
+                            </i>
+
+                        </button>
+
+
+                    </div>
+
+
+                    <p
+                            th:if="${#fields.hasErrors('confirmPassword')}"
+
+                            th:errors="*{confirmPassword}"
+
+                            class="field-error">
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     SUBMIT
+                ================================================== -->
+
+                <button
+                        type="submit"
+
+                        class="register-button">
+
+                    <i
+                            class="bi bi-person-plus">
+                    </i>
+
+                    Create Account
+
+                </button>
+
+
+            </form>
+
+
+            <!-- =================================================
+                 LOGIN
+            ================================================== -->
+
+            <div class="login-divider">
+
+                Already registered?
+
+            </div>
+
+
+            <div class="login-link">
+
+                <span>
+                    Already have an account?
+                </span>
+
+                <a
+                        th:href="@{/login}">
+
+                    Login
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    function togglePassword(
+        inputId,
+        iconId
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        const icon =
+            document.getElementById(iconId);
+
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            icon.classList.remove(
+                "bi-eye"
+            );
+
+            icon.classList.add(
+                "bi-eye-slash"
+            );
+
+        } else {
+
+            input.type = "password";
+
+            icon.classList.remove(
+                "bi-eye-slash"
+            );
+
+            icon.classList.add(
+                "bi-eye"
+            );
+
+        }
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

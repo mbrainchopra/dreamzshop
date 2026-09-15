@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management | Dreamz Shop</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --primary-deep: #166534;
+            --primary-soft: #f0fdf4;
+            --primary-light: #dcfce7;
+            --sidebar: #08111f;
+            --sidebar-mid: #0f172a;
+            --sidebar-green: #102217;
+            --text: #111827;
+            --text-soft: #374151;
+            --muted: #64748b;
+            --bg: #f5f7f6;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --blue: #2563eb;
+            --orange: #ea580c;
+            --purple: #7c3aed;
+            --sidebar-width: 255px;
+            --shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            --shadow-hover: 0 18px 42px rgba(15, 23, 42, .11);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                    radial-gradient(circle at 90% 0%, rgba(34, 197, 94, .075), transparent 28%),
+                    radial-gradient(circle at 5% 95%, rgba(37, 99, 235, .025), transparent 25%),
+                    var(--bg);
+            color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            animation: pageIn .45s ease both;
+        }
+
+        a,
+        button,
+        input,
+        .card,
+        .table tbody tr {
+            transition: all .22s cubic-bezier(.2, .7, .2, 1);
+        }
+
+        ::selection {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .dreamz-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            background:
+                    radial-gradient(circle at 0% 0%, rgba(34, 197, 94, .14), transparent 28%),
+                    radial-gradient(circle at 100% 90%, rgba(34, 197, 94, .08), transparent 30%),
+                    linear-gradient(180deg, var(--sidebar), var(--sidebar-mid) 48%, var(--sidebar-green));
+            border-right: 1px solid rgba(255, 255, 255, .06);
+            box-shadow: 8px 0 35px rgba(0, 0, 0, .10);
+            overflow: hidden;
+        }
+
+        .dreamz-sidebar::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            left: -170px;
+            top: 28%;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, .07);
+            filter: blur(28px);
+            animation: glow 7s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .dreamz-brand {
+            position: relative;
+            flex-shrink: 0;
+            padding: 18px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .dreamz-brand-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .dreamz-brand-link:hover {
+            color: #fff;
+            transform: translateX(2px);
+        }
+
+        .dreamz-brand-icon {
+            width: 43px;
+            height: 43px;
+            flex: 0 0 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(135deg, #4ade80, #16a34a 58%, #15803d);
+            box-shadow: 0 10px 25px rgba(22, 163, 74, .30);
+            position: relative;
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .dreamz-brand-icon::after {
+            content: "";
+            position: absolute;
+            width: 62px;
+            height: 130px;
+            top: -45px;
+            left: -82px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent);
+            transform: rotate(25deg);
+            animation: shine 4.7s ease-in-out infinite;
+        }
+
+        .dreamz-brand-link strong {
+            display: block;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -.35px;
+        }
+
+        .dreamz-brand-link small {
+            display: block;
+            margin-top: 3px;
+            color: #94a3b8;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.35px;
+        }
+
+        .dreamz-sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 13px 11px 16px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, .15) transparent;
+        }
+
+        .dreamz-section-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 10px 7px;
+            color: #64748b;
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .dreamz-section-title::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, .55);
+        }
+
+        .dreamz-link {
+            position: relative;
+            min-height: 43px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 3px 0;
+            padding: 0 12px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 650;
+            overflow: hidden;
+        }
+
+        .dreamz-link i {
+            width: 21px;
+            flex: 0 0 21px;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .dreamz-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .055);
+            border-color: rgba(255, 255, 255, .06);
+            transform: translateX(3px);
+        }
+
+        .dreamz-link:hover i {
+            color: #4ade80;
+            transform: scale(1.08);
+        }
+
+        .dreamz-link.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(34, 197, 94, .24), rgba(34, 197, 94, .07));
+            border-color: rgba(74, 222, 128, .13);
+            box-shadow: inset 3px 0 0 #22c55e;
+        }
+
+        .dreamz-link.active i {
+            color: #4ade80;
+            text-shadow: 0 0 12px rgba(74, 222, 128, .42);
+        }
+
+        .dreamz-store-link {
+            margin-top: 12px;
+            background: rgba(255, 255, 255, .04);
+            border-color: rgba(255, 255, 255, .07);
+        }
+
+        .dreamz-sidebar-footer {
+            flex-shrink: 0;
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+            background: rgba(0, 0, 0, .12);
+        }
+
+        .dreamz-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px;
+            margin-bottom: 8px;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, .045);
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .dreamz-user-avatar {
+            width: 35px;
+            height: 35px;
+            flex: 0 0 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #fff;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            box-shadow: 0 6px 18px rgba(22, 163, 74, .22);
+        }
+
+        .dreamz-user strong {
+            display: block;
+            color: #fff;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        .dreamz-user small {
+            display: block;
+            margin-top: 2px;
+            color: #94a3b8;
+            font-size: 8px;
+        }
+
+        .dreamz-logout {
+            width: 100%;
+            min-height: 39px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid rgba(248, 113, 113, .18);
+            border-radius: 10px;
+            color: #cbd5e1;
+            background: transparent;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        .dreamz-logout:hover {
+            color: #fecaca;
+            background: rgba(220, 38, 38, .12);
+            border-color: rgba(248, 113, 113, .25);
+            transform: translateY(-1px);
+        }
+
+        .dreamz-sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1090;
+            opacity: 0;
+            visibility: hidden;
+            background: rgba(15, 23, 42, .50);
+            backdrop-filter: blur(3px);
+            transition: all .3s ease;
+        }
+
+        .dreamz-sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dreamz-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            min-height: 76px;
+            margin-left: var(--sidebar-width);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            background: rgba(255, 255, 255, .92);
+            border-bottom: 1px solid rgba(229, 231, 235, .90);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 5px 22px rgba(15, 23, 42, .035);
+        }
+
+        .dreamz-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+        }
+
+        .dreamz-menu-btn {
+            width: 40px;
+            height: 40px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font-size: 19px;
+        }
+
+        .dreamz-menu-btn:hover {
+            color: var(--primary);
+            border-color: #bbf7d0;
+            background: var(--primary-soft);
+        }
+
+        .dreamz-topbar-eyebrow {
+            margin-bottom: 2px;
+            color: var(--primary-dark);
+            font-size: 7.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        .dreamz-topbar-title {
+            margin: 0;
+            color: var(--text);
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .dreamz-topbar-subtitle {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dreamz-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+
+        .dreamz-store-btn {
+            min-height: 39px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: #374151;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .dreamz-store-btn:hover {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            border-color: #bbf7d0;
+            transform: translateY(-1px);
+        }
+
+        .dreamz-admin-avatar {
+            width: 39px;
+            height: 39px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary-deep);
+            background: var(--primary-light);
+            border: 1px solid #bbf7d0;
+            font-size: 14px;
+        }
+
+        .dreamz-admin-avatar::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 1px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+            border: 2px solid #fff;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: calc(100vh - 76px);
+            padding: 30px;
+        }
+
+        .alert {
+            border-radius: 13px;
+            border: 1px solid transparent;
+            font-size: 13px;
+            box-shadow: none;
+            animation: alertIn .35s ease both;
+        }
+
+        .alert-success {
+            color: #166534;
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .alert-danger {
+            color: #991b1b;
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .stats-row {
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            position: relative;
+            height: 100%;
+            min-height: 145px;
+            padding: 22px;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            right: -28px;
+            top: -35px;
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, .055);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            position: relative;
+            z-index: 1;
+            width: 46px;
+            height: 46px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            font-size: 20px;
+        }
+
+        .stat-total .stat-icon {
+            color: var(--primary-deep);
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+        }
+
+        .stat-low .stat-icon {
+            color: #b45309;
+            background: #fffbeb;
+        }
+
+        .stat-out .stat-icon {
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .stat-card h3 {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            color: var(--text);
+            font-size: 29px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -.04em;
+        }
+
+        .stat-card p {
+            position: relative;
+            z-index: 1;
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .content-card {
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .toolbar {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: linear-gradient(180deg, #fff, #fbfdfc);
+            border-bottom: 1px solid #eef2ef;
+        }
+
+        .search-box {
+            width: min(100%, 620px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 10px;
+            border-color: #dbe1e7;
+            color: var(--text);
+            font-size: 13px;
+            box-shadow: none;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-control:focus {
+            border-color: #86efac;
+            box-shadow: 0 0 0 .22rem rgba(34, 197, 94, .12);
+        }
+
+        .btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            min-width: 102px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            border-color: #16a34a;
+            box-shadow: 0 7px 18px rgba(22, 163, 74, .18);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #15803d, #166534);
+            border-color: #15803d;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(22, 163, 74, .24);
+        }
+
+        .btn-outline-secondary {
+            color: #4b5563;
+            border-color: #d1d5db;
+            background: #fff;
+        }
+
+        .btn-outline-secondary:hover {
+            color: #374151;
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .table-responsive {
+            border: 0;
+            border-radius: 0;
+        }
+
+        .table {
+            min-width: 1050px;
+            margin: 0;
+        }
+
+        .table thead th {
+            padding: 15px 16px;
+            background: #f8faf9;
+            color: #64748b;
+            border-bottom: 1px solid var(--border);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .075em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 16px;
+            border-bottom: 1px solid #eef2ef;
+            vertical-align: middle;
+            color: #374151;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fcf9;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .product-image,
+        .product-placeholder {
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            border-radius: 12px;
+        }
+
+        .product-image {
+            object-fit: cover;
+            background: #f8faf9;
+            border: 1px solid #edf1ee;
+        }
+
+        .product-image:hover {
+            transform: scale(1.04);
+        }
+
+        .product-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8faf9, #f0fdf4);
+            color: #94a3b8;
+            border: 1px solid #e6ebe7;
+            font-size: 20px;
+        }
+
+        .product-name {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #111827;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .product-sku {
+            margin-top: 4px;
+            color: #94a3b8;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px;
+        }
+
+        .stock-number {
+            display: inline-block;
+            font-size: 19px;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .stock-normal {
+            color: #15803d;
+        }
+
+        .stock-low {
+            color: #b45309;
+        }
+
+        .stock-out {
+            color: #dc2626;
+        }
+
+        .stock-label {
+            margin-top: 5px;
+            color: #94a3b8;
+            font-size: 10px;
+            text-transform: lowercase;
+        }
+
+        .stock-badge,
+        .status-badge {
+            min-height: 29px;
+            padding: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
+
+        .badge-normal,
+        .product-status-active {
+            color: #166534;
+            background: #dcfce7;
+            border-color: #bbf7d0;
+        }
+
+        .badge-low {
+            color: #92400e;
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+
+        .badge-out,
+        .product-status-out {
+            color: #991b1b;
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .product-status-other {
+            color: #475569;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+        }
+
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 14px;
+            text-decoration: none;
+            box-shadow: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 16px rgba(15, 23, 42, .08);
+        }
+
+        .view-btn {
+            color: #2563eb;
+            background: #eff6ff;
+            border-color: #dbeafe;
+        }
+
+        .in-btn {
+            color: #059669;
+            background: #ecfdf5;
+            border-color: #d1fae5;
+        }
+
+        .out-btn {
+            color: #ea580c;
+            background: #fff7ed;
+            border-color: #fed7aa;
+        }
+
+        .adjust-btn {
+            color: #7c3aed;
+            background: #f5f3ff;
+            border-color: #ede9fe;
+        }
+
+        .action-btn.disabled-action {
+            opacity: .48;
+            cursor: not-allowed;
+        }
+
+        .action-btn.disabled-action:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            width: 66px;
+            height: 66px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            color: #166534;
+            font-size: 28px;
+        }
+
+        .empty-state h5 {
+            margin: 16px 0 6px;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .empty-state p {
+            margin: 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @keyframes alertIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @keyframes glow {
+            from {
+                transform: translate(0, 0) scale(.85);
+                opacity: .4;
+            }
+            to {
+                transform: translate(125px, 22px) scale(1.2);
+                opacity: .9;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes shine {
+            0%, 55% {
+                left: -82px;
+            }
+            75%, 100% {
+                left: 110px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .dreamz-sidebar {
+                transform: translateX(-100%);
+                transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+            }
+
+            .dreamz-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .dreamz-menu-btn {
+                display: inline-flex;
+            }
+
+            .dreamz-topbar {
+                margin-left: 0;
+                min-height: 70px;
+                padding: 0 18px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+
+            .dreamz-store-btn {
+                display: none;
+            }
+
+            .stats-row {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .dreamz-topbar {
+                padding: 0 13px;
+            }
+
+            .dreamz-topbar-title {
+                font-size: 16px;
+            }
+
+            .dreamz-topbar-subtitle {
+                display: none;
+            }
+
+            .dreamz-topbar-eyebrow {
+                font-size: 7px;
+            }
+
+            .dreamz-admin-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .main-content {
+                padding: 18px 13px 28px;
+            }
+
+            .stat-card {
+                min-height: 130px;
+                padding: 19px;
+            }
+
+            .toolbar {
+                padding: 15px;
+            }
+
+            .search-box {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .search-box .form-control {
+                flex: 1 1 100%;
+            }
+
+            .search-box .btn {
+                flex: 1;
+            }
+
+            .table {
+                min-width: 1050px;
+            }
+
+            .content-card {
+                border-radius: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dreamz-sidebar-overlay" id="dreamzSidebarOverlay"></div>
+
+<aside class="dreamz-sidebar" id="dreamzSidebar">
+
+    <div class="dreamz-brand">
+        <a class="dreamz-brand-link" href="/admin/dashboard">
+            <span class="dreamz-brand-icon">
+                <i class="bi bi-bag-heart-fill"></i>
+            </span>
+            <span>
+                <strong>Dreamz Shop</strong>
+                <small>Administration</small>
+            </span>
+        </a>
+    </div>
+
+    <div class="dreamz-sidebar-content">
+
+        <div class="dreamz-section-title">Overview</div>
+
+        <a class="dreamz-link" href="/admin/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <div class="dreamz-section-title">Catalog</div>
+
+        <a class="dreamz-link" href="/admin/products">
+            <i class="bi bi-box-seam"></i>
+            <span>Products</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/categories">
+            <i class="bi bi-tags"></i>
+            <span>Categories</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/subcategories">
+            <i class="bi bi-diagram-3"></i>
+            <span>Subcategories</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/brands">
+            <i class="bi bi-award"></i>
+            <span>Brands</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/banners">
+            <i class="bi bi-images"></i>
+            <span>Banners</span>
+        </a>
+
+        <a class="dreamz-link active" href="/admin/inventory">
+            <i class="bi bi-boxes"></i>
+            <span>Inventory</span>
+        </a>
+
+        <div class="dreamz-section-title">Sales</div>
+
+        <a class="dreamz-link" href="/admin/orders">
+            <i class="bi bi-cart3"></i>
+            <span>Orders</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/offers">
+            <i class="bi bi-percent"></i>
+            <span>Offers</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/coupons">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Coupons</span>
+        </a>
+
+        <div class="dreamz-section-title">Customers</div>
+
+        <a class="dreamz-link" href="/admin/customers">
+            <i class="bi bi-people"></i>
+            <span>Customers</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/reviews">
+            <i class="bi bi-star"></i>
+            <span>Reviews</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/returns">
+            <i class="bi bi-arrow-return-left"></i>
+            <span>Returns</span>
+        </a>
+
+        <a class="dreamz-link" href="/admin/refunds">
+            <i class="bi bi-cash-coin"></i>
+            <span>Refunds</span>
+        </a>
+
+        <div class="dreamz-section-title">Analytics</div>
+
+        <a class="dreamz-link" href="/admin/reports">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Reports</span>
+        </a>
+
+        <a class="dreamz-link dreamz-store-link" href="/static">
+            <i class="bi bi-shop"></i>
+            <span>View Store</span>
+        </a>
+
+    </div>
+
+    <div class="dreamz-sidebar-footer">
+
+        <div class="dreamz-user">
+            <span class="dreamz-user-avatar">
+                <i class="bi bi-person-fill"></i>
+            </span>
+            <span>
+                <strong>Administrator</strong>
+                <small>Store Management</small>
+            </span>
+        </div>
+
+        <form class="m-0" method="post" th:action="@{/logout}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden">
+            <button class="dreamz-logout" type="submit">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+
+    </div>
+
+</aside>
+
+<header class="dreamz-topbar">
+
+    <div class="dreamz-topbar-left">
+
+        <button aria-label="Open admin navigation"
+                class="dreamz-menu-btn"
+                id="dreamzMenuBtn"
+                type="button">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div>
+            <div class="dreamz-topbar-eyebrow">Dreamz Shop Administration</div>
+            <h1 class="dreamz-topbar-title">Inventory Management</h1>
+            <p class="dreamz-topbar-subtitle">
+                Monitor stock levels, availability and product inventory.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="dreamz-topbar-right">
+
+        <a class="dreamz-store-btn" href="/static">
+            <i class="bi bi-shop"></i>
+            <span>View Store</span>
+        </a>
+
+        <div class="dreamz-admin-avatar" title="Administrator">
+            <i class="bi bi-person-fill"></i>
+        </div>
+
+    </div>
+
+</header>
+
+<main class="main-content">
+
+    <div class="alert alert-success alert-dismissible fade show mb-4"
+         role="alert"
+         th:if="${success}">
+
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        <span th:text="${success}">
+            Stock updated successfully.
+        </span>
+
+        <button class="btn-close"
+                data-bs-dismiss="alert"
+                type="button"
+                aria-label="Close">
+        </button>
+
+    </div>
+
+    <div class="alert alert-danger alert-dismissible fade show mb-4"
+         role="alert"
+         th:if="${error}">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        <span th:text="${error}">
+            Something went wrong.
+        </span>
+
+        <button class="btn-close"
+                data-bs-dismiss="alert"
+                type="button"
+                aria-label="Close">
+        </button>
+
+    </div>
+
+    <div class="row g-4 stats-row">
+
+        <div class="col-md-4">
+            <div class="stat-card stat-total">
+
+                <div class="stat-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <h3 th:text="${totalProducts}">
+                    0
+                </h3>
+
+                <p>Total Products</p>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card stat-low">
+
+                <div class="stat-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <h3 th:text="${lowStockProducts}">
+                    0
+                </h3>
+
+                <p>Low Stock Products</p>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card stat-out">
+
+                <div class="stat-icon">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+
+                <h3 th:text="${outOfStockProducts}">
+                    0
+                </h3>
+
+                <p>Out of Stock</p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="content-card">
+
+        <div class="toolbar">
+
+            <form action="/admin/inventory"
+                  class="search-box"
+                  method="get">
+
+                <input class="form-control"
+                       name="keyword"
+                       placeholder="Search product by name..."
+                       th:value="${keyword}"
+                       type="text"
+                       autocomplete="off">
+
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                    <span>Search</span>
+                </button>
+
+                <a class="btn btn-outline-secondary"
+                   href="/admin/inventory"
+                   th:if="${keyword != null and !keyword.isEmpty()}"
+                   title="Clear search"
+                   aria-label="Clear search">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+
+            </form>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Minimum Level</th>
+                    <th>Stock Status</th>
+                    <th>Product Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="product : ${products}">
+
+                    <td>
+
+                        <div class="product-info">
+
+                            <div th:if="${product.mainImage != null and !product.mainImage.isEmpty()}">
+
+                                <img class="product-image"
+                                     th:alt="${product.name}"
+                                     th:src="${product.mainImage}">
+
+                            </div>
+
+                            <div class="product-placeholder"
+                                 th:unless="${product.mainImage != null and !product.mainImage.isEmpty()}">
+
+                                <i class="bi bi-box-seam"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="product-name"
+                                     th:text="${product.name}">
+                                    Product Name
+                                </div>
+
+                                <div class="product-sku"
+                                     th:text="'SKU: ' + ${product.sku}">
+                                    SKU: PRODUCT001
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        <span th:if="${product.category != null}"
+                              th:text="${product.category.name}">
+                            Category
+                        </span>
+
+                        <span class="text-muted"
+                              th:unless="${product.category != null}">
+                            —
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="stock-number"
+                              th:classappend="${
+                                  product.stockQuantity == null
+                                  or product.stockQuantity <= 0
+                                  ? 'stock-out'
+                                  : (
+                                      product.minimumStockLevel != null
+                                      and product.stockQuantity <= product.minimumStockLevel
+                                      ? 'stock-low'
+                                      : 'stock-normal'
+                                  )
+                              }"
+                              th:text="${product.stockQuantity != null ? product.stockQuantity : 0}">
+                            0
+                        </span>
+
+                        <div class="stock-label"
+                             th:text="${product.unit != null ? product.unit : 'units'}">
+                            units
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        <strong th:text="${product.minimumStockLevel != null ? product.minimumStockLevel : 0}">
+                            5
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        <span class="stock-badge badge-out"
+                              th:if="${product.stockQuantity == null or product.stockQuantity <= 0}">
+                            <i class="bi bi-x-circle"></i>
+                            Out of Stock
+                        </span>
+
+                        <span class="stock-badge badge-low"
+                              th:if="${product.stockQuantity != null
+                                      and product.stockQuantity > 0
+                                      and product.minimumStockLevel != null
+                                      and product.stockQuantity <= product.minimumStockLevel}">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Low Stock
+                        </span>
+
+                        <span class="stock-badge badge-normal"
+                              th:if="${product.stockQuantity != null
+                                      and product.stockQuantity > 0
+                                      and (
+                                          product.minimumStockLevel == null
+                                          or product.stockQuantity > product.minimumStockLevel
+                                      )}">
+                            <i class="bi bi-check-circle"></i>
+                            In Stock
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="status-badge product-status-active"
+                              th:if="${product.status != null and product.status.name() == 'ACTIVE'}"
+                              th:text="${product.status}">
+                            ACTIVE
+                        </span>
+
+                        <span class="status-badge product-status-out"
+                              th:if="${product.status != null and product.status.name() == 'OUT_OF_STOCK'}"
+                              th:text="${product.status}">
+                            OUT_OF_STOCK
+                        </span>
+
+                        <span class="status-badge product-status-other"
+                              th:if="${product.status != null
+                                      and product.status.name() != 'ACTIVE'
+                                      and product.status.name() != 'OUT_OF_STOCK'}"
+                              th:text="${product.status}">
+                            INACTIVE
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <a class="action-btn view-btn"
+                               th:href="@{/admin/inventory/product/{id}(id=${product.id})}"
+                               title="Inventory History"
+                               aria-label="View inventory history">
+                                <i class="bi bi-clock-history"></i>
+                            </a>
+
+                            <button class="action-btn in-btn disabled-action"
+                                    type="button"
+                                    title="Stock-in backend action is not defined in this page"
+                                    aria-label="Add stock"
+                                    disabled>
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+
+                            <button class="action-btn out-btn disabled-action"
+                                    type="button"
+                                    title="Stock-out backend action is not defined in this page"
+                                    aria-label="Remove stock"
+                                    disabled>
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+
+                            <button class="action-btn adjust-btn disabled-action"
+                                    type="button"
+                                    title="Stock adjustment backend action is not defined in this page"
+                                    aria-label="Adjust stock"
+                                    disabled>
+                                <i class="bi bi-sliders"></i>
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${products == null or products.isEmpty()}">
+
+                    <td colspan="7">
+
+                        <div class="empty-state">
+
+                            <div class="empty-state-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                            <h5>No Products Found</h5>
+
+                            <p>
+                                There are no products matching your search.
+                            </p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const sidebar = document.getElementById("dreamzSidebar");
+        const overlay = document.getElementById("dreamzSidebarOverlay");
+        const menuButton = document.getElementById("dreamzMenuBtn");
+
+        function openSidebar() {
+            if (sidebar) {
+                sidebar.classList.add("show");
+            }
+
+            if (overlay) {
+                overlay.classList.add("show");
+            }
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+            if (sidebar) {
+                sidebar.classList.remove("show");
+            }
+
+            if (overlay) {
+                overlay.classList.remove("show");
+            }
+
+            document.body.style.overflow = "";
+        }
+
+        if (menuButton) {
+            menuButton.addEventListener("click", openSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener("click", closeSidebar);
+        }
+
+        document.querySelectorAll(".dreamz-link").forEach(function (link) {
+
+            const href = link.getAttribute("href") || "";
+            const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+            const cleanHref = href.replace(/\/$/, "");
+
+            if (
+                cleanHref &&
+                cleanHref !== "/" &&
+                (
+                    currentPath === cleanHref ||
+                    (
+                        cleanHref !== "/admin/dashboard" &&
+                        currentPath.startsWith(cleanHref + "/")
+                    )
+                )
+            ) {
+                link.classList.add("active");
+            }
+
+            link.addEventListener("click", function () {
+                if (window.innerWidth <= 991) {
+                    closeSidebar();
+                }
+            });
+
+        });
+
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 991) {
+                closeSidebar();
+            }
+        });
+
+        document.querySelectorAll(".btn, .action-btn, .dreamz-link, .dreamz-store-btn").forEach(function (element) {
+
+            element.addEventListener("pointerdown", function () {
+                element.style.transform = "scale(.98)";
+            });
+
+            element.addEventListener("pointerup", function () {
+                element.style.transform = "";
+            });
+
+            element.addEventListener("pointercancel", function () {
+                element.style.transform = "";
+            });
+
+            element.addEventListener("pointerleave", function () {
+                element.style.transform = "";
+            });
+
+        });
+
+    });
+</script>
+
+</body>
+</html>

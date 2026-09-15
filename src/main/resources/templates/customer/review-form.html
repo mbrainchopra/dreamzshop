@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Write Review | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f8f6;
+
+            --yellow: #f59e0b;
+            --yellow-soft: #fffbeb;
+
+            --red: #dc2626;
+            --red-soft: #fef2f2;
+
+            --shadow: 0 8px 28px rgba(0, 0, 0, .055);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, .09);
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .045),
+                            transparent 30%
+                    ),
+                    var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .review-page {
+            padding-top: 28px;
+            padding-bottom: 65px;
+        }
+
+
+        /* =====================================================
+           PAGE HEADER
+        ===================================================== */
+
+        .page-header {
+            position: relative;
+            overflow: hidden;
+
+            padding: 24px 27px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+
+            animation: fadeUp .45s ease both;
+        }
+
+
+        .page-header::after {
+            content: "";
+
+            position: absolute;
+
+            width: 190px;
+            height: 190px;
+
+            right: -75px;
+            top: -105px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(22, 163, 74, .055);
+        }
+
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            border-radius: 12px;
+
+            background: var(--yellow-soft);
+            color: var(--yellow);
+
+            font-size: 19px;
+        }
+
+
+        .page-title {
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 21px;
+            font-weight: 900;
+
+            letter-spacing: -.35px;
+        }
+
+
+        .page-subtitle {
+            margin: 5px 0 0;
+
+            color: var(--muted);
+
+            font-size: 9px;
+        }
+
+
+        /* =====================================================
+           ALERT
+        ===================================================== */
+
+        .custom-alert {
+            border: none;
+
+            border-radius: 11px;
+
+            font-size: 9px;
+            font-weight: 650;
+
+            box-shadow:
+                    0 4px 15px rgba(0, 0, 0, .035);
+
+            animation:
+                    slideDown .35s ease both;
+        }
+
+
+        /* =====================================================
+           FORM CARD
+        ===================================================== */
+
+        .form-card {
+            overflow: hidden;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                    fadeUp .5s ease both;
+        }
+
+
+        .form-card-body {
+            padding: 28px;
+        }
+
+
+        /* =====================================================
+           SECTION TITLE
+        ===================================================== */
+
+        .section-title {
+            display: flex;
+
+            align-items: center;
+            gap: 8px;
+
+            padding-bottom: 13px;
+
+            margin-bottom: 19px;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+
+            color: var(--text);
+
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+
+        .section-title i {
+            color:
+                    var(--green);
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           PRODUCT
+        ===================================================== */
+
+        .product-box {
+            padding: 15px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f8faf9,
+                            #f0fdf4
+                    );
+
+            border:
+                    1px solid #e1eee4;
+
+            border-radius: 13px;
+        }
+
+
+        .product-image {
+            width: 82px;
+            height: 82px;
+
+            object-fit: contain;
+
+            padding: 7px;
+
+            background: white;
+
+            border:
+                    1px solid #edf0ee;
+
+            border-radius: 11px;
+
+            transition:
+                    transform .25s ease;
+        }
+
+
+        .product-box:hover .product-image {
+            transform:
+                    scale(1.05);
+        }
+
+
+        .product-name {
+            margin-bottom: 4px;
+
+            color: var(--text);
+
+            font-size: 11px;
+            font-weight: 850;
+        }
+
+
+        .product-sku {
+            color: #9ca3af;
+
+            font-size: 7px;
+        }
+
+
+        /* =====================================================
+           VERIFIED PURCHASE
+        ===================================================== */
+
+        .verified-box {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 10px;
+
+            padding: 14px 15px;
+
+            background:
+                    var(--green-soft);
+
+            border:
+                    1px solid #ccebd4;
+
+            border-radius: 12px;
+
+            color:
+                    var(--green-deep);
+
+            font-size: 8px;
+
+            line-height: 1.65;
+        }
+
+
+        .verified-icon {
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 8px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green);
+
+            font-size: 13px;
+        }
+
+
+        .verified-title {
+            font-size: 9px;
+            font-weight: 850;
+        }
+
+
+        /* =====================================================
+           LABELS
+        ===================================================== */
+
+        .form-label {
+            margin-bottom: 7px;
+
+            color: var(--text);
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+
+        .required {
+            color:
+                    var(--red);
+
+            margin-left: 2px;
+        }
+
+
+        .optional {
+            color: #9ca3af;
+
+            font-size: 8px;
+            font-weight: 500;
+        }
+
+
+        /* =====================================================
+           INPUTS
+        ===================================================== */
+
+        .form-control {
+            min-height: 42px;
+
+            padding:
+                    9px 12px;
+
+            background: white;
+
+            border:
+                    1px solid #dfe4e1;
+
+            border-radius: 10px;
+
+            color: var(--text);
+
+            font-size: 9px;
+
+            transition:
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+        }
+
+
+        textarea.form-control {
+            min-height: 135px;
+
+            resize: vertical;
+
+            line-height: 1.7;
+        }
+
+
+        .form-control:hover {
+            border-color:
+                    #b9cbbd;
+        }
+
+
+        .form-control:focus {
+            border-color:
+                    var(--green);
+
+            box-shadow:
+                    0 0 0 3px rgba(22, 163, 74, .10);
+
+            outline: none;
+        }
+
+
+        /* =====================================================
+           RATING
+        ===================================================== */
+
+        .rating-container {
+            display: flex;
+
+            flex-direction: row-reverse;
+
+            justify-content: flex-end;
+
+            gap: 3px;
+
+            width: max-content;
+
+            padding: 5px 8px;
+
+            background:
+                    #fafbfa;
+
+            border:
+                    1px solid #edf0ee;
+
+            border-radius: 12px;
+        }
+
+
+        .rating-container input {
+            display: none;
+        }
+
+
+        .rating-container label {
+            width: 35px;
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: #d1d5db;
+
+            font-size: 28px;
+
+            line-height: 1;
+
+            cursor: pointer;
+
+            transition:
+                    color .15s ease,
+                    transform .15s ease;
+        }
+
+
+        .rating-container label:hover,
+        .rating-container label:hover ~ label,
+        .rating-container input:checked ~ label {
+            color:
+                    var(--yellow);
+        }
+
+
+        .rating-container label:hover {
+            transform:
+                    scale(1.12);
+        }
+
+
+        .rating-help {
+            color:
+                    var(--muted);
+
+            font-size: 8px;
+        }
+
+
+        /* =====================================================
+           CHARACTER COUNT
+        ===================================================== */
+
+        .field-footer {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 6px;
+        }
+
+
+        .character-count {
+            color: #9ca3af;
+
+            font-size: 7px;
+            font-weight: 650;
+        }
+
+
+        /* =====================================================
+           ERROR
+        ===================================================== */
+
+        .error-message {
+            margin-top: 6px;
+
+            color:
+                    var(--red);
+
+            font-size: 8px;
+            font-weight: 650;
+        }
+
+
+        /* =====================================================
+           GUIDELINES
+        ===================================================== */
+
+        .guideline-box {
+            padding: 15px;
+
+            background:
+                    #fafbfa;
+
+            border:
+                    1px solid #edf0ee;
+
+            border-radius: 12px;
+        }
+
+
+        .guideline-title {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 9px;
+
+            color: var(--text);
+
+            font-size: 9px;
+            font-weight: 850;
+        }
+
+
+        .guideline-title i {
+            color:
+                    var(--yellow);
+
+            font-size: 13px;
+        }
+
+
+        .guideline-list {
+            margin: 0;
+
+            padding-left: 19px;
+
+            color:
+                    #6b7280;
+
+            font-size: 8px;
+
+            line-height: 1.75;
+        }
+
+
+        .guideline-list li {
+            margin-bottom: 4px;
+        }
+
+
+        .guideline-list li:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* =====================================================
+           CONFIRMATION
+        ===================================================== */
+
+        .confirmation-box {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 10px;
+
+            padding: 13px 14px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px solid #e5ebe6;
+
+            border-radius: 11px;
+        }
+
+
+        .confirmation-box .form-check-input {
+            width: 16px;
+            height: 16px;
+
+            flex-shrink: 0;
+
+            margin-top: 2px;
+
+            border-color:
+                    #b8c6bb;
+
+            cursor: pointer;
+        }
+
+
+        .confirmation-box .form-check-input:checked {
+            background-color:
+                    var(--green);
+
+            border-color:
+                    var(--green);
+        }
+
+
+        .confirmation-box .form-check-input:focus {
+            box-shadow:
+                    0 0 0 3px rgba(22, 163, 74, .10);
+        }
+
+
+        .confirmation-label {
+            color:
+                    #4b5563;
+
+            font-size: 8px;
+
+            line-height: 1.65;
+
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           ACTIONS
+        ===================================================== */
+
+        .form-actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 8px;
+
+            padding-top: 19px;
+
+            margin-top: 20px;
+
+            border-top:
+                    1px solid #f0f1f2;
+        }
+
+
+        .btn {
+            min-height: 39px;
+
+            border-radius: 9px;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background .2s ease;
+        }
+
+
+        .btn:hover {
+            transform:
+                    translateY(-2px);
+        }
+
+
+        .btn-dark {
+            border: none;
+
+            background:
+                    #111827;
+
+            color: white;
+        }
+
+
+        .btn-dark:hover {
+            background:
+                    #1f2937;
+
+            color: white;
+
+            box-shadow:
+                    0 7px 18px rgba(0, 0, 0, .15);
+        }
+
+
+        .btn-outline-secondary:hover {
+            box-shadow:
+                    0 4px 12px rgba(0, 0, 0, .07);
+        }
+
+
+        /* =====================================================
+           SIDE CARD
+        ===================================================== */
+
+        .side-card {
+            padding: 20px;
+
+            background:
+                    white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 17px;
+
+            box-shadow:
+                    var(--shadow);
+
+            animation:
+                    fadeUp .6s ease both;
+        }
+
+
+        .side-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 11px;
+
+            border-radius: 11px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+
+            font-size: 17px;
+        }
+
+
+        .side-title {
+            margin-bottom: 5px;
+
+            color: var(--text);
+
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+
+        .side-text {
+            color:
+                    #9ca3af;
+
+            font-size: 8px;
+
+            line-height: 1.7;
+        }
+
+
+        .side-list {
+            margin: 15px 0 0;
+
+            padding: 0;
+
+            list-style: none;
+        }
+
+
+        .side-list li {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 9px 0;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+
+            color:
+                    #6b7280;
+
+            font-size: 8px;
+
+            line-height: 1.55;
+        }
+
+
+        .side-list li:last-child {
+            border-bottom: none;
+
+            padding-bottom: 0;
+        }
+
+
+        .side-list i {
+            flex-shrink: 0;
+
+            margin-top: 1px;
+
+            color:
+                    var(--green);
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .shop-footer {
+            padding:
+                    35px 0 18px;
+
+            background:
+                    #111827;
+
+            color: white;
+        }
+
+
+        .footer-brand {
+            font-size: 20px;
+
+            font-weight: 950;
+        }
+
+
+        .footer-brand span {
+            color:
+                    #4ade80;
+        }
+
+
+        .footer-text {
+            margin-top: 4px;
+
+            color:
+                    #9ca3af;
+
+            font-size: 8px;
+        }
+
+
+        .footer-services {
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 24px;
+
+            margin: 20px 0;
+        }
+
+
+        .footer-service {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color:
+                    #d1d5db;
+
+            font-size: 8px;
+            font-weight: 650;
+        }
+
+
+        .footer-service i {
+            color:
+                    #4ade80;
+
+            font-size: 12px;
+        }
+
+
+        .footer-bottom {
+            padding-top: 14px;
+
+            border-top:
+                    1px solid rgba(255,255,255,.08);
+
+            color:
+                    #6b7280;
+
+            font-size: 7px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+        ===================================================== */
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform:
+                        translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        @keyframes slideDown {
+
+            from {
+                opacity: 0;
+                transform:
+                        translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 991px) {
+
+            .side-card {
+                margin-top: 2px;
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .review-page {
+                padding:
+                        15px 8px 45px;
+            }
+
+
+            .page-header {
+                padding: 19px;
+
+                border-radius: 15px;
+            }
+
+
+            .page-title {
+                font-size: 18px;
+            }
+
+
+            .form-card-body {
+                padding: 18px;
+            }
+
+
+            .product-box {
+                padding: 12px;
+            }
+
+
+            .form-actions {
+                flex-direction:
+                        column-reverse;
+
+                justify-content:
+                        stretch;
+            }
+
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+
+            .footer-services {
+                gap: 14px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .page-header {
+                padding: 17px;
+            }
+
+
+            .header-icon {
+                width: 39px;
+                height: 39px;
+
+                font-size: 17px;
+            }
+
+
+            .product-image {
+                width: 68px;
+                height: 68px;
+            }
+
+
+            .product-name {
+                font-size: 9px;
+            }
+
+
+            .rating-container {
+                width: 100%;
+
+                justify-content:
+                        flex-start;
+            }
+
+
+            .rating-container label {
+                width: 32px;
+                height: 32px;
+
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container review-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <section class="page-header mb-4">
+
+        <div
+                class="header-content
+                       d-flex
+                       justify-content-between
+                       align-items-center
+                       flex-wrap
+                       gap-3">
+
+
+            <div>
+
+                <div class="header-icon">
+
+                    <i class="bi bi-star-fill"></i>
+
+                </div>
+
+
+                <h1 class="page-title">
+
+                    Write a Review
+
+                </h1>
+
+
+                <p class="page-subtitle">
+
+                    Share your experience with this product.
+
+                </p>
+
+            </div>
+
+
+            <a
+                    th:href="@{/customer/reviews}"
+                    class="btn btn-outline-secondary px-3">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                My Reviews
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible fade show custom-alert"
+            role="alert">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        <span th:text="${errorMessage}">
+            Something went wrong.
+        </span>
+
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <div class="row justify-content-center g-4">
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+
+            <section class="form-card">
+
+
+                <div class="form-card-body">
+
+
+                    <!-- =================================================
+                         PRODUCT
+                    ================================================== -->
+
+                    <div class="section-title">
+
+                        <i class="bi bi-box-seam"></i>
+
+                        Product
+
+                    </div>
+
+
+                    <div
+                            class="product-box mb-4"
+                            th:if="${product != null}">
+
+
+                        <div
+                                class="d-flex
+                                       align-items-center
+                                       gap-3">
+
+
+                            <!-- IMAGE -->
+
+                            <div>
+
+                                <img
+                                        th:if="${product.mainImage != null
+                                            && !product.mainImage.isEmpty()}"
+                                        th:src="${product.mainImage}"
+                                        th:alt="${product.name}"
+                                        class="product-image">
+
+
+                                <div
+                                        th:unless="${product.mainImage != null
+                                            && !product.mainImage.isEmpty()}"
+                                        class="product-image
+                                               d-flex
+                                               align-items-center
+                                               justify-content-center">
+
+                                    <i class="bi bi-image text-muted fs-3"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- INFO -->
+
+                            <div class="flex-grow-1">
+
+                                <div
+                                        class="product-name"
+                                        th:text="${product.name}">
+
+                                    Product Name
+
+                                </div>
+
+
+                                <div class="product-sku">
+
+                                    SKU:
+
+                                    <span th:text="${product.sku}">
+                                        PRODUCT001
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VERIFIED PURCHASE
+                    ================================================== -->
+
+                    <div class="verified-box mb-4">
+
+
+                        <div class="verified-icon">
+
+                            <i class="bi bi-patch-check-fill"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="verified-title">
+
+                                Verified Purchase
+
+                            </div>
+
+
+                            <div>
+
+                                You can review this product because it was
+                                purchased from Dreamz Shop and the order
+                                has been delivered.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REVIEW FORM
+                    ================================================== -->
+
+                    <form
+                            th:action="@{/customer/reviews/save}"
+                            th:object="${review}"
+                            method="post"
+                            id="reviewForm">
+
+
+                        <!-- CSRF -->
+
+                        <input
+                                type="hidden"
+                                th:name="${_csrf.parameterName}"
+                                th:value="${_csrf.token}">
+
+
+                        <!-- ORDER ID -->
+
+                        <input
+                                type="hidden"
+                                th:field="*{order.id}">
+
+
+                        <!-- PRODUCT ID -->
+
+                        <input
+                                type="hidden"
+                                th:field="*{product.id}">
+
+
+                        <!-- =================================================
+                             RATING
+                        ================================================== -->
+
+                        <div class="mb-4">
+
+
+                            <label class="form-label">
+
+                                Your Rating
+
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <div class="rating-container">
+
+
+                                <!-- 5 -->
+
+                                <input
+                                        type="radio"
+                                        id="rating5"
+                                        th:field="*{rating}"
+                                        value="5"
+                                        required>
+
+
+                                <label
+                                        for="rating5"
+                                        title="Excellent">
+                                    ★
+                                </label>
+
+
+                                <!-- 4 -->
+
+                                <input
+                                        type="radio"
+                                        id="rating4"
+                                        th:field="*{rating}"
+                                        value="4">
+
+
+                                <label
+                                        for="rating4"
+                                        title="Very Good">
+                                    ★
+                                </label>
+
+
+                                <!-- 3 -->
+
+                                <input
+                                        type="radio"
+                                        id="rating3"
+                                        th:field="*{rating}"
+                                        value="3">
+
+
+                                <label
+                                        for="rating3"
+                                        title="Good">
+                                    ★
+                                </label>
+
+
+                                <!-- 2 -->
+
+                                <input
+                                        type="radio"
+                                        id="rating2"
+                                        th:field="*{rating}"
+                                        value="2">
+
+
+                                <label
+                                        for="rating2"
+                                        title="Average">
+                                    ★
+                                </label>
+
+
+                                <!-- 1 -->
+
+                                <input
+                                        type="radio"
+                                        id="rating1"
+                                        th:field="*{rating}"
+                                        value="1">
+
+
+                                <label
+                                        for="rating1"
+                                        title="Poor">
+                                    ★
+                                </label>
+
+
+                            </div>
+
+
+                            <div
+                                    id="ratingText"
+                                    class="rating-help mt-2">
+
+                                Select a rating from 1 to 5 stars.
+
+                            </div>
+
+
+                            <div
+                                    th:if="${#fields.hasErrors('rating')}"
+                                    class="error-message"
+                                    th:errors="*{rating}">
+
+                                Rating error
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             TITLE
+                        ================================================== -->
+
+                        <div class="mb-4">
+
+
+                            <label
+                                    for="title"
+                                    class="form-label">
+
+                                Review Title
+
+                                <span class="optional">
+
+                                    (Optional)
+
+                                </span>
+
+                            </label>
+
+
+                            <input
+                                    type="text"
+                                    id="title"
+                                    th:field="*{title}"
+                                    class="form-control"
+                                    maxlength="150"
+                                    placeholder="Give your review a short title">
+
+
+                            <div
+                                    th:if="${#fields.hasErrors('title')}"
+                                    class="error-message"
+                                    th:errors="*{title}">
+
+                                Title error
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             COMMENT
+                        ================================================== -->
+
+                        <div class="mb-4">
+
+
+                            <label
+                                    for="comment"
+                                    class="form-label">
+
+                                Your Review
+
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <textarea
+                                    id="comment"
+                                    th:field="*{comment}"
+                                    class="form-control"
+                                    rows="7"
+                                    minlength="5"
+                                    maxlength="2000"
+                                    placeholder="Tell other customers about your experience..."
+                                    required></textarea>
+
+
+                            <div class="field-footer">
+
+
+                                <div>
+
+                                    <div
+                                            th:if="${#fields.hasErrors('comment')}"
+                                            class="error-message"
+                                            th:errors="*{comment}">
+
+                                        Comment error
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="character-count">
+
+                                    <span id="charCount">0</span>/2000
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             GUIDELINES
+                        ================================================== -->
+
+                        <div class="guideline-box mb-4">
+
+
+                            <div class="guideline-title">
+
+                                <i class="bi bi-lightbulb"></i>
+
+                                Review Guidelines
+
+                            </div>
+
+
+                            <ul class="guideline-list">
+
+                                <li>
+
+                                    Share your genuine experience with
+                                    the product.
+
+                                </li>
+
+
+                                <li>
+
+                                    Mention product quality, usability,
+                                    delivery, or other useful details.
+
+                                </li>
+
+
+                                <li>
+
+                                    Avoid offensive or inappropriate content.
+
+                                </li>
+
+
+                                <li>
+
+                                    Your review will be reviewed before
+                                    it becomes visible to other customers.
+
+                                </li>
+
+                            </ul>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CONFIRMATION
+                        ================================================== -->
+
+                        <div class="confirmation-box mb-4">
+
+
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="confirmReview"
+                                    required>
+
+
+                            <label
+                                    class="confirmation-label"
+                                    for="confirmReview">
+
+                                I confirm that this review is based on
+                                my genuine experience with the product.
+
+                            </label>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             ACTIONS
+                        ================================================== -->
+
+                        <div class="form-actions">
+
+
+                            <a
+                                    th:href="@{/customer/reviews}"
+                                    class="btn btn-outline-secondary px-4">
+
+                                <i class="bi bi-x-lg me-1"></i>
+
+                                Cancel
+
+                            </a>
+
+
+                            <button
+                                    type="submit"
+                                    class="btn btn-dark px-4"
+                                    id="submitButton">
+
+                                <i class="bi bi-send me-1"></i>
+
+                                Submit Review
+
+                            </button>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- =================================================
+             SIDE INFORMATION
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+
+            <aside class="side-card">
+
+
+                <div class="side-icon">
+
+                    <i class="bi bi-stars"></i>
+
+                </div>
+
+
+                <div class="side-title">
+
+                    Make Your Review Helpful
+
+                </div>
+
+
+                <div class="side-text">
+
+                    A useful review helps other customers make better
+                    purchasing decisions.
+
+                </div>
+
+
+                <ul class="side-list">
+
+
+                    <li>
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+
+                            Be honest about your experience.
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+
+                            Share details about product quality.
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+
+                            Mention whether the product met your expectations.
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+
+                            Keep the review respectful and useful.
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <i class="bi bi-shield-check"></i>
+
+                        <span>
+
+                            Reviews are checked before public display.
+
+                        </span>
+
+                    </li>
+
+
+                </ul>
+
+
+            </aside>
+
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                Dreamz <span>Shop</span>
+
+            </div>
+
+
+            <div class="footer-text">
+
+                Quality products. Simple shopping.
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-star"></i>
+
+                Genuine Reviews
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- =========================================================
+     REVIEW SCRIPT
+========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            const comment =
+                document.getElementById("comment");
+
+            const charCount =
+                document.getElementById("charCount");
+
+            const ratingText =
+                document.getElementById("ratingText");
+
+            const form =
+                document.getElementById("reviewForm");
+
+            const submitButton =
+                document.getElementById("submitButton");
+
+            const confirmation =
+                document.getElementById("confirmReview");
+
+
+            const ratingLabels = {
+
+                1: "Poor",
+
+                2: "Average",
+
+                3: "Good",
+
+                4: "Very Good",
+
+                5: "Excellent"
+
+            };
+
+
+            /* =================================================
+               CHARACTER COUNT
+            ================================================= */
+
+            function updateCharacterCount() {
+
+                if (!comment || !charCount) {
+                    return;
+                }
+
+                charCount.textContent =
+                    comment.value.length;
+            }
+
+
+            if (comment) {
+
+                comment.addEventListener(
+                    "input",
+                    updateCharacterCount
+                );
+
+                updateCharacterCount();
+            }
+
+
+            /* =================================================
+               RATING TEXT
+            ================================================= */
+
+            const ratingInputs =
+                document.querySelectorAll(
+                    'input[name="rating"]'
+                );
+
+
+            ratingInputs.forEach(
+                function (input) {
+
+                    input.addEventListener(
+                        "change",
+                        function () {
+
+                            if (ratingText) {
+
+                                ratingText.textContent =
+                                    ratingLabels[this.value] ||
+                                    "Select a rating from 1 to 5 stars.";
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =================================================
+               FORM SUBMISSION
+            ================================================= */
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    function (event) {
+
+
+                        const selectedRating =
+                            document.querySelector(
+                                'input[name="rating"]:checked'
+                            );
+
+
+                        /* Rating validation */
+
+                        if (!selectedRating) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "Please select a rating."
+                            );
+
+                            return;
+
+                        }
+
+
+                        /* Confirmation validation */
+
+                        if (
+                            confirmation &&
+                            !confirmation.checked
+                        ) {
+
+                            event.preventDefault();
+
+                            confirmation.focus();
+
+                            alert(
+                                "Please confirm that this is your genuine review."
+                            );
+
+                            return;
+
+                        }
+
+
+                        /* Prevent duplicate submission */
+
+                        if (submitButton) {
+
+                            submitButton.disabled = true;
+
+                            submitButton.innerHTML =
+                                '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                                'Submitting...';
+
+                        }
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

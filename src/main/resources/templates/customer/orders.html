@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        /* =========================================================
+           ROOT
+        ========================================================= */
+
+        :root {
+
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --text-soft: #374151;
+            --muted: #6b7280;
+
+            --border: #e5e7eb;
+
+            --bg: #f7f8f6;
+            --white: #ffffff;
+
+            --danger: #dc2626;
+            --danger-soft: #fee2e2;
+
+            --warning: #d97706;
+            --warning-soft: #fef3c7;
+
+            --blue: #2563eb;
+            --blue-soft: #dbeafe;
+
+            --purple: #7c3aed;
+            --purple-soft: #ede9fe;
+
+            --cyan: #0891b2;
+            --cyan-soft: #cffafe;
+
+            --shadow-sm:
+                    0 4px 18px rgba(0, 0, 0, .05);
+
+            --shadow-md:
+                    0 10px 30px rgba(0, 0, 0, .08);
+        }
+
+
+        /* =========================================================
+           GENERAL
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+
+            margin: 0;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .045),
+                            transparent 28%
+                    ),
+                    var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .orders-page {
+
+            min-height: calc(100vh - 70px);
+
+            padding:
+                    30px 0 65px;
+        }
+
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .page-header {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 26px 28px;
+
+            margin-bottom: 20px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #ffffff 0%,
+                            #f0fdf4 100%
+                    );
+
+            border:
+                    1px solid #dceee1;
+
+            border-radius: 22px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+        .page-header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 190px;
+            height: 190px;
+
+            right: -75px;
+            top: -100px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(22, 163, 74, .07);
+        }
+
+        .page-header-content {
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .heading-wrap {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+        .heading-icon {
+
+            width: 51px;
+            height: 51px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 15px;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 23px;
+        }
+
+        .page-title {
+
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 27px;
+
+            font-weight: 900;
+        }
+
+        .page-subtitle {
+
+            margin: 5px 0 0;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .shop-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            min-height: 40px;
+
+            padding: 8px 15px;
+
+            border-radius: 10px;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            transition: all .2s ease;
+        }
+
+        .shop-btn:hover {
+
+            background: #1f2937;
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(17, 24, 39, .14);
+        }
+
+
+        /* =========================================================
+           QUICK INFO
+        ========================================================= */
+
+        .quick-info {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+
+            gap: 13px;
+
+            margin-bottom: 20px;
+
+            animation:
+                    fadeUp .5s ease both;
+        }
+
+        .info-card {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 15px 16px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 15px;
+
+            box-shadow: var(--shadow-sm);
+
+            transition: all .2s ease;
+        }
+
+        .info-card:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .info-icon {
+
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 11px;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 16px;
+        }
+
+        .info-label {
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            font-weight: 750;
+
+            text-transform: uppercase;
+
+            letter-spacing: .45px;
+        }
+
+        .info-value {
+
+            margin-top: 2px;
+
+            color: var(--text);
+
+            font-size: 15px;
+
+            font-weight: 850;
+        }
+
+
+        /* =========================================================
+           ORDER CARD
+        ========================================================= */
+
+        .order-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 19px 20px;
+
+            margin-bottom: 13px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                    transform .22s ease,
+                    box-shadow .22s ease,
+                    border-color .22s ease;
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+        .order-card:nth-child(2) {
+            animation-delay: .04s;
+        }
+
+        .order-card:nth-child(3) {
+            animation-delay: .08s;
+        }
+
+        .order-card:nth-child(4) {
+            animation-delay: .12s;
+        }
+
+        .order-card:nth-child(5) {
+            animation-delay: .16s;
+        }
+
+        .order-card:hover {
+
+            transform: translateY(-3px);
+
+            border-color: #d5e9da;
+
+            box-shadow: var(--shadow-md);
+        }
+
+
+        /* =========================================================
+           ORDER TOP
+        ========================================================= */
+
+        .order-top {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding-bottom: 15px;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+        }
+
+        .order-number {
+
+            color: var(--text);
+
+            font-size: 14px;
+
+            font-weight: 850;
+        }
+
+        .order-number-label {
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .45px;
+
+            margin-bottom: 3px;
+        }
+
+        .order-date {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 5px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+        .order-date i {
+
+            color: var(--green);
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           STATUS BADGE
+        ========================================================= */
+
+        .status-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 7px 10px;
+
+            border-radius: 999px;
+
+            font-size: 8px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .3px;
+
+            white-space: nowrap;
+        }
+
+        .status-badge::before {
+
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+        .status-pending {
+
+            background: #f3f4f6;
+
+            color: #4b5563;
+        }
+
+        .status-confirmed {
+
+            background: var(--blue-soft);
+
+            color: #1d4ed8;
+        }
+
+        .status-processing {
+
+            background: #e0e7ff;
+
+            color: #4338ca;
+        }
+
+        .status-packed {
+
+            background: var(--warning-soft);
+
+            color: #92400e;
+        }
+
+        .status-shipped {
+
+            background: var(--cyan-soft);
+
+            color: #155e75;
+        }
+
+        .status-out-for-delivery {
+
+            background: var(--green-light);
+
+            color: var(--green-deep);
+        }
+
+        .status-delivered {
+
+            background: #d1fae5;
+
+            color: #065f46;
+        }
+
+        .status-cancelled {
+
+            background: var(--danger-soft);
+
+            color: #991b1b;
+        }
+
+        .status-return-requested {
+
+            background: var(--warning-soft);
+
+            color: #92400e;
+        }
+
+        .status-returned {
+
+            background: var(--purple-soft);
+
+            color: #6d28d9;
+        }
+
+        .status-refund-requested {
+
+            background: #ffedd5;
+
+            color: #9a3412;
+        }
+
+        .status-refunded {
+
+            background: #d1fae5;
+
+            color: #065f46;
+        }
+
+
+        /* =========================================================
+           ORDER BODY
+        ========================================================= */
+
+        .order-body {
+
+            display: grid;
+
+            grid-template-columns:
+                    1fr 190px 155px;
+
+            gap: 20px;
+
+            align-items: center;
+
+            padding-top: 16px;
+        }
+
+        .detail-label {
+
+            color: #9ca3af;
+
+            font-size: 8px;
+
+            font-weight: 750;
+
+            text-transform: uppercase;
+
+            letter-spacing: .45px;
+        }
+
+        .detail-value {
+
+            margin-top: 4px;
+
+            color: var(--text-soft);
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+        .payment-line {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 6px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+        .payment-line i {
+
+            color: var(--green);
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           TOTAL
+        ========================================================= */
+
+        .order-total {
+
+            color: var(--green-deep);
+
+            font-size: 19px;
+
+            font-weight: 900;
+        }
+
+        .item-count {
+
+            margin-top: 3px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+
+        /* =========================================================
+           VIEW ORDER BUTTON
+        ========================================================= */
+
+        .view-order-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            width: 100%;
+
+            min-height: 38px;
+
+            padding: 8px 12px;
+
+            border:
+                    1px solid #d1d5db;
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: #374151;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            transition: all .2s ease;
+        }
+
+        .view-order-btn:hover {
+
+            border-color: var(--green);
+
+            background: var(--green);
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 6px 15px rgba(22, 163, 74, .14);
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================= */
+
+        .empty-box {
+
+            padding: 75px 20px;
+
+            text-align: center;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 21px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation:
+                    fadeUp .55s ease both;
+        }
+
+        .empty-icon {
+
+            width: 85px;
+            height: 85px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto;
+
+            border-radius: 50%;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 36px;
+
+            animation:
+                    floatIcon 3s ease-in-out infinite;
+        }
+
+        .empty-title {
+
+            margin:
+                    18px 0 6px;
+
+            color: var(--text);
+
+            font-size: 20px;
+
+            font-weight: 850;
+        }
+
+        .empty-text {
+
+            margin:
+                    0 auto 21px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+        .start-shopping-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 10px 16px;
+
+            border-radius: 10px;
+
+            background: var(--green);
+
+            color: white;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            transition: all .2s ease;
+        }
+
+        .start-shopping-btn:hover {
+
+            background: var(--green-dark);
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(22, 163, 74, .16);
+        }
+
+
+        /* =========================================================
+           PAGINATION
+        ========================================================= */
+
+        .pagination-wrap {
+
+            margin-top: 24px;
+
+            animation:
+                    fadeUp .55s ease both;
+        }
+
+        .pagination {
+
+            gap: 5px;
+        }
+
+        .pagination .page-link {
+
+            min-width: 36px;
+
+            height: 36px;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 5px 10px;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 9px !important;
+
+            background: white;
+
+            color: #4b5563;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            transition: all .2s ease;
+        }
+
+        .pagination .page-link:hover {
+
+            border-color: var(--green);
+
+            background: var(--green-soft);
+
+            color: var(--green);
+        }
+
+        .pagination .active .page-link {
+
+            border-color: var(--green);
+
+            background: var(--green);
+
+            color: white;
+        }
+
+        .pagination .disabled .page-link {
+
+            opacity: .4;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .shop-footer {
+
+            padding:
+                    40px 0 22px;
+
+            background: #111827;
+
+            color: white;
+        }
+
+        .footer-brand {
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+        .footer-brand span {
+
+            color: #4ade80;
+        }
+
+        .footer-description {
+
+            margin-top: 5px;
+
+            color: #9ca3af;
+
+            font-size: 10px;
+        }
+
+        .footer-services {
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 28px;
+
+            margin: 24px 0;
+        }
+
+        .footer-service {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #d1d5db;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+        .footer-service i {
+
+            color: #4ade80;
+
+            font-size: 14px;
+        }
+
+        .footer-bottom {
+
+            padding-top: 17px;
+
+            border-top:
+                    1px solid rgba(255,255,255,.08);
+
+            color: #6b7280;
+
+            font-size: 9px;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+        ========================================================= */
+
+        @keyframes fadeUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(15px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+
+                transform:
+                        translateY(0);
+            }
+
+            50% {
+
+                transform:
+                        translateY(-7px);
+            }
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 991px) {
+
+            .order-body {
+
+                grid-template-columns:
+                        1fr 170px 140px;
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .orders-page {
+
+                padding:
+                        20px 8px 50px;
+            }
+
+            .page-header {
+
+                padding: 20px;
+
+                border-radius: 18px;
+            }
+
+            .heading-wrap {
+
+                gap: 9px;
+            }
+
+            .heading-icon {
+
+                width: 43px;
+                height: 43px;
+
+                border-radius: 12px;
+
+                font-size: 19px;
+            }
+
+            .page-title {
+
+                font-size: 20px;
+            }
+
+            .page-subtitle {
+
+                font-size: 10px;
+            }
+
+            .shop-btn {
+
+                width: 100%;
+
+                margin-top: 8px;
+            }
+
+            .quick-info {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+            .order-card {
+
+                padding: 16px;
+            }
+
+            .order-top {
+
+                align-items: flex-start;
+            }
+
+            .order-body {
+
+                grid-template-columns:
+                        1fr 1fr;
+
+                gap: 15px;
+            }
+
+            .order-action {
+
+                grid-column:
+                        1 / -1;
+            }
+
+            .view-order-btn {
+
+                width: 100%;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .order-top {
+
+                flex-direction: column;
+            }
+
+            .status-badge {
+
+                align-self: flex-start;
+            }
+
+            .order-body {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+            .order-total {
+
+                font-size: 18px;
+            }
+
+            .order-action {
+
+                grid-column:
+                        auto;
+            }
+
+            .footer-services {
+
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="orders-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <section class="page-header">
+
+            <div class="page-header-content">
+
+                <div
+                        class="d-flex
+                               justify-content-between
+                               align-items-center
+                               flex-wrap
+                               gap-3">
+
+
+                    <div class="heading-wrap">
+
+                        <div class="heading-icon">
+
+                            <i class="bi bi-box-seam-fill"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h1 class="page-title">
+                                My Orders
+                            </h1>
+
+                            <p class="page-subtitle">
+                                View and track all your Dreamz Shop orders.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <a
+                            th:href="@{/products}"
+                            class="shop-btn">
+
+                        <i class="bi bi-bag-plus-fill"></i>
+
+                        Continue Shopping
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             QUICK INFORMATION
+        ====================================================== -->
+
+        <div
+                th:if="${!orders.content.isEmpty()}"
+                class="quick-info">
+
+
+            <!-- TOTAL ORDERS -->
+
+            <div class="info-card">
+
+                <div class="info-icon">
+
+                    <i class="bi bi-boxes"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="info-label">
+                        Total Orders
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${orders.totalElements}">
+
+                        0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT PAGE -->
+
+            <div class="info-card">
+
+                <div class="info-icon">
+
+                    <i class="bi bi-layers-fill"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="info-label">
+                        Current Page
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${orders.number + 1}">
+
+                        1
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCOUNT -->
+
+            <div class="info-card">
+
+                <div class="info-icon">
+
+                    <i class="bi bi-person-check-fill"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="info-label">
+                        Account
+                    </div>
+
+                    <div class="info-value">
+                        Active
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMPTY ORDERS
+        ====================================================== -->
+
+        <section
+                th:if="${orders.content.isEmpty()}"
+                class="empty-box">
+
+
+            <div class="empty-icon">
+
+                <i class="bi bi-box-seam"></i>
+
+            </div>
+
+
+            <h2 class="empty-title">
+                No Orders Yet
+            </h2>
+
+
+            <p class="empty-text">
+                You haven't placed any orders yet.
+                Start shopping and your orders will appear here.
+            </p>
+
+
+            <a
+                    th:href="@{/products}"
+                    class="start-shopping-btn">
+
+                <i class="bi bi-cart-plus-fill"></i>
+
+                Start Shopping
+
+            </a>
+
+        </section>
+
+
+        <!-- =====================================================
+             ORDER LIST
+        ====================================================== -->
+
+        <div
+                th:if="${!orders.content.isEmpty()}">
+
+
+            <article
+                    th:each="order : ${orders.content}"
+                    class="order-card">
+
+
+                <!-- =================================================
+                     ORDER TOP
+                ================================================= -->
+
+                <div class="order-top">
+
+
+                    <div>
+
+                        <div class="order-number-label">
+                            Order Number
+                        </div>
+
+
+                        <div class="order-number">
+
+                            #
+
+                            <span
+                                    th:text="${order.orderNumber}">
+                                DZ123456
+                            </span>
+
+                        </div>
+
+
+                        <div class="order-date">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            Placed on
+
+                            <span
+                                    th:text="${#temporals.format(
+                                        order.createdAt,
+                                        'dd MMM yyyy'
+                                    )}">
+
+                                06 Sep 2026
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <span
+                            class="status-badge"
+                            th:classappend="'status-' + ${#strings.toLowerCase(
+                                #strings.replace(
+                                    order.orderStatus.name(),
+                                    '_',
+                                    '-'
+                                )
+                            )}"
+                            th:text="${#strings.replace(
+                                order.orderStatus.name(),
+                                '_',
+                                ' '
+                            )}">
+
+                        CONFIRMED
+
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     ORDER BODY
+                ================================================= -->
+
+                <div class="order-body">
+
+
+                    <!-- ORDER DETAILS -->
+
+                    <div>
+
+                        <div class="detail-label">
+                            Order Status
+                        </div>
+
+
+                        <div
+                                class="detail-value"
+                                th:text="${#strings.replace(
+                                    order.orderStatus.name(),
+                                    '_',
+                                    ' '
+                                )}">
+
+                            Confirmed
+
+                        </div>
+
+
+                        <div class="payment-line">
+
+                            <i class="bi bi-wallet2"></i>
+
+                            Payment:
+
+                            <strong
+                                    th:text="${#strings.replace(
+                                        order.paymentStatus.name(),
+                                        '_',
+                                        ' '
+                                    )}">
+
+                                Pending
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div>
+
+                        <div class="detail-label">
+                            Order Total
+                        </div>
+
+
+                        <div class="order-total">
+
+                            ₹<span
+                                th:text="${#numbers.formatDecimal(
+                                    order.grandTotal,
+                                    1,
+                                    2
+                                )}">
+
+                                0.00
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="item-count">
+
+                            <span
+                                    th:text="${order.totalItems}">
+                                0
+                            </span>
+
+                            item(s)
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTION -->
+
+                    <div class="order-action">
+
+                        <a
+                                th:href="@{/customer/orders/{id}(id=${order.id})}"
+                                class="view-order-btn">
+
+                            View Order
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- =================================================
+                 PAGINATION
+            ================================================= -->
+
+            <nav
+                    th:if="${orders.totalPages > 1}"
+                    class="pagination-wrap"
+                    aria-label="Order pagination">
+
+
+                <ul class="pagination justify-content-center">
+
+
+                    <!-- PREVIOUS -->
+
+                    <li
+                            class="page-item"
+                            th:classappend="${orders.first
+                                ? ' disabled'
+                                : ''}">
+
+                        <a
+                                th:if="${!orders.first}"
+                                class="page-link"
+                                th:href="@{/customer/orders(
+                                    page=${orders.number - 1},
+                                    size=${pageSize}
+                                )}">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </a>
+
+
+                        <span
+                                th:if="${orders.first}"
+                                class="page-link">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </span>
+
+                    </li>
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    <li
+                            th:each="pageNumber :
+                                ${#numbers.sequence(
+                                    0,
+                                    orders.totalPages - 1
+                                )}"
+                            class="page-item"
+                            th:classappend="${pageNumber
+                                == orders.number
+                                ? ' active'
+                                : ''}">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/customer/orders(
+                                    page=${pageNumber},
+                                    size=${pageSize}
+                                )}"
+                                th:text="${pageNumber + 1}">
+
+                            1
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- NEXT -->
+
+                    <li
+                            class="page-item"
+                            th:classappend="${orders.last
+                                ? ' disabled'
+                                : ''}">
+
+                        <a
+                                th:if="${!orders.last}"
+                                class="page-link"
+                                th:href="@{/customer/orders(
+                                    page=${orders.number + 1},
+                                    size=${pageSize}
+                                )}">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+
+                        <span
+                                th:if="${orders.last}"
+                                class="page-link">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </span>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                Dreamz <span>Shop</span>
+
+            </div>
+
+
+            <div class="footer-description">
+
+                Simple, secure and reliable online shopping.
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-cash-coin"></i>
+
+                Cash on Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

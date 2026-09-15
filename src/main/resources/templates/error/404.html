@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Page Not Found | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        :root {
+            --primary: #0c831f;
+            --primary-dark: #086618;
+            --primary-light: #eaf7ec;
+            --dark: #172119;
+            --text: #202020;
+            --muted: #737373;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            #edf8ef 0,
+                            transparent 35%
+                    ),
+                    radial-gradient(
+                            circle at bottom right,
+                            #eaf7ec 0,
+                            transparent 35%
+                    ),
+                    #f7f8f6;
+            color: var(--text);
+            font-family: Inter, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .top-navbar {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #e8ebe8;
+            display: flex;
+            align-items: center;
+            backdrop-filter: blur(12px);
+        }
+
+
+        .brand-logo {
+            color: var(--primary);
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+
+        .brand-logo:hover {
+            color: var(--primary-dark);
+        }
+
+
+        .home-link {
+            color: #444;
+            font-size: 13px;
+            font-weight: 650;
+            text-decoration: none;
+            padding: 9px 13px;
+            border-radius: 9px;
+            transition: 0.25s ease;
+        }
+
+
+        .home-link:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+
+        /* =====================================================
+           ERROR WRAPPER
+        ===================================================== */
+
+        .error-wrapper {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 20px;
+        }
+
+
+        .error-card {
+            width: 100%;
+            max-width: 650px;
+            background: #ffffff;
+            border: 1px solid #e7ebe7;
+            border-radius: 25px;
+            padding: 55px 40px 42px;
+            text-align: center;
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.07);
+            position: relative;
+            overflow: hidden;
+            animation: errorAppear 0.65s ease;
+        }
+
+
+        .error-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--primary);
+        }
+
+
+        /* =====================================================
+           SEARCH ICON
+        ===================================================== */
+
+        .error-icon-wrapper {
+            width: 94px;
+            height: 94px;
+            margin: 0 auto 22px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconFloat 2.5s ease-in-out infinite;
+        }
+
+
+        .error-icon {
+            font-size: 42px;
+        }
+
+
+        /* =====================================================
+           ERROR CODE
+        ===================================================== */
+
+        .error-code {
+            font-size: 100px;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -5px;
+            color: #202020;
+            margin-bottom: 10px;
+        }
+
+
+        .error-title {
+            font-size: 27px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+
+        .error-message {
+            max-width: 470px;
+            margin: 0 auto 28px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           ACTION BUTTONS
+        ===================================================== */
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+
+        .primary-button {
+            min-height: 45px;
+            padding: 0 20px;
+            border-radius: 10px;
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s ease;
+        }
+
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(12, 131, 31, 0.18);
+        }
+
+
+        .secondary-button {
+            min-height: 45px;
+            padding: 0 20px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #dfe3df;
+            color: #444;
+            font-size: 13px;
+            font-weight: 650;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s ease;
+        }
+
+
+        .secondary-button:hover {
+            background: var(--primary-light);
+            border-color: #a7d3ad;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================================
+           INFO BOX
+        ===================================================== */
+
+        .info-box {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+            color: #888;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+
+        .info-box i {
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+
+        /* =====================================================
+           FOOTER TEXT
+        ===================================================== */
+
+        .mini-footer {
+            margin-top: 20px;
+            color: #949c95;
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+        ===================================================== */
+
+        @keyframes errorAppear {
+
+            from {
+                opacity: 0;
+                transform: translateY(25px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+        }
+
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 576px) {
+
+            .top-navbar {
+                height: 62px;
+            }
+
+
+            .brand-logo {
+                font-size: 20px;
+            }
+
+
+            .home-link {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+
+            .error-wrapper {
+                min-height: calc(100vh - 62px);
+                padding: 25px 15px;
+            }
+
+
+            .error-card {
+                padding: 45px 20px 35px;
+                border-radius: 20px;
+            }
+
+
+            .error-icon-wrapper {
+                width: 78px;
+                height: 78px;
+            }
+
+
+            .error-icon {
+                font-size: 35px;
+            }
+
+
+            .error-code {
+                font-size: 72px;
+                letter-spacing: -3px;
+            }
+
+
+            .error-title {
+                font-size: 23px;
+            }
+
+
+            .error-message {
+                font-size: 13px;
+            }
+
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+
+            .primary-button,
+            .secondary-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="top-navbar">
+
+    <div class="container
+                d-flex
+                align-items-center
+                justify-content-between">
+
+
+        <a
+                th:href="@{/}"
+                class="brand-logo">
+
+            <i class="bi bi-bag-heart-fill me-1"></i>
+
+            Dreamz Shop
+
+        </a>
+
+
+        <a
+                th:href="@{/}"
+                class="home-link">
+
+            <i class="bi bi-house me-1"></i>
+
+            Back to Home
+
+        </a>
+
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     ERROR CONTENT
+========================================================= -->
+
+<main class="error-wrapper">
+
+
+    <div class="error-card">
+
+
+        <!-- SEARCH ICON -->
+
+        <div class="error-icon-wrapper">
+
+            <i class="bi bi-search error-icon"></i>
+
+        </div>
+
+
+        <!-- ERROR CODE -->
+
+        <div class="error-code">
+
+            404
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1 class="error-title">
+
+            Page Not Found
+
+        </h1>
+
+
+        <!-- MESSAGE -->
+
+        <p class="error-message">
+
+            Sorry, the page you are looking for could not be found.
+            It may have been moved, removed, or the URL may be incorrect.
+
+        </p>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="action-buttons">
+
+
+            <a
+                    th:href="@{/}"
+                    class="primary-button">
+
+                <i class="bi bi-house-door me-2"></i>
+
+                Continue Shopping
+
+            </a>
+
+
+            <a
+                    th:href="@{/products}"
+                    class="secondary-button">
+
+                <i class="bi bi-grid me-2"></i>
+
+                Browse Products
+
+            </a>
+
+
+        </div>
+
+
+        <!-- INFO -->
+
+        <div class="info-box">
+
+            <i class="bi bi-info-circle"></i>
+
+            Try checking the URL or return to the Dreamz Shop
+            homepage to continue shopping.
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="mini-footer">
+
+            © 2026 Dreamz Shop · Quality products. Better shopping.
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>

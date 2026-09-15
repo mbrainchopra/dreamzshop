@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Addresses | Dreamz Shop</title>
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        :root {
+            --green: #0c831f;
+            --green-dark: #067017;
+            --green-light: #eaf7ec;
+            --green-soft: #f5fbf6;
+
+            --dark: #17211a;
+            --muted: #6b7280;
+
+            --border: #e2e8e3;
+
+            --danger: #dc3545;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+
+            background:
+                    linear-gradient(
+                            180deg,
+                            #f8faf8 0%,
+                            #f3f7f3 100%
+                    );
+
+            color: var(--dark);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================== */
+
+        .addresses-page {
+            min-height: calc(100vh - 70px);
+
+            padding: 40px 0 65px;
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================== */
+
+        .page-header {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 28px 30px;
+
+            margin-bottom: 24px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            background: white;
+
+            box-shadow:
+                    0 6px 24px rgba(20,40,25,0.045);
+        }
+
+
+        .page-header::after {
+            content: "";
+
+            position: absolute;
+
+            width: 210px;
+            height: 210px;
+
+            right: -90px;
+            top: -110px;
+
+            border-radius: 50%;
+
+            background: rgba(12,131,31,0.055);
+        }
+
+
+        .header-content {
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        .title-row {
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+
+        .page-icon {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 50px;
+            height: 50px;
+
+            flex-shrink: 0;
+
+            border-radius: 14px;
+
+            color: var(--green);
+
+            background: var(--green-light);
+
+            font-size: 22px;
+        }
+
+
+        .page-title {
+            margin: 0;
+
+            color: #18231b;
+
+            font-size: 27px;
+
+            font-weight: 850;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .page-subtitle {
+            margin: 8px 0 0 63px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+
+        .add-address-btn {
+            position: relative;
+
+            z-index: 3;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            min-height: 44px;
+
+            padding: 0 18px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            color: white;
+
+            background: var(--green);
+
+            font-size: 12px;
+
+            font-weight: 750;
+
+            box-shadow:
+                    0 5px 14px rgba(12,131,31,0.16);
+
+            transition:
+                    background .2s ease,
+                    transform .2s ease,
+                    box-shadow .2s ease;
+        }
+
+
+        .add-address-btn:hover {
+            color: white;
+
+            background: var(--green-dark);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 8px 20px rgba(12,131,31,0.22);
+        }
+
+
+        /* =========================================================
+           ALERTS
+        ========================================================== */
+
+        .custom-alert {
+            border-radius: 12px;
+
+            font-size: 13px;
+
+            box-shadow:
+                    0 4px 15px rgba(0,0,0,0.035);
+        }
+
+
+        /* =========================================================
+           ADDRESS GRID
+        ========================================================== */
+
+        .address-grid {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+
+            gap: 20px;
+        }
+
+
+        /* =========================================================
+           ADDRESS CARD
+        ========================================================== */
+
+        .address-card {
+            position: relative;
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-height: 330px;
+
+            padding: 21px;
+
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            background: white;
+
+            box-shadow:
+                    0 5px 18px rgba(20,40,25,0.04);
+
+            transition:
+                    transform .3s ease,
+                    box-shadow .3s ease,
+                    border-color .3s ease;
+        }
+
+
+        .address-card:hover {
+            transform: translateY(-5px);
+
+            border-color: #cfe3d2;
+
+            box-shadow:
+                    0 15px 32px rgba(20,40,25,0.09);
+        }
+
+
+        .default-card {
+            border: 2px solid var(--green);
+
+            box-shadow:
+                    0 7px 24px rgba(12,131,31,0.09);
+        }
+
+
+        .default-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 120px;
+            height: 120px;
+
+            right: -55px;
+            top: -55px;
+
+            border-radius: 50%;
+
+            background: rgba(12,131,31,0.07);
+        }
+
+
+        /* =========================================================
+           CARD HEADER
+        ========================================================== */
+
+        .address-card-header {
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .address-type {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: var(--green);
+
+            font-size: 11px;
+
+            font-weight: 850;
+
+            letter-spacing: .7px;
+
+            text-transform: uppercase;
+        }
+
+
+        .address-type-icon {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 31px;
+            height: 31px;
+
+            border-radius: 9px;
+
+            color: var(--green);
+
+            background: var(--green-light);
+
+            font-size: 14px;
+        }
+
+
+        .default-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 6px 9px;
+
+            border-radius: 20px;
+
+            color: #0c6b25;
+
+            background: #e9f7eb;
+
+            border: 1px solid #c9e9ce;
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            letter-spacing: .4px;
+        }
+
+
+        /* =========================================================
+           CUSTOMER DETAILS
+        ========================================================== */
+
+        .address-name {
+            margin-bottom: 5px;
+
+            color: #202820;
+
+            font-size: 17px;
+
+            font-weight: 800;
+        }
+
+
+        .phone {
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 17px;
+
+            color: #7b857d;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+
+        .phone i {
+            color: var(--green);
+        }
+
+
+        /* =========================================================
+           ADDRESS TEXT
+        ========================================================== */
+
+        .address-text {
+            flex: 1;
+
+            padding: 15px;
+
+            border: 1px solid #edf0ed;
+
+            border-radius: 12px;
+
+            background: #fafcfb;
+
+            color: #4b5750;
+
+            font-size: 12px;
+
+            line-height: 1.75;
+        }
+
+
+        .address-line {
+            word-break: break-word;
+        }
+
+
+        .location-line {
+            margin-top: 2px;
+        }
+
+
+        .pin-line {
+            margin-top: 4px;
+
+            color: #344139;
+        }
+
+
+        .pin-label {
+            color: #7b857d;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =========================================================
+           CARD ACTIONS
+        ========================================================== */
+
+        .card-actions {
+            display: flex;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 7px;
+
+            padding-top: 16px;
+
+            margin-top: 16px;
+
+            border-top: 1px solid #edf0ed;
+        }
+
+
+        .action-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            min-height: 36px;
+
+            padding: 0 11px;
+
+            border-radius: 9px;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            transition:
+                    transform .2s ease,
+                    background .2s ease;
+        }
+
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+
+        .edit-btn {
+            color: #2563eb;
+
+            border: 1px solid #d5e2ff;
+
+            background: #f5f8ff;
+        }
+
+
+        .edit-btn:hover {
+            color: #1d4ed8;
+
+            background: #eaf1ff;
+        }
+
+
+        .default-btn {
+            color: var(--green);
+
+            border: 1px solid #cde4d1;
+
+            background: #f3fbf4;
+        }
+
+
+        .default-btn:hover {
+            color: white;
+
+            background: var(--green);
+        }
+
+
+        .delete-btn {
+            color: #dc3545;
+
+            border: 1px solid #f3d0d4;
+
+            background: #fff8f8;
+        }
+
+
+        .delete-btn:hover {
+            color: white;
+
+            background: #dc3545;
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================== */
+
+        .empty-box {
+            padding: 75px 25px;
+
+            text-align: center;
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            background: white;
+
+            box-shadow:
+                    0 6px 22px rgba(20,40,25,0.04);
+        }
+
+
+        .empty-icon {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 82px;
+            height: 82px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            color: #8c9890;
+
+            background: #f0f3f1;
+
+            font-size: 34px;
+
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+
+        @keyframes floatIcon {
+
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-7px);
+            }
+
+        }
+
+
+        .empty-box h4 {
+            color: #202820;
+
+            font-size: 20px;
+
+            font-weight: 800;
+        }
+
+
+        .empty-box p {
+            max-width: 430px;
+
+            margin: 0 auto 22px;
+
+            color: #7b857d;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        .empty-add-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            min-height: 43px;
+
+            padding: 0 18px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            color: white;
+
+            background: var(--green);
+
+            font-size: 12px;
+
+            font-weight: 750;
+
+            transition: .2s ease;
+        }
+
+
+        .empty-add-btn:hover {
+            color: white;
+
+            background: var(--green-dark);
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================== */
+
+        .address-footer {
+            margin-top: 20px;
+
+            padding: 38px 0 22px;
+
+            color: #9ca3af;
+
+            background: #111814;
+        }
+
+
+        .footer-brand {
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 800;
+        }
+
+
+        .footer-brand i {
+            color: #55c766;
+        }
+
+
+        .footer-subtitle {
+            margin-top: 5px;
+
+            color: #778179;
+
+            font-size: 11px;
+        }
+
+
+        .footer-services {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 18px;
+
+            margin-top: 17px;
+
+            color: #8b958e;
+
+            font-size: 10px;
+        }
+
+
+        .footer-service {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+        }
+
+
+        .footer-service i {
+            color: #55c766;
+        }
+
+
+        .footer-bottom {
+            padding-top: 19px;
+
+            margin-top: 22px;
+
+            border-top: 1px solid #273129;
+
+            color: #626d66;
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================================
+           ANIMATION
+        ========================================================== */
+
+        .address-card {
+            animation: cardEnter .45s ease both;
+        }
+
+
+        @keyframes cardEnter {
+
+            from {
+                opacity: 0;
+
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform: translateY(0);
+            }
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================== */
+
+        @media (max-width: 991px) {
+
+            .address-grid {
+                grid-template-columns:
+                        repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .addresses-page {
+                padding: 25px 0 45px;
+            }
+
+
+            .page-header {
+                padding: 21px;
+            }
+
+
+            .page-header .d-flex {
+                align-items: stretch !important;
+            }
+
+
+            .title-row {
+                align-items: flex-start;
+            }
+
+
+            .page-icon {
+                width: 43px;
+                height: 43px;
+
+                font-size: 18px;
+            }
+
+
+            .page-title {
+                font-size: 22px;
+            }
+
+
+            .page-subtitle {
+                margin-left: 0;
+
+                margin-top: 8px;
+            }
+
+
+            .add-address-btn {
+                width: 100%;
+            }
+
+
+            .address-grid {
+                grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+
+            .address-card {
+                min-height: 0;
+            }
+
+
+            .card-actions {
+                gap: 6px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .page-header {
+                border-radius: 16px;
+            }
+
+
+            .address-card {
+                padding: 18px;
+            }
+
+
+            .address-card-header {
+                margin-bottom: 17px;
+            }
+
+
+            .default-badge {
+                font-size: 8px;
+            }
+
+
+            .action-btn {
+                flex: 1;
+
+                min-width: 85px;
+            }
+
+
+            .footer-services {
+                flex-direction: column;
+
+                gap: 9px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================== -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================== -->
+
+<main class="addresses-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <div class="header-content">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            flex-wrap
+                            gap-3">
+
+
+                    <div>
+
+                        <div class="title-row">
+
+                            <span class="page-icon">
+
+                                <i class="bi bi-geo-alt-fill"></i>
+
+                            </span>
+
+
+                            <h1 class="page-title">
+
+                                My Addresses
+
+                            </h1>
+
+                        </div>
+
+
+                        <p class="page-subtitle">
+
+                            Manage your delivery addresses and
+                            choose your preferred location.
+
+                        </p>
+
+                    </div>
+
+
+                    <a
+                            th:href="@{/customer/addresses/add}"
+                            class="add-address-btn">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add New Address
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUCCESS MESSAGE
+        ====================================================== -->
+
+        <div
+                th:if="${successMessage}"
+                class="alert alert-success alert-dismissible fade show custom-alert"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <span th:text="${successMessage}">
+                Address saved successfully.
+            </span>
+
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR MESSAGE
+        ====================================================== -->
+
+        <div
+                th:if="${errorMessage}"
+                class="alert alert-danger alert-dismissible fade show custom-alert"
+                role="alert">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            <span th:text="${errorMessage}">
+                Something went wrong.
+            </span>
+
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             ADDRESS LIST
+        ====================================================== -->
+
+        <div
+                th:if="${addresses != null && !addresses.isEmpty()}"
+                class="address-grid">
+
+
+            <!-- =================================================
+                 ADDRESS CARD
+            ================================================== -->
+
+            <div
+                    th:each="address : ${addresses}"
+                    class="address-card">
+
+
+                <!-- HEADER -->
+
+                <div class="address-card-header">
+
+                    <div>
+
+                        <div class="address-type">
+
+                            <span class="address-type-icon">
+
+                                <i
+                                        th:class="${address.addressType != null
+                                        && address.addressType.name() == 'WORK'
+                                        ? 'bi bi-briefcase-fill'
+                                        : address.addressType != null
+                                        && address.addressType.name() == 'OTHER'
+                                        ? 'bi bi-geo-alt-fill'
+                                        : 'bi bi-house-door-fill'}">
+                                </i>
+
+                            </span>
+
+
+                            <span
+                                    th:text="${address.addressType != null
+                                    ? address.addressType.name()
+                                    : 'ADDRESS'}">
+
+                                HOME
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DEFAULT -->
+
+                    <span
+                            th:if="${address.defaultAddress}"
+                            class="default-badge">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        DEFAULT
+
+                    </span>
+
+                </div>
+
+
+                <!-- NAME -->
+
+                <div class="address-name">
+
+                    <span
+                            th:text="${address.fullName}">
+
+                        Customer Name
+
+                    </span>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="phone">
+
+                    <i class="bi bi-telephone-fill"></i>
+
+                    <span
+                            th:text="${address.phone}">
+
+                        9876543210
+
+                    </span>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="address-text">
+
+
+                    <div
+                            class="address-line"
+                            th:if="${address.addressLine1 != null}"
+                            th:text="${address.addressLine1}">
+
+                        123 Main Street
+
+                    </div>
+
+
+                    <div
+                            class="address-line"
+                            th:if="${address.addressLine2 != null
+                            && !address.addressLine2.isBlank()}"
+                            th:text="${address.addressLine2}">
+
+                        Near Main Road
+
+                    </div>
+
+
+                    <div class="location-line">
+
+                        <span
+                                th:if="${address.city != null}"
+                                th:text="${address.city}">
+
+                            Chennai
+
+                        </span>
+
+
+                        <span
+                                th:if="${address.city != null
+                                && address.state != null}">
+
+                            ,
+
+                        </span>
+
+
+                        <span
+                                th:if="${address.state != null}"
+                                th:text="${address.state}">
+
+                            Tamil Nadu
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                            class="pin-line"
+                            th:if="${address.pincode != null}">
+
+                        <span class="pin-label">
+
+                            PIN
+
+                        </span>
+
+                        :
+
+                        <strong
+                                th:text="${address.pincode}">
+
+                            600001
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="card-actions">
+
+
+                    <!-- EDIT -->
+
+                    <a
+                            th:href="@{/customer/addresses/edit/{id}(
+                                id=${address.id}
+                            )}"
+                            class="btn action-btn edit-btn">
+
+                        <i class="bi bi-pencil"></i>
+
+                        Edit
+
+                    </a>
+
+
+                    <!-- SET DEFAULT -->
+
+                    <form
+                            th:if="${!address.defaultAddress}"
+                            th:action="@{/customer/addresses/default/{id}(
+                                id=${address.id}
+                            )}"
+                            method="post"
+                            class="d-inline">
+
+                        <input
+                                type="hidden"
+                                name="_csrf"
+                                th:value="${_csrf.token}">
+
+
+                        <button
+                                type="submit"
+                                class="btn action-btn default-btn">
+
+                            <i class="bi bi-check2-circle"></i>
+
+                            Set Default
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- DELETE -->
+
+                    <form
+                            th:action="@{/customer/addresses/delete/{id}(
+                                id=${address.id}
+                            )}"
+                            method="post"
+                            class="d-inline delete-form">
+
+                        <input
+                                type="hidden"
+                                name="_csrf"
+                                th:value="${_csrf.token}">
+
+
+                        <button
+                                type="submit"
+                                class="btn action-btn delete-btn">
+
+                            <i class="bi bi-trash3"></i>
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMPTY STATE
+        ====================================================== -->
+
+        <div
+                th:if="${addresses == null || addresses.isEmpty()}"
+                class="empty-box">
+
+
+            <div class="empty-icon">
+
+                <i class="bi bi-geo-alt"></i>
+
+            </div>
+
+
+            <h4>
+
+                No Addresses Found
+
+            </h4>
+
+
+            <p>
+
+                You haven't added a delivery address yet.
+                Add one now to make your checkout faster
+                and easier.
+
+            </p>
+
+
+            <a
+                    th:href="@{/customer/addresses/add}"
+                    class="empty-add-btn">
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Your First Address
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================== -->
+
+<footer class="address-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                <i class="bi bi-bag-heart-fill me-1"></i>
+
+                Dreamz Shop
+
+            </div>
+
+
+            <div class="footer-subtitle">
+
+                Simple. Secure. Reliable Shopping.
+
+            </div>
+
+
+            <div class="footer-services">
+
+                <span class="footer-service">
+
+                    <i class="bi bi-shield-check"></i>
+
+                    Secure Shopping
+
+                </span>
+
+
+                <span class="footer-service">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                    Cash on Delivery
+
+                </span>
+
+
+                <span class="footer-service">
+
+                    <i class="bi bi-truck"></i>
+
+                    Reliable Delivery
+
+                </span>
+
+
+                <span class="footer-service">
+
+                    <i class="bi bi-arrow-repeat"></i>
+
+                    Easy Returns
+
+                </span>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                © 2026 Dreamz Shop.
+                All rights reserved.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================== -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- =========================================================
+     DELETE CONFIRMATION
+========================================================== -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const deleteForms =
+            document.querySelectorAll(".delete-form");
+
+
+        deleteForms.forEach(function (form) {
+
+            form.addEventListener("submit", function (event) {
+
+                const confirmed =
+                    window.confirm(
+                        "Are you sure you want to delete this address?"
+                    );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

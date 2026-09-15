@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dreamz Shop | Reports & Analytics</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --primary-light: #22c55e;
+            --primary-soft: #ecfdf3;
+
+            --sidebar: #071a12;
+            --sidebar-hover: rgba(255,255,255,.055);
+
+            --bg: #f5f7f6;
+            --card: #ffffff;
+
+            --text: #17211b;
+            --heading: #111827;
+            --muted: #6b7280;
+
+            --border: #e5e7eb;
+
+            --danger: #dc2626;
+            --warning: #d97706;
+            --blue: #2563eb;
+            --purple: #7c3aed;
+
+            --sidebar-width: 260px;
+
+            --shadow: 0 10px 30px rgba(15,23,42,.07);
+            --shadow-lg: 0 18px 45px rgba(15,23,42,.11);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+
+            width: var(--sidebar-width);
+            height: 100vh;
+
+            z-index: 1100;
+
+            display: flex;
+            flex-direction: column;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(34,197,94,.11),
+                            transparent 34%
+                    ),
+                    linear-gradient(
+                            180deg,
+                            #071a12 0%,
+                            #0a1712 55%,
+                            #06130d 100%
+                    );
+
+            border-right: 1px solid rgba(255,255,255,.06);
+
+            box-shadow: 8px 0 30px rgba(15,23,42,.10);
+
+            transition: transform .28s ease;
+        }
+
+        .admin-sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.12);
+            border-radius: 20px;
+        }
+
+        .sidebar-brand {
+            min-height: 76px;
+
+            padding: 17px 20px;
+
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: #fff;
+
+            border-bottom: 1px solid rgba(255,255,255,.07);
+        }
+
+        .sidebar-brand:hover {
+            color: #fff;
+        }
+
+        .brand-icon {
+            width: 41px;
+            height: 41px;
+            flex: 0 0 41px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color: #fff;
+
+            background: linear-gradient(
+                    135deg,
+                    #22c55e,
+                    #15803d
+            );
+
+            box-shadow: 0 8px 20px rgba(34,197,94,.24);
+
+            font-size: 19px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -.2px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+
+            color: #94a3b8;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-content {
+            padding: 18px 12px 20px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section-title {
+            padding: 0 10px 8px;
+
+            color: #5f7168;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-link {
+            position: relative;
+
+            min-height: 42px;
+
+            margin: 3px 0;
+            padding: 10px 11px;
+
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            border-radius: 11px;
+
+            color: #aebdb5;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: all .2s ease;
+        }
+
+        .sidebar-link i {
+            width: 19px;
+            flex-shrink: 0;
+
+            text-align: center;
+
+            font-size: 16px;
+        }
+
+        .sidebar-link:hover {
+            color: #fff;
+            background: var(--sidebar-hover);
+            transform: translateX(2px);
+        }
+
+        .sidebar-link.active {
+            color: #fff;
+
+            background: linear-gradient(
+                    90deg,
+                    rgba(34,197,94,.19),
+                    rgba(34,197,94,.07)
+            );
+
+            box-shadow:
+                    inset 0 0 0 1px rgba(74,222,128,.08);
+        }
+
+        .sidebar-link.active::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+
+            width: 3px;
+
+            border-radius: 0 4px 4px 0;
+
+            background: #4ade80;
+        }
+
+        .sidebar-link.active i {
+            color: #4ade80;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+
+            padding: 14px 18px 18px;
+
+            border-top: 1px solid rgba(255,255,255,.06);
+        }
+
+        .store-link {
+            min-height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 10px;
+
+            color: #d1d9e5;
+
+            background: rgba(255,255,255,.035);
+
+            font-size: 11px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .store-link:hover {
+            color: #fff;
+
+            border-color: rgba(74,222,128,.28);
+
+            background: rgba(34,197,94,.09);
+        }
+
+        .main-shell {
+            min-height: 100vh;
+            margin-left: var(--sidebar-width);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+
+            min-height: 72px;
+
+            padding: 0 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            background: rgba(255,255,255,.90);
+
+            border-bottom: 1px solid rgba(229,231,235,.9);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-menu-btn {
+            width: 40px;
+            height: 40px;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            color: #374151;
+            background: #fff;
+
+            font-size: 18px;
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--primary-dark);
+            border-color: #bbf7d0;
+            background: var(--primary-soft);
+        }
+
+        .topbar-title {
+            color: #1f2937;
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .topbar-subtitle {
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-user {
+            padding: 6px 10px 6px 7px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            background: #fff;
+        }
+
+        .admin-user-icon {
+            width: 31px;
+            height: 31px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+        }
+
+        .admin-user-name {
+            color: #374151;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            width: 38px;
+            height: 38px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #fee2e2;
+            border-radius: 10px;
+
+            color: #b91c1c;
+            background: #fff;
+
+            transition: .2s ease;
+        }
+
+        .logout-btn:hover {
+            color: #fff;
+            border-color: var(--danger);
+            background: var(--danger);
+        }
+
+        .page-content {
+            padding: 30px 30px 45px;
+
+            animation: pageIn .4s ease both;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .breadcrumb-mini {
+            margin-bottom: 9px;
+
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .breadcrumb-mini a {
+            color: var(--muted);
+        }
+
+        .breadcrumb-mini a:hover {
+            color: var(--primary);
+        }
+
+        .page-title {
+            margin: 0;
+
+            color: var(--heading);
+
+            font-size: clamp(24px, 3vw, 31px);
+            font-weight: 800;
+
+            letter-spacing: -.8px;
+        }
+
+        .page-subtitle {
+            margin: 7px 0 0;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .filter-card,
+        .stat-card,
+        .report-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            background: #fff;
+
+            box-shadow: var(--shadow);
+
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        .filter-card:hover,
+        .stat-card:hover,
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .filter-card {
+            margin-bottom: 24px;
+        }
+
+        .filter-card-body {
+            padding: 21px;
+        }
+
+        .filter-title {
+            margin-bottom: 16px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            color: #1f2937;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .filter-title-icon {
+            width: 31px;
+            height: 31px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+        }
+
+        .form-label {
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .form-control {
+            min-height: 42px;
+
+            border: 1px solid #dbe1e7;
+            border-radius: 10px;
+
+            font-size: 10px;
+
+            transition: .2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4ade80;
+
+            box-shadow:
+                    0 0 0 .22rem rgba(34,197,94,.12);
+        }
+
+        .filter-btn {
+            min-height: 42px;
+
+            border: 0;
+            border-radius: 10px;
+
+            padding: 0 17px;
+
+            color: #fff;
+
+            background: linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #15803d
+            );
+
+            font-size: 10px;
+            font-weight: 800;
+
+            box-shadow:
+                    0 7px 16px rgba(22,163,74,.18);
+
+            transition: .2s ease;
+        }
+
+        .filter-btn:hover {
+            color: #fff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                    0 10px 21px rgba(22,163,74,.24);
+        }
+
+        .reset-btn {
+            min-height: 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 16px;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            color: #475569;
+            background: #fff;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .reset-btn:hover {
+            color: var(--primary-dark);
+
+            border-color: #bbf7d0;
+
+            background: var(--primary-soft);
+
+            transform: translateY(-1px);
+        }
+
+        .stat-card {
+            height: 100%;
+        }
+
+        .stat-card-body {
+            min-height: 132px;
+
+            padding: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .stat-label {
+            margin-bottom: 7px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+            font-weight: 650;
+        }
+
+        .stat-value {
+            color: var(--heading);
+
+            font-size: 25px;
+            font-weight: 800;
+
+            letter-spacing: -.6px;
+
+            word-break: break-word;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            font-size: 20px;
+        }
+
+        .icon-green {
+            color: var(--primary-dark);
+            background: #dcfce7;
+        }
+
+        .icon-blue {
+            color: #1d4ed8;
+            background: #dbeafe;
+        }
+
+        .icon-cyan {
+            color: #0e7490;
+            background: #cffafe;
+        }
+
+        .icon-orange {
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        .report-card {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .report-header {
+            padding: 18px 20px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            border-bottom: 1px solid var(--border);
+
+            background: #fff;
+        }
+
+        .report-header-icon {
+            width: 34px;
+            height: 34px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+        }
+
+        .report-header h5 {
+            margin: 0;
+
+            color: #1f2937;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .report-body {
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            padding: 13px 16px;
+
+            color: #6b7280;
+
+            background: #f8fafc;
+
+            border-bottom: 1px solid var(--border);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .35px;
+
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 14px 16px;
+
+            color: #374151;
+
+            border-bottom: 1px solid #f0f2f4;
+
+            font-size: 10px;
+
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+        .table tbody tr {
+            transition: .2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(22,163,74,.035);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .product-name {
+            color: #1f2937;
+            font-weight: 750;
+        }
+
+        .sku {
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .quantity-badge {
+            min-width: 32px;
+
+            padding: 5px 8px;
+
+            display: inline-flex;
+            justify-content: center;
+
+            border-radius: 7px;
+
+            color: #1d4ed8;
+            background: #dbeafe;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .status-badge {
+            padding: 6px 9px;
+
+            display: inline-flex;
+            align-items: center;
+
+            border-radius: 999px;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+        .status-green {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .status-blue {
+            color: #1d4ed8;
+            background: #dbeafe;
+        }
+
+        .status-orange {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        .status-red {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .status-gray {
+            color: #475569;
+            background: #e2e8f0;
+        }
+
+        .empty-state {
+            min-height: 180px;
+
+            padding: 35px 20px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            color: #94a3b8;
+
+            text-align: center;
+        }
+
+        .empty-state i {
+            margin-bottom: 10px;
+
+            font-size: 34px;
+        }
+
+        .empty-state-title {
+            color: #64748b;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .empty-state-text {
+            margin-top: 4px;
+
+            color: #94a3b8;
+
+            font-size: 9px;
+        }
+
+        footer {
+            margin-top: 35px;
+            padding: 25px 0;
+
+            color: #94a3b8;
+
+            text-align: center;
+
+            font-size: 9px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+
+            z-index: 1050;
+
+            display: none;
+
+            background: rgba(15,23,42,.48);
+
+            backdrop-filter: blur(2px);
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(10px);
+
+            animation: reveal .45s ease forwards;
+        }
+
+        @keyframes reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1199.98px) {
+
+            .page-content {
+                padding: 27px 24px 40px;
+            }
+
+        }
+
+        @media (max-width: 991.98px) {
+
+            .admin-sidebar {
+                transform: translateX(-100%);
+                box-shadow: 15px 0 40px rgba(0,0,0,.18);
+            }
+
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-shell {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .page-content {
+                padding: 24px 18px 35px;
+            }
+
+        }
+
+        @media (max-width: 767.98px) {
+
+            .page-header {
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .page-subtitle {
+                font-size: 11px;
+            }
+
+            .topbar {
+                min-height: 66px;
+            }
+
+            .admin-user-name {
+                display: none;
+            }
+
+            .stat-card-body {
+                min-height: 115px;
+            }
+
+        }
+
+        @media (max-width: 575.98px) {
+
+            .page-content {
+                padding: 20px 13px 30px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .filter-card-body {
+                padding: 16px;
+            }
+
+            .stat-card-body {
+                padding: 17px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .report-header {
+                padding: 16px;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+    <a th:href="@{/admin/dashboard}"
+       class="sidebar-brand">
+
+        <span class="brand-icon">
+            <i class="bi bi-bag-heart-fill"></i>
+        </span>
+
+        <span class="brand-text">
+
+            <span class="brand-name">
+                Dreamz Shop
+            </span>
+
+            <span class="brand-subtitle">
+                Admin Panel
+            </span>
+
+        </span>
+
+    </a>
+
+    <div class="sidebar-content">
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Overview
+            </div>
+
+            <a th:href="@{/admin/dashboard}"
+               class="sidebar-link">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Store Management
+            </div>
+
+            <a th:href="@{/admin/products}"
+               class="sidebar-link">
+
+                <i class="bi bi-box-seam-fill"></i>
+
+                <span>
+                    Products
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/categories}"
+               class="sidebar-link">
+
+                <i class="bi bi-tags-fill"></i>
+
+                <span>
+                    Categories
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/subcategories}"
+               class="sidebar-link">
+
+                <i class="bi bi-diagram-3-fill"></i>
+
+                <span>
+                    Subcategories
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/brands}"
+               class="sidebar-link">
+
+                <i class="bi bi-bookmark-star-fill"></i>
+
+                <span>
+                    Brands
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/banners}"
+               class="sidebar-link">
+
+                <i class="bi bi-images"></i>
+
+                <span>
+                    Banners
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/inventory}"
+               class="sidebar-link">
+
+                <i class="bi bi-boxes"></i>
+
+                <span>
+                    Inventory
+                </span>
+
+            </a>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Sales
+            </div>
+
+            <a th:href="@{/admin/orders}"
+               class="sidebar-link">
+
+                <i class="bi bi-cart-check-fill"></i>
+
+                <span>
+                    Orders
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/offers}"
+               class="sidebar-link">
+
+                <i class="bi bi-percent"></i>
+
+                <span>
+                    Offers
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/coupons}"
+               class="sidebar-link">
+
+                <i class="bi bi-ticket-perforated-fill"></i>
+
+                <span>
+                    Coupons
+                </span>
+
+            </a>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Customers
+            </div>
+
+            <a th:href="@{/admin/customers}"
+               class="sidebar-link">
+
+                <i class="bi bi-people-fill"></i>
+
+                <span>
+                    Customers
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/reviews}"
+               class="sidebar-link">
+
+                <i class="bi bi-star-fill"></i>
+
+                <span>
+                    Reviews
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/returns}"
+               class="sidebar-link">
+
+                <i class="bi bi-arrow-return-left"></i>
+
+                <span>
+                    Returns
+                </span>
+
+            </a>
+
+            <a th:href="@{/admin/refunds}"
+               class="sidebar-link">
+
+                <i class="bi bi-wallet2"></i>
+
+                <span>
+                    Refunds
+                </span>
+
+            </a>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Analytics
+            </div>
+
+            <a th:href="@{/admin/reports}"
+               class="sidebar-link active">
+
+                <i class="bi bi-bar-chart-line-fill"></i>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                Administration
+            </div>
+
+            <a th:href="@{/admin/staff}"
+               class="sidebar-link">
+
+                <i class="bi bi-person-badge-fill"></i>
+
+                <span>
+                    Staff
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar-footer">
+
+        <a th:href="@{/}"
+           class="store-link">
+
+            <i class="bi bi-shop"></i>
+
+            <span>
+                View Store
+            </span>
+
+            <i class="bi bi-arrow-up-right"></i>
+
+        </a>
+
+    </div>
+
+</aside>
+
+<div class="mobile-overlay"
+     id="mobileOverlay">
+</div>
+
+<div class="main-shell">
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button type="button"
+                    class="mobile-menu-btn"
+                    id="mobileMenuBtn"
+                    aria-label="Open navigation">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+            <div>
+
+                <div class="topbar-title">
+                    Reports & Analytics
+                </div>
+
+                <div class="topbar-subtitle">
+                    Store performance overview
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <div class="admin-user">
+
+                <span class="admin-user-icon">
+                    <i class="bi bi-person-fill"></i>
+                </span>
+
+                <span class="admin-user-name">
+                    Administrator
+                </span>
+
+            </div>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="m-0">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="logout-btn"
+                        title="Logout"
+                        aria-label="Logout">
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </header>
+
+    <main class="page-content">
+
+        <div class="page-header reveal">
+
+            <div class="breadcrumb-mini">
+
+                <a th:href="@{/admin/dashboard}">
+
+                    <i class="bi bi-grid-1x2-fill"></i>
+
+                    Dashboard
+
+                </a>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>
+                    Reports
+                </span>
+
+            </div>
+
+            <h1 class="page-title">
+
+                <i class="bi bi-bar-chart-line me-2 text-success"></i>
+
+                Reports & Analytics
+
+            </h1>
+
+            <p class="page-subtitle">
+                Analyze Dreamz Shop sales, orders, products and payments.
+            </p>
+
+        </div>
+
+        <section class="filter-card reveal">
+
+            <div class="filter-card-body">
+
+                <div class="filter-title">
+
+                    <span class="filter-title-icon">
+                        <i class="bi bi-calendar-range"></i>
+                    </span>
+
+                    <span>
+                        Report Period
+                    </span>
+
+                </div>
+
+                <form th:action="@{/admin/reports}"
+                      method="get"
+                      class="row g-3 align-items-end">
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label for="startDate"
+                               class="form-label">
+
+                            Start Date
+
+                        </label>
+
+                        <input type="date"
+                               id="startDate"
+                               name="startDate"
+                               class="form-control"
+                               th:value="${startDate}">
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label for="endDate"
+                               class="form-label">
+
+                            End Date
+
+                        </label>
+
+                        <input type="date"
+                               id="endDate"
+                               name="endDate"
+                               class="form-control"
+                               th:value="${endDate}">
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-12">
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="filter-btn">
+
+                                <i class="bi bi-funnel-fill me-1"></i>
+
+                                Apply Filter
+
+                            </button>
+
+                            <a th:href="@{/admin/reports}"
+                               class="reset-btn">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                                Reset
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <section class="row g-4 mb-4">
+
+            <div class="col-xl-3 col-md-6 reveal">
+
+                <div class="stat-card">
+
+                    <div class="stat-card-body">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Total Revenue
+                            </div>
+
+                            <div class="stat-value">
+
+                                ₹<span th:text="${totalRevenue}">
+                                    0.00
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon icon-green">
+
+                            <i class="bi bi-currency-rupee"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-md-6 reveal">
+
+                <div class="stat-card">
+
+                    <div class="stat-card-body">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Total Orders
+                            </div>
+
+                            <div class="stat-value"
+                                 th:text="${totalOrders}">
+                                0
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon icon-blue">
+
+                            <i class="bi bi-cart-check-fill"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-md-6 reveal">
+
+                <div class="stat-card">
+
+                    <div class="stat-card-body">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Delivered Orders
+                            </div>
+
+                            <div class="stat-value"
+                                 th:text="${deliveredOrders}">
+                                0
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon icon-cyan">
+
+                            <i class="bi bi-box-seam-fill"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-md-6 reveal">
+
+                <div class="stat-card">
+
+                    <div class="stat-card-body">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Average Order Value
+                            </div>
+
+                            <div class="stat-value">
+
+                                ₹<span th:text="${averageOrderValue}">
+                                    0.00
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon icon-orange">
+
+                            <i class="bi bi-graph-up-arrow"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="row g-4 mb-4">
+
+            <div class="col-lg-7 reveal">
+
+                <div class="report-card">
+
+                    <div class="report-header">
+
+                        <span class="report-header-icon">
+                            <i class="bi bi-calendar3"></i>
+                        </span>
+
+                        <h5>
+                            Monthly Sales
+                        </h5>
+
+                    </div>
+
+                    <div class="report-body">
+
+                        <div th:if="${monthlySalesReport != null and !monthlySalesReport.isEmpty()}">
+
+                            <table class="table table-hover">
+
+                                <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Year
+                                    </th>
+
+                                    <th>
+                                        Month
+                                    </th>
+
+                                    <th>
+                                        Orders
+                                    </th>
+
+                                    <th>
+                                        Revenue
+                                    </th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="row : ${monthlySalesReport}">
+
+                                    <td th:text="${row[0]}">
+                                        2026
+                                    </td>
+
+                                    <td th:text="${row[1]}">
+                                        1
+                                    </td>
+
+                                    <td th:text="${row[2]}">
+                                        0
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+
+                                            ₹<span th:text="${row[3]}">
+                                                0.00
+                                            </span>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div th:if="${monthlySalesReport == null or monthlySalesReport.isEmpty()}"
+                             class="empty-state">
+
+                            <i class="bi bi-bar-chart"></i>
+
+                            <div class="empty-state-title">
+                                No monthly sales data available
+                            </div>
+
+                            <div class="empty-state-text">
+                                Sales information will appear here when available.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-5 reveal">
+
+                <div class="report-card">
+
+                    <div class="report-header">
+
+                        <span class="report-header-icon">
+                            <i class="bi bi-calendar-day"></i>
+                        </span>
+
+                        <h5>
+                            Daily Sales
+                        </h5>
+
+                    </div>
+
+                    <div class="report-body">
+
+                        <div th:if="${dailySalesReport != null and !dailySalesReport.isEmpty()}">
+
+                            <table class="table table-hover">
+
+                                <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Orders
+                                    </th>
+
+                                    <th>
+                                        Revenue
+                                    </th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="row : ${dailySalesReport}">
+
+                                    <td th:text="${row[0]}">
+                                        2026-09-01
+                                    </td>
+
+                                    <td th:text="${row[1]}">
+                                        0
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+
+                                            ₹<span th:text="${row[2]}">
+                                                0.00
+                                            </span>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div th:if="${dailySalesReport == null or dailySalesReport.isEmpty()}"
+                             class="empty-state">
+
+                            <i class="bi bi-calendar-x"></i>
+
+                            <div class="empty-state-title">
+                                No daily sales data available
+                            </div>
+
+                            <div class="empty-state-text">
+                                Daily sales information will appear here.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="report-card mb-4 reveal">
+
+            <div class="report-header">
+
+                <span class="report-header-icon">
+                    <i class="bi bi-trophy-fill"></i>
+                </span>
+
+                <h5>
+                    Best Selling Products
+                </h5>
+
+            </div>
+
+            <div class="report-body">
+
+                <div th:if="${bestSellingProducts != null and !bestSellingProducts.isEmpty()}">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                SKU
+                            </th>
+
+                            <th>
+                                Quantity Sold
+                            </th>
+
+                            <th>
+                                Sales
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="row, stat : ${bestSellingProducts}">
+
+                            <td>
+
+                                <strong th:text="${stat.count}">
+                                    1
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                <span class="product-name"
+                                      th:text="${row[1]}">
+                                    Product
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="sku"
+                                      th:text="${row[2]}">
+                                    SKU
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="quantity-badge"
+                                      th:text="${row[3]}">
+                                    0
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+
+                                    ₹<span th:text="${row[4]}">
+                                        0.00
+                                    </span>
+
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div th:if="${bestSellingProducts == null or bestSellingProducts.isEmpty()}"
+                     class="empty-state">
+
+                    <i class="bi bi-box-seam"></i>
+
+                    <div class="empty-state-title">
+                        No product sales data available
+                    </div>
+
+                    <div class="empty-state-text">
+                        Best selling products will appear here.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="row g-4">
+
+            <div class="col-lg-6 reveal">
+
+                <div class="report-card">
+
+                    <div class="report-header">
+
+                        <span class="report-header-icon">
+                            <i class="bi bi-list-check"></i>
+                        </span>
+
+                        <h5>
+                            Order Status Report
+                        </h5>
+
+                    </div>
+
+                    <div class="report-body">
+
+                        <div th:if="${orderStatusReport != null and !orderStatusReport.isEmpty()}">
+
+                            <table class="table table-hover">
+
+                                <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Orders
+                                    </th>
+
+                                    <th>
+                                        Total Value
+                                    </th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="row : ${orderStatusReport}">
+
+                                    <td>
+
+                                        <span class="status-badge status-gray"
+                                              th:text="${row[0]}">
+                                            STATUS
+                                        </span>
+
+                                    </td>
+
+                                    <td th:text="${row[1]}">
+                                        0
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+
+                                            ₹<span th:text="${row[2]}">
+                                                0.00
+                                            </span>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div th:if="${orderStatusReport == null or orderStatusReport.isEmpty()}"
+                             class="empty-state">
+
+                            <i class="bi bi-clipboard-x"></i>
+
+                            <div class="empty-state-title">
+                                No order status data available
+                            </div>
+
+                            <div class="empty-state-text">
+                                Order status statistics will appear here.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6 reveal">
+
+                <div class="report-card">
+
+                    <div class="report-header">
+
+                        <span class="report-header-icon">
+                            <i class="bi bi-credit-card-fill"></i>
+                        </span>
+
+                        <h5>
+                            Payment Status Report
+                        </h5>
+
+                    </div>
+
+                    <div class="report-body">
+
+                        <div th:if="${paymentStatusReport != null and !paymentStatusReport.isEmpty()}">
+
+                            <table class="table table-hover">
+
+                                <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Payment Status
+                                    </th>
+
+                                    <th>
+                                        Orders
+                                    </th>
+
+                                    <th>
+                                        Total Value
+                                    </th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="row : ${paymentStatusReport}">
+
+                                    <td>
+
+                                        <span class="status-badge status-gray"
+                                              th:text="${row[0]}">
+                                            PENDING
+                                        </span>
+
+                                    </td>
+
+                                    <td th:text="${row[1]}">
+                                        0
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+
+                                            ₹<span th:text="${row[2]}">
+                                                0.00
+                                            </span>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div th:if="${paymentStatusReport == null or paymentStatusReport.isEmpty()}"
+                             class="empty-state">
+
+                            <i class="bi bi-credit-card-2-front"></i>
+
+                            <div class="empty-state-title">
+                                No payment data available
+                            </div>
+
+                            <div class="empty-state-text">
+                                Payment statistics will appear here.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <footer>
+
+            Dreamz Shop Admin Panel · Reports & Analytics · 2026
+
+        </footer>
+
+    </main>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const sidebar = document.getElementById("adminSidebar");
+        const overlay = document.getElementById("mobileOverlay");
+        const menuButton = document.getElementById("mobileMenuBtn");
+
+        function openSidebar() {
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            sidebar.classList.add("open");
+            overlay.classList.add("show");
+
+            document.body.style.overflow = "hidden";
+
+        }
+
+        function closeSidebar() {
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+
+            document.body.style.overflow = "";
+
+        }
+
+        if (menuButton) {
+
+            menuButton.addEventListener("click", function () {
+
+                if (sidebar.classList.contains("open")) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+
+            });
+
+        }
+
+        if (overlay) {
+
+            overlay.addEventListener("click", function () {
+                closeSidebar();
+            });
+
+        }
+
+        document.querySelectorAll(".sidebar-link").forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                if (window.innerWidth <= 991) {
+                    closeSidebar();
+                }
+
+            });
+
+        });
+
+        window.addEventListener("resize", function () {
+
+            if (window.innerWidth > 991) {
+                closeSidebar();
+            }
+
+        });
+
+        document.querySelectorAll(".reveal").forEach(function (element, index) {
+
+            element.style.animationDelay =
+                Math.min(index * 45, 350) + "ms";
+
+        });
+
+    });
+
+</script>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

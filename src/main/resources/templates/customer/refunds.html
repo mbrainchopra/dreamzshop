@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Refunds | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        :root {
+
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+
+            --bg: #f7f8f6;
+
+            --blue: #2563eb;
+            --blue-soft: #eff6ff;
+
+            --yellow: #d97706;
+            --yellow-soft: #fffbeb;
+
+            --red: #dc2626;
+            --red-soft: #fef2f2;
+
+            --gray-soft: #f3f4f6;
+
+            --shadow:
+                    0 8px 28px rgba(0, 0, 0, .055);
+
+            --shadow-hover:
+                    0 15px 35px rgba(0, 0, 0, .09);
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .045),
+                            transparent 30%
+                    ),
+                    var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .refund-page {
+
+            padding-top: 28px;
+
+            padding-bottom: 65px;
+        }
+
+
+        /* =====================================================
+           PAGE HEADER
+        ===================================================== */
+
+        .page-header {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 24px 27px;
+
+            margin-bottom: 20px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+
+        .page-header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 200px;
+
+            height: 200px;
+
+            right: -85px;
+
+            top: -115px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(22, 163, 74, .055);
+        }
+
+
+        .header-content {
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        .header-icon {
+
+            width: 44px;
+
+            height: 44px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            border-radius: 12px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+
+            font-size: 20px;
+        }
+
+
+        .page-title {
+
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 21px;
+
+            font-weight: 900;
+
+            letter-spacing: -.3px;
+        }
+
+
+        .page-subtitle {
+
+            margin: 5px 0 0;
+
+            color: var(--muted);
+
+            font-size: 9px;
+        }
+
+
+        /* =====================================================
+           ALERT
+        ===================================================== */
+
+        .custom-alert {
+
+            border: none;
+
+            border-radius: 11px;
+
+            font-size: 9px;
+
+            font-weight: 650;
+
+            box-shadow:
+                    0 4px 15px rgba(0, 0, 0, .035);
+
+            animation:
+                    slideDown .35s ease both;
+        }
+
+
+        /* =====================================================
+           REFUND CARD
+        ===================================================== */
+
+        .refund-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 17px;
+
+            box-shadow: var(--shadow);
+
+            transition:
+                    transform .25s ease,
+                    box-shadow .25s ease,
+                    border-color .25s ease;
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+
+        .refund-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+
+            top: 0;
+
+            width: 4px;
+
+            height: 100%;
+
+            background:
+                    var(--green);
+
+            transform:
+                    scaleY(.25);
+
+            transform-origin:
+                    center;
+
+            transition:
+                    transform .25s ease;
+        }
+
+
+        .refund-card:hover {
+
+            transform:
+                    translateY(-3px);
+
+            box-shadow:
+                    var(--shadow-hover);
+
+            border-color:
+                    #d7e9db;
+        }
+
+
+        .refund-card:hover::before {
+
+            transform:
+                    scaleY(1);
+        }
+
+
+        .refund-inner {
+
+            padding: 22px 23px;
+        }
+
+
+        /* =====================================================
+           REFUND HEADER
+        ===================================================== */
+
+        .refund-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+            padding-bottom: 17px;
+
+            margin-bottom: 17px;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+        }
+
+
+        .refund-label {
+
+            margin-bottom: 4px;
+
+            color: #9ca3af;
+
+            font-size: 7px;
+
+            font-weight: 850;
+
+            letter-spacing: 1px;
+        }
+
+
+        .refund-number {
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            word-break: break-word;
+        }
+
+
+        .created-date {
+
+            margin-top: 5px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding:
+                    7px 11px;
+
+            border-radius: 30px;
+
+            font-size: 8px;
+
+            font-weight: 850;
+
+            white-space: nowrap;
+        }
+
+
+        .status-pending {
+
+            background:
+                    #fef3c7;
+
+            color:
+                    #92400e;
+        }
+
+
+        .status-initiated {
+
+            background:
+                    #e0f2fe;
+
+            color:
+                    #075985;
+        }
+
+
+        .status-processing {
+
+            background:
+                    #dbeafe;
+
+            color:
+                    #1d4ed8;
+        }
+
+
+        .status-completed {
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+        }
+
+
+        .status-failed {
+
+            background:
+                    var(--red-soft);
+
+            color:
+                    #991b1b;
+        }
+
+
+        .status-cancelled {
+
+            background:
+                    var(--gray-soft);
+
+            color:
+                    #4b5563;
+        }
+
+
+        /* =====================================================
+           INFORMATION GRID
+        ===================================================== */
+
+        .refund-info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .info-box {
+
+            padding: 13px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px solid #edf1ee;
+
+            border-radius: 11px;
+
+            transition:
+                    transform .2s ease,
+                    border-color .2s ease;
+        }
+
+
+        .info-box:hover {
+
+            transform:
+                    translateY(-2px);
+
+            border-color:
+                    #d6e8da;
+        }
+
+
+        .info-label {
+
+            margin-bottom: 5px;
+
+            color: #9ca3af;
+
+            font-size: 7px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .4px;
+        }
+
+
+        .info-value {
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            word-break: break-word;
+        }
+
+
+        .amount {
+
+            color:
+                    var(--green-deep);
+
+            font-size: 19px;
+
+            font-weight: 950;
+        }
+
+
+        /* =====================================================
+           TRANSACTION
+        ===================================================== */
+
+        .transaction-box {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-top: 15px;
+
+            padding: 12px 14px;
+
+            background:
+                    #f8faf9;
+
+            border:
+                    1px dashed #d7e6da;
+
+            border-radius: 11px;
+        }
+
+
+        .transaction-icon {
+
+            width: 33px;
+
+            height: 33px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 9px;
+
+            background:
+                    var(--green-light);
+
+            color:
+                    var(--green-deep);
+
+            font-size: 14px;
+        }
+
+
+        .transaction-value {
+
+            color: var(--text);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            word-break: break-all;
+        }
+
+
+        /* =====================================================
+           REMARKS
+        ===================================================== */
+
+        .remarks-box {
+
+            margin-top: 13px;
+
+            padding: 11px 13px;
+
+            background:
+                    #fafafa;
+
+            border-left:
+                    3px solid #d1d5db;
+
+            border-radius: 7px;
+
+            color: #6b7280;
+
+            font-size: 8px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           COMPLETED
+        ===================================================== */
+
+        .completed-box {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 13px;
+
+            color:
+                    var(--green-deep);
+
+            font-size: 8px;
+
+            font-weight: 700;
+        }
+
+
+        .completed-box i {
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           ACTIONS
+        ===================================================== */
+
+        .refund-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 8px;
+
+            padding-top: 16px;
+
+            margin-top: 17px;
+
+            border-top:
+                    1px solid #f0f1f2;
+        }
+
+
+        .btn {
+
+            min-height: 37px;
+
+            border-radius: 9px;
+
+            font-size: 8px;
+
+            font-weight: 800;
+
+            transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background .2s ease;
+        }
+
+
+        .btn-outline-primary {
+
+            color:
+                    var(--green-deep);
+
+            border-color:
+                    #b8ddc0;
+        }
+
+
+        .btn-outline-primary:hover {
+
+            background:
+                    var(--green);
+
+            border-color:
+                    var(--green);
+
+            color: white;
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 6px 15px rgba(22, 163, 74, .15);
+        }
+
+
+        .btn-outline-dark:hover {
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-box {
+
+            padding:
+                    70px 25px;
+
+            background: white;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                    fadeUp .45s ease both;
+        }
+
+
+        .empty-icon {
+
+            width: 80px;
+
+            height: 80px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin: 0 auto;
+
+            border-radius: 50%;
+
+            background:
+                    var(--green-soft);
+
+            color:
+                    #86a98f;
+
+            font-size: 34px;
+
+            animation:
+                    floatIcon 3s ease-in-out infinite;
+        }
+
+
+        .empty-title {
+
+            margin-top: 19px;
+
+            color: var(--text);
+
+            font-size: 17px;
+
+            font-weight: 900;
+        }
+
+
+        .empty-text {
+
+            max-width: 500px;
+
+            margin: 7px auto 22px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            line-height: 1.7;
+        }
+
+
+        .btn-dark-custom {
+
+            border: none;
+
+            background:
+                    #111827;
+
+            color: white;
+        }
+
+
+        .btn-dark-custom:hover {
+
+            background:
+                    #1f2937;
+
+            color: white;
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(0, 0, 0, .14);
+        }
+
+
+        /* =====================================================
+           PAGINATION
+        ===================================================== */
+
+        .pagination-wrapper {
+
+            margin-top: 28px;
+        }
+
+
+        .pagination {
+
+            gap: 4px;
+        }
+
+
+        .pagination .page-link {
+
+            min-width: 34px;
+
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 0 9px;
+
+            border:
+                    1px solid #e2e6e3;
+
+            border-radius: 8px !important;
+
+            color: #374151;
+
+            background: white;
+
+            font-size: 8px;
+
+            font-weight: 750;
+
+            box-shadow:
+                    0 3px 9px rgba(0, 0, 0, .025);
+
+            transition:
+                    background .2s ease,
+                    color .2s ease,
+                    border-color .2s ease,
+                    transform .2s ease;
+        }
+
+
+        .pagination .page-link:hover {
+
+            color:
+                    var(--green-deep);
+
+            border-color:
+                    #b9dcbf;
+
+            background:
+                    var(--green-soft);
+
+            transform:
+                    translateY(-1px);
+        }
+
+
+        .pagination .page-item.active .page-link {
+
+            color: white;
+
+            border-color:
+                    var(--green);
+
+            background:
+                    var(--green);
+
+            box-shadow:
+                    0 5px 13px rgba(22, 163, 74, .16);
+        }
+
+
+        .pagination .page-item.disabled .page-link {
+
+            opacity: .45;
+
+            pointer-events: none;
+
+            background:
+                    #f9faf9;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .shop-footer {
+
+            padding:
+                    35px 0 18px;
+
+            background:
+                    #111827;
+
+            color: white;
+        }
+
+
+        .footer-brand {
+
+            font-size: 20px;
+
+            font-weight: 950;
+        }
+
+
+        .footer-brand span {
+
+            color:
+                    #4ade80;
+        }
+
+
+        .footer-text {
+
+            margin-top: 4px;
+
+            color: #9ca3af;
+
+            font-size: 8px;
+        }
+
+
+        .footer-services {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 24px;
+
+            margin: 20px 0;
+        }
+
+
+        .footer-service {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: #d1d5db;
+
+            font-size: 8px;
+
+            font-weight: 650;
+        }
+
+
+        .footer-service i {
+
+            color:
+                    #4ade80;
+
+            font-size: 12px;
+        }
+
+
+        .footer-bottom {
+
+            padding-top: 14px;
+
+            border-top:
+                    1px solid rgba(255,255,255,.08);
+
+            color: #6b7280;
+
+            font-size: 7px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+        ===================================================== */
+
+        @keyframes fadeUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(15px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        @keyframes slideDown {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(-8px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+
+                transform:
+                        translateY(0);
+            }
+
+            50% {
+
+                transform:
+                        translateY(-5px);
+            }
+        }
+
+
+        /* =====================================================
+           CARD STAGGER
+        ===================================================== */
+
+        .refund-card:nth-child(1) {
+            animation-delay: .03s;
+        }
+
+        .refund-card:nth-child(2) {
+            animation-delay: .08s;
+        }
+
+        .refund-card:nth-child(3) {
+            animation-delay: .13s;
+        }
+
+        .refund-card:nth-child(4) {
+            animation-delay: .18s;
+        }
+
+        .refund-card:nth-child(5) {
+            animation-delay: .23s;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 767px) {
+
+            .refund-page {
+
+                padding:
+                        15px 8px 45px;
+            }
+
+
+            .page-header {
+
+                padding: 19px;
+
+                border-radius: 15px;
+            }
+
+
+            .page-title {
+
+                font-size: 18px;
+            }
+
+
+            .refund-inner {
+
+                padding: 18px;
+            }
+
+
+            .refund-header {
+
+                align-items:
+                        flex-start;
+            }
+
+
+            .refund-info-grid {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+
+            .refund-actions {
+
+                justify-content:
+                        stretch;
+            }
+
+
+            .refund-actions .btn {
+
+                flex: 1;
+            }
+
+
+            .empty-box {
+
+                padding:
+                        55px 18px;
+            }
+
+
+            .footer-services {
+
+                gap: 13px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .refund-header {
+
+                flex-direction:
+                        column;
+            }
+
+
+            .status-badge {
+
+                align-self:
+                        flex-start;
+            }
+
+
+            .refund-number {
+
+                font-size: 12px;
+            }
+
+
+            .transaction-box {
+
+                align-items:
+                        flex-start;
+            }
+
+
+            .refund-actions {
+
+                flex-direction:
+                        column;
+            }
+
+
+            .refund-actions .btn {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container refund-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <section class="page-header">
+
+        <div class="header-content">
+
+            <div class="header-icon">
+
+                <i class="bi bi-wallet2"></i>
+
+            </div>
+
+
+            <h1 class="page-title">
+
+                My Refunds
+
+            </h1>
+
+
+            <p class="page-subtitle">
+
+                Track the status of your refunds and
+                view complete transaction details.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUCCESS
+    ====================================================== -->
+
+    <div
+            th:if="${successMessage}"
+            class="alert alert-success alert-dismissible fade show custom-alert"
+            role="alert">
+
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        <span th:text="${successMessage}">
+            Refund information updated.
+        </span>
+
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible fade show custom-alert"
+            role="alert">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        <span th:text="${errorMessage}">
+            Something went wrong.
+        </span>
+
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         REFUND LIST
+    ====================================================== -->
+
+    <div
+            th:if="${refunds != null && !refunds.content.isEmpty()}">
+
+
+        <div
+                th:each="refund : ${refunds.content}"
+                class="refund-card mb-4">
+
+
+            <div class="refund-inner">
+
+
+                <!-- =================================================
+                     HEADER
+                ================================================= -->
+
+                <div class="refund-header">
+
+
+                    <div>
+
+                        <div class="refund-label">
+                            REFUND
+                        </div>
+
+
+                        <div class="refund-number">
+
+                            <span
+                                    th:text="${refund.refundNumber}">
+                                REF-20260906-12345678
+                            </span>
+
+                        </div>
+
+
+                        <div class="created-date">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            Created on
+
+                            <span
+                                    th:text="${#temporals.format(
+                                        refund.createdAt,
+                                        'dd MMM yyyy, hh:mm a'
+                                    )}">
+                                06 Sep 2026, 10:30 AM
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <span
+                            class="status-badge"
+                            th:classappend="${refund.status.name() == 'PENDING'
+                                ? ' status-pending'
+                                : refund.status.name() == 'INITIATED'
+                                ? ' status-initiated'
+                                : refund.status.name() == 'PROCESSING'
+                                ? ' status-processing'
+                                : refund.status.name() == 'COMPLETED'
+                                ? ' status-completed'
+                                : refund.status.name() == 'FAILED'
+                                ? ' status-failed'
+                                : ' status-cancelled'}">
+
+
+                        <i
+                                th:class="${refund.status.name() == 'COMPLETED'
+                                    ? 'bi bi-check-circle-fill'
+                                    : refund.status.name() == 'FAILED'
+                                    ? 'bi bi-x-circle-fill'
+                                    : refund.status.name() == 'CANCELLED'
+                                    ? 'bi bi-slash-circle-fill'
+                                    : 'bi bi-clock-fill'}">
+                        </i>
+
+
+                        <span
+                                th:text="${refund.status.name().replace('_', ' ')}">
+
+                            PENDING
+
+                        </span>
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     INFORMATION
+                ================================================== -->
+
+                <div class="refund-info-grid">
+
+
+                    <!-- AMOUNT -->
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Refund Amount
+                        </div>
+
+                        <div class="amount">
+
+                            ₹
+
+                            <span
+                                    th:text="${#numbers.formatDecimal(
+                                        refund.refundAmount,
+                                        1,
+                                        2
+                                    )}">
+                                999.00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ORDER -->
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Order Number
+                        </div>
+
+                        <div class="info-value">
+
+                            <span
+                                    th:if="${refund.order != null}"
+                                    th:text="${refund.order.orderNumber}">
+                                DZ-100001
+                            </span>
+
+                            <span
+                                    th:unless="${refund.order != null}">
+                                N/A
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- METHOD -->
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Refund Method
+                        </div>
+
+                        <div class="info-value">
+
+                            <i class="bi bi-bank me-1"></i>
+
+                            <span
+                                    th:text="${refund.refundMethod != null
+                                        ? refund.refundMethod.replace('_', ' ')
+                                        : 'Manual'}">
+                                COD BANK TRANSFER
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     TRANSACTION REFERENCE
+                ================================================== -->
+
+                <div
+                        th:if="${refund.transactionReference != null
+                            && !refund.transactionReference.isEmpty()}"
+                        class="transaction-box">
+
+
+                    <div class="transaction-icon">
+
+                        <i class="bi bi-upc-scan"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="info-label mb-1">
+
+                            Transaction Reference
+
+                        </div>
+
+
+                        <div class="transaction-value">
+
+                            <span
+                                    th:text="${refund.transactionReference}">
+                                TXN123456789
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     REMARKS
+                ================================================== -->
+
+                <div
+                        th:if="${refund.remarks != null
+                            && !refund.remarks.isEmpty()}"
+                        class="remarks-box">
+
+                    <strong>
+                        <i class="bi bi-chat-left-text me-1"></i>
+                        Remarks:
+                    </strong>
+
+                    <span
+                            th:text="${refund.remarks}">
+                        Refund is being processed.
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     COMPLETED DATE
+                ================================================== -->
+
+                <div
+                        th:if="${refund.completedAt != null}"
+                        class="completed-box">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    Refund completed on
+
+                    <span
+                            th:text="${#temporals.format(
+                                refund.completedAt,
+                                'dd MMM yyyy, hh:mm a'
+                            )}">
+
+                        06 Sep 2026, 05:30 PM
+
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="refund-actions">
+
+
+                    <a
+                            th:href="@{/customer/refunds/{id}(
+                                id=${refund.id}
+                            )}"
+                            class="btn btn-outline-primary px-3">
+
+                        <i class="bi bi-eye me-1"></i>
+
+                        View Details
+
+                    </a>
+
+
+                    <!-- RELATED ORDER -->
+
+                    <a
+                            th:if="${refund.order != null}"
+                            th:href="@{/customer/orders/{id}(
+                                id=${refund.order.id}
+                            )}"
+                            class="btn btn-outline-dark px-3">
+
+                        <i class="bi bi-box-seam me-1"></i>
+
+                        View Order
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PAGINATION
+        ====================================================== -->
+
+        <div
+                th:if="${refunds.totalPages > 1}"
+                class="pagination-wrapper">
+
+
+            <nav
+                    aria-label="Refund pagination"
+                    class="d-flex justify-content-center">
+
+
+                <ul class="pagination mb-0">
+
+
+                    <!-- PREVIOUS -->
+
+                    <li
+                            class="page-item"
+                            th:classappend="${refunds.first
+                                ? ' disabled'
+                                : ''}">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/customer/refunds(
+                                    page=${refunds.number - 1}
+                                )}"
+                                aria-label="Previous">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    <li
+                            th:each="pageNumber : ${#numbers.sequence(
+                                0,
+                                refunds.totalPages - 1
+                            )}"
+                            class="page-item"
+                            th:classappend="${pageNumber == refunds.number
+                                ? ' active'
+                                : ''}">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/customer/refunds(
+                                    page=${pageNumber}
+                                )}"
+                                th:text="${pageNumber + 1}">
+
+                            1
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- NEXT -->
+
+                    <li
+                            class="page-item"
+                            th:classappend="${refunds.last
+                                ? ' disabled'
+                                : ''}">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/customer/refunds(
+                                    page=${refunds.number + 1}
+                                )}"
+                                aria-label="Next">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+                    </li>
+
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         EMPTY STATE
+    ====================================================== -->
+
+    <section
+            th:if="${refunds == null || refunds.content.isEmpty()}"
+            class="empty-box">
+
+
+        <div class="empty-icon">
+
+            <i class="bi bi-wallet2"></i>
+
+        </div>
+
+
+        <h2 class="empty-title">
+
+            No Refunds Found
+
+        </h2>
+
+
+        <p class="empty-text">
+
+            You don't have any refunds yet.
+            Refund information will appear here when
+            an eligible return reaches refund processing.
+
+        </p>
+
+
+        <a
+                th:href="@{/customer/returns}"
+                class="btn btn-dark-custom px-4">
+
+            <i class="bi bi-arrow-return-left me-1"></i>
+
+            View My Returns
+
+        </a>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                Dreamz <span>Shop</span>
+
+            </div>
+
+
+            <div class="footer-text">
+
+                Quality products. Simple shopping.
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-cash-coin"></i>
+
+                Cash on Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${product.name + ' | Dreamz Shop'}">
+        Product Details | Dreamz Shop
+    </title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        :root {
+            --primary: #0c831f;
+            --primary-dark: #086618;
+            --primary-light: #eaf7ec;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --background: #f7f8f6;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text-dark);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .top-navbar {
+            height: 72px;
+            background: #ffffff;
+            border-bottom: 1px solid #eeeeee;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand-logo {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo:hover {
+            color: var(--primary-dark);
+        }
+
+        .nav-link-custom {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 12px !important;
+            transition: 0.25s ease;
+        }
+
+        .nav-link-custom:hover {
+            color: var(--primary);
+        }
+
+        .nav-search {
+            width: 330px;
+            position: relative;
+        }
+
+        .nav-search input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f6f7f6;
+            padding: 0 45px 0 42px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.25s ease;
+        }
+
+        .nav-search input:focus {
+            background: #ffffff;
+            border-color: #9bd7a3;
+            box-shadow: 0 0 0 3px rgba(12, 131, 31, 0.08);
+        }
+
+        .nav-search i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #737373;
+        }
+
+        .nav-icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            font-size: 19px;
+            transition: 0.25s ease;
+            position: relative;
+        }
+
+        .nav-icon-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -2px;
+            right: -1px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .page-wrapper {
+            padding: 25px 0 70px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 22px;
+        }
+
+        .breadcrumb-item {
+            font-size: 13px;
+        }
+
+        .breadcrumb-item a {
+            color: #6b7280;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary);
+        }
+
+        .breadcrumb-item.active {
+            color: #111827;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           PRODUCT CARD
+        ===================================================== */
+
+        .product-main-card {
+            background: #ffffff;
+            border: 1px solid #eeeeee;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.045);
+            animation: fadeUp 0.55s ease;
+        }
+
+        .product-gallery {
+            padding: 28px;
+        }
+
+        .main-image-wrapper {
+            height: 510px;
+            width: 100%;
+            background: #f7f8f7;
+            border-radius: 18px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main-product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 30px;
+            transition: transform 0.45s ease;
+        }
+
+        .main-image-wrapper:hover .main-product-image {
+            transform: scale(1.035);
+        }
+
+        .image-badge {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            padding: 7px 11px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .image-wishlist {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 43px;
+            height: 43px;
+            border-radius: 50%;
+            border: 1px solid #eeeeee;
+            background: #ffffff;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            z-index: 3;
+            transition: 0.25s ease;
+            cursor: pointer;
+        }
+
+        .image-wishlist:hover {
+            color: #e11d48;
+            border-color: #fecdd3;
+            background: #fff1f2;
+            transform: scale(1.06);
+        }
+
+
+        /* =====================================================
+           THUMBNAILS
+        ===================================================== */
+
+        .thumbnail-wrapper {
+            display: flex;
+            gap: 11px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding: 3px 2px 7px;
+            scrollbar-width: thin;
+        }
+
+        .thumbnail {
+            flex: 0 0 auto;
+            width: 76px;
+            height: 76px;
+            object-fit: contain;
+            background: #f7f8f7;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 6px;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .thumbnail:hover {
+            border-color: #9bd7a3;
+            transform: translateY(-2px);
+        }
+
+        .thumbnail.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(12, 131, 31, 0.08);
+        }
+
+
+        /* =====================================================
+           PRODUCT INFORMATION
+        ===================================================== */
+
+        .product-information {
+            padding: 35px 35px 35px 10px;
+        }
+
+        .brand-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-radius: 7px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .product-title {
+            font-size: 34px;
+            line-height: 1.18;
+            font-weight: 750;
+            letter-spacing: -0.7px;
+            margin-bottom: 10px;
+            color: #171717;
+        }
+
+        .sku-text {
+            color: #8a8a8a;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+
+        /* =====================================================
+           RATING
+        ===================================================== */
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #168c2a;
+            color: white;
+            border-radius: 6px;
+            padding: 5px 9px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .rating-badge i {
+            font-size: 11px;
+        }
+
+        .rating-text {
+            color: #737373;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           PRICE
+        ===================================================== */
+
+        .price-area {
+            padding: 17px 0;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .selling-price {
+            color: #111827;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+        }
+
+        .mrp {
+            color: #999999;
+            font-size: 17px;
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: #e9f8eb;
+            color: #08751a;
+            border-radius: 6px;
+            padding: 6px 9px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .saving-text {
+            color: #168c2a;
+            font-size: 13px;
+            font-weight: 650;
+            margin-top: 7px;
+        }
+
+
+        /* =====================================================
+           DESCRIPTION
+        ===================================================== */
+
+        .short-description {
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-top: 19px;
+            margin-bottom: 20px;
+        }
+
+
+        /* =====================================================
+           PRODUCT META
+        ===================================================== */
+
+        .product-meta-box {
+            background: #f8faf8;
+            border: 1px solid #edf2ed;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            font-size: 13px;
+        }
+
+        .meta-row + .meta-row {
+            border-top: 1px solid #e9eee9;
+        }
+
+        .meta-label {
+            color: #777777;
+        }
+
+        .meta-value {
+            color: #222222;
+            font-weight: 650;
+            text-align: right;
+        }
+
+
+        /* =====================================================
+           STOCK
+        ===================================================== */
+
+        .stock-area {
+            margin-bottom: 20px;
+        }
+
+        .stock-success {
+            color: #11852a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .stock-warning {
+            color: #e57b00;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .out-stock {
+            color: #dc3545;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           QUANTITY
+        ===================================================== */
+
+        .quantity-label {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .quantity-box {
+            width: 145px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #d8ddd8;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .quantity-btn {
+            width: 43px;
+            height: 46px;
+            border: none;
+            background: #f7f8f7;
+            color: #222;
+            font-size: 20px;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .quantity-input {
+            width: 59px;
+            height: 46px;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .action-buttons {
+            margin-top: 18px;
+        }
+
+        .add-cart-btn,
+        .buy-btn {
+            min-height: 49px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.25s ease;
+        }
+
+        .add-cart-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .add-cart-btn:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 17px rgba(12, 131, 31, 0.18);
+        }
+
+        .buy-btn {
+            background: #ffffff;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .buy-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================================
+           BENEFITS
+        ===================================================== */
+
+        .benefit-grid {
+            margin-top: 23px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .benefit-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .benefit-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .benefit-text {
+            font-size: 11px;
+            color: #8a8a8a;
+            margin-top: 2px;
+        }
+
+
+        /* =====================================================
+           BELOW PRODUCT
+        ===================================================== */
+
+        .content-card {
+            background: #ffffff;
+            border: 1px solid #eeeeee;
+            border-radius: 18px;
+            padding: 28px;
+            margin-top: 20px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.035);
+            animation: fadeUp 0.65s ease;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 750;
+            color: #171717;
+            margin-bottom: 18px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            margin-right: 7px;
+        }
+
+        .description-content {
+            color: #666666;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           SPECIFICATIONS
+        ===================================================== */
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 14px 0;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 14px;
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            color: #777777;
+        }
+
+        .spec-value {
+            font-weight: 650;
+            text-align: right;
+        }
+
+
+        /* =====================================================
+           DELIVERY CARD
+        ===================================================== */
+
+        .delivery-card {
+            margin-top: 20px;
+            background: #f0f9f1;
+            border: 1px solid #d9efd9;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .delivery-icon {
+            width: 44px;
+            height: 44px;
+            background: #ffffff;
+            color: var(--primary);
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .delivery-title {
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .delivery-text {
+            color: #6d756d;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            background: #172119;
+            color: #ffffff;
+            margin-top: 50px;
+            padding: 45px 0 25px;
+        }
+
+        .footer-brand {
+            font-size: 23px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .footer-description {
+            color: #aeb8b0;
+            font-size: 13px;
+            line-height: 1.7;
+            max-width: 340px;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            font-weight: 750;
+            margin-bottom: 15px;
+        }
+
+        .footer-link {
+            display: block;
+            color: #aeb8b0;
+            font-size: 13px;
+            margin-bottom: 9px;
+            transition: 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        .footer-bottom {
+            margin-top: 35px;
+            padding-top: 18px;
+            border-top: 1px solid #303a32;
+            color: #89958c;
+            font-size: 12px;
+        }
+
+        .social-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #27332a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #c8d1ca;
+            margin-right: 5px;
+            transition: 0.2s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+        ===================================================== */
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-cart {
+            animation: cartPulse 0.35s ease;
+        }
+
+        @keyframes cartPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.12);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 991px) {
+
+            .top-navbar {
+                height: auto;
+                min-height: 66px;
+            }
+
+            .nav-search {
+                width: 100%;
+                margin: 12px 0;
+            }
+
+            .product-information {
+                padding: 10px 28px 30px;
+            }
+
+            .main-image-wrapper {
+                height: 440px;
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .page-wrapper {
+                padding-top: 15px;
+            }
+
+            .product-gallery {
+                padding: 15px;
+            }
+
+            .product-information {
+                padding: 10px 20px 25px;
+            }
+
+            .main-image-wrapper {
+                height: 350px;
+                border-radius: 15px;
+            }
+
+            .main-product-image {
+                padding: 20px;
+            }
+
+            .product-title {
+                font-size: 26px;
+            }
+
+            .selling-price {
+                font-size: 29px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .spec-row {
+                font-size: 13px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .brand-logo {
+                font-size: 21px;
+            }
+
+            .main-image-wrapper {
+                height: 310px;
+            }
+
+            .thumbnail {
+                width: 64px;
+                height: 64px;
+            }
+
+            .product-title {
+                font-size: 23px;
+            }
+
+            .selling-price {
+                font-size: 27px;
+            }
+
+            .action-buttons .col-6 {
+                width: 100%;
+            }
+
+            .benefit-grid .col-6 {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar navbar-expand-lg top-navbar">
+
+    <div class="container">
+
+        <a class="navbar-brand brand-logo"
+           th:href="@{/}">
+
+            <i class="bi bi-bag-heart-fill me-1"></i>
+            Dreamz Shop
+
+        </a>
+
+
+        <button
+                class="navbar-toggler border-0 shadow-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar">
+
+            <i class="bi bi-list fs-2"></i>
+
+        </button>
+
+
+        <div class="collapse navbar-collapse"
+             id="mainNavbar">
+
+
+            <div class="nav-search mx-lg-auto">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                        type="text"
+                        placeholder="Search products...">
+
+            </div>
+
+
+            <ul class="navbar-nav align-items-lg-center gap-lg-1">
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link nav-link-custom"
+                       th:href="@{/}">
+
+                        Home
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link nav-link-custom"
+                       th:href="@{/products}">
+
+                        Shop
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link nav-link-custom"
+                       th:href="@{/login}">
+
+                        Login
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-icon-btn"
+                       th:href="@{/customer/wishlist}">
+
+                        <i class="bi bi-heart"></i>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-icon-btn"
+                       th:href="@{/customer/cart}">
+
+                        <i class="bi bi-cart3"></i>
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     PAGE
+========================================================= -->
+
+<main class="container page-wrapper">
+
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a th:href="@{/}">
+                    <i class="bi bi-house"></i>
+                    Home
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a th:href="@{/products}">
+                    Products
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                th:text="${product.name}">
+
+                Product
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN PRODUCT
+    ====================================================== -->
+
+    <div class="product-main-card">
+
+        <div class="row g-0">
+
+
+            <!-- =================================================
+                 IMAGE GALLERY
+            ================================================== -->
+
+            <div class="col-lg-6">
+
+                <div class="product-gallery">
+
+
+                    <div class="main-image-wrapper">
+
+
+                        <div
+                                th:if="${product.discountPercentage > 0}"
+                                class="image-badge">
+
+                            <span
+                                    th:text="${#numbers.formatDecimal(product.discountPercentage, 1, 0)}">
+
+                                0
+
+                            </span>
+
+                            % OFF
+
+                        </div>
+
+
+                        <button
+                                type="button"
+                                class="image-wishlist"
+                                onclick="toggleWishlist()">
+
+                            <i
+                                    id="wishlistIcon"
+                                    class="bi bi-heart">
+
+                            </i>
+
+                        </button>
+
+
+                        <img
+                                id="mainProductImage"
+                                class="main-product-image"
+                                th:src="${product.mainImage != null && !product.mainImage.isEmpty()
+                                    ? product.mainImage
+                                    : '/images/no-image.png'}"
+                                th:alt="${product.name}">
+
+                    </div>
+
+
+                    <!-- =================================================
+                         THUMBNAILS
+                    ================================================== -->
+
+                    <div class="thumbnail-wrapper">
+
+
+                        <img
+                                th:if="${product.mainImage != null && !product.mainImage.isEmpty()}"
+                                class="thumbnail active"
+                                th:src="${product.mainImage}"
+                                th:alt="${product.name}"
+                                onclick="changeMainImage(this, this.src)">
+
+
+                        <img
+                                th:each="image : ${images}"
+                                th:if="${image.enabled}"
+                                class="thumbnail"
+                                th:src="${image.imageUrl}"
+                                th:alt="${image.altText != null ? image.altText : product.name}"
+                                onclick="changeMainImage(this, this.src)">
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PRODUCT INFORMATION
+            ================================================== -->
+
+            <div class="col-lg-6">
+
+                <div class="product-information">
+
+
+                    <!-- BRAND -->
+
+                    <div
+                            th:if="${product.brand != null}"
+                            class="brand-label">
+
+                        <i class="bi bi-patch-check-fill"></i>
+
+                        <span
+                                th:text="${product.brand.name}">
+
+                            Brand
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <h1
+                            class="product-title"
+                            th:text="${product.name}">
+
+                        Product Name
+
+                    </h1>
+
+
+                    <!-- SKU -->
+
+                    <div class="sku-text">
+
+                        Product Code:
+                        <strong th:text="${product.sku}">
+                            SKU
+                        </strong>
+
+                    </div>
+
+
+                    <!-- RATING -->
+
+                    <div class="rating-row">
+
+                        <span class="rating-badge">
+
+                            4.5
+                            <i class="bi bi-star-fill"></i>
+
+                        </span>
+
+                        <span class="rating-text">
+
+                            Customer Reviews
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- PRICE -->
+
+                    <div class="price-area">
+
+
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+
+
+                            <span class="selling-price">
+
+                                ₹<span
+                                    th:text="${product.sellingPrice}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+
+                            <span
+                                    th:if="${product.mrp != null && product.mrp > product.sellingPrice}"
+                                    class="mrp">
+
+                                ₹<span
+                                    th:text="${product.mrp}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+
+                            <span
+                                    th:if="${product.discountPercentage > 0}"
+                                    class="discount-badge">
+
+                                <span
+                                        th:text="${#numbers.formatDecimal(product.discountPercentage, 1, 0)}">
+
+                                    0
+
+                                </span>
+
+                                % OFF
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                                th:if="${product.discountAmount > 0}"
+                                class="saving-text">
+
+                            <i class="bi bi-tag-fill me-1"></i>
+
+                            You save ₹
+                            <span
+                                    th:text="${product.discountAmount}">
+                                0.00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SHORT DESCRIPTION -->
+
+                    <p
+                            th:if="${product.shortDescription != null
+                                    && !product.shortDescription.isEmpty()}"
+                            class="short-description"
+                            th:text="${product.shortDescription}">
+
+                        Product short description.
+
+                    </p>
+
+
+                    <!-- PRODUCT META -->
+
+                    <div class="product-meta-box">
+
+
+                        <div
+                                th:if="${product.category != null}"
+                                class="meta-row">
+
+                            <span class="meta-label">
+                                Category
+                            </span>
+
+                            <span
+                                    class="meta-value"
+                                    th:text="${product.category.name}">
+
+                                Category
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                                th:if="${product.subCategory != null}"
+                                class="meta-row">
+
+                            <span class="meta-label">
+                                Subcategory
+                            </span>
+
+                            <span
+                                    class="meta-value"
+                                    th:text="${product.subCategory.name}">
+
+                                Subcategory
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                                th:if="${product.weight != null}"
+                                class="meta-row">
+
+                            <span class="meta-label">
+                                Weight
+                            </span>
+
+                            <span class="meta-value">
+
+                                <span th:text="${product.weight}">
+                                    0
+                                </span>
+
+                                <span th:text="${product.weightUnit}">
+                                    kg
+                                </span>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STOCK -->
+
+                    <div class="stock-area">
+
+
+                        <div
+                                th:if="${product.stockQuantity != null
+                                    && product.stockQuantity > 0}"
+                                class="stock-success">
+
+                            <i class="bi bi-check-circle-fill me-1"></i>
+
+                            In Stock
+
+                            <span
+                                    class="text-muted fw-normal">
+
+                                ·
+                                <span
+                                        th:text="${product.stockQuantity}">
+                                    0
+                                </span>
+
+                                available
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                                th:if="${product.stockQuantity != null
+                                    && product.stockQuantity > 0
+                                    && product.stockQuantity <= product.minimumStockLevel}"
+                                class="stock-warning">
+
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+                            Only a few items left!
+
+                        </div>
+
+
+                        <div
+                                th:if="${product.stockQuantity == null
+                                    || product.stockQuantity <= 0}"
+                                class="out-stock">
+
+                            <i class="bi bi-x-circle-fill me-1"></i>
+
+                            Out of Stock
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CART FORM
+                    ================================================== -->
+
+                    <form
+                            th:if="${product.status.name() == 'ACTIVE'
+                                && product.stockQuantity != null
+                                && product.stockQuantity > 0}"
+                            th:action="@{/customer/cart/add}"
+                            method="post"
+                            id="addToCartForm">
+
+
+                        <input
+                                type="hidden"
+                                name="productId"
+                                th:value="${product.id}">
+
+
+                        <!-- QUANTITY -->
+
+                        <div>
+
+                            <div class="quantity-label">
+                                Quantity
+                            </div>
+
+
+                            <div class="quantity-box">
+
+                                <button
+                                        type="button"
+                                        class="quantity-btn"
+                                        onclick="decreaseQuantity()">
+
+                                    −
+
+                                </button>
+
+
+                                <input
+                                        type="number"
+                                        id="quantity"
+                                        name="quantity"
+                                        class="quantity-input"
+                                        value="1"
+                                        min="1"
+                                        th:max="${product.stockQuantity}">
+
+
+                                <button
+                                        type="button"
+                                        class="quantity-btn"
+                                        onclick="increaseQuantity()">
+
+                                    +
+
+                                </button>
+
+                            </div>
+
+
+                            <div class="form-text mt-1">
+
+                                Maximum
+                                <span
+                                        th:text="${product.stockQuantity}">
+                                    0
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTION BUTTONS -->
+
+                        <div class="row g-2 action-buttons">
+
+
+                            <div class="col-6">
+
+                                <button
+                                        type="submit"
+                                        class="btn add-cart-btn text-white w-100">
+
+                                    <i class="bi bi-cart-plus me-1"></i>
+
+                                    Add to Cart
+
+                                </button>
+
+                            </div>
+
+
+                            <div class="col-6">
+
+                                <button
+                                        type="button"
+                                        class="btn buy-btn w-100"
+                                        onclick="buyNow()">
+
+                                    <i class="bi bi-lightning-fill me-1"></i>
+
+                                    Buy Now
+
+                                </button>
+
+                            </div>
+
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- UNAVAILABLE -->
+
+                    <div
+                            th:if="${product.status.name() != 'ACTIVE'
+                                || product.stockQuantity == null
+                                || product.stockQuantity <= 0}">
+
+                        <button
+                                type="button"
+                                class="btn btn-secondary w-100"
+                                disabled>
+
+                            <i class="bi bi-x-circle me-1"></i>
+
+                            Currently Unavailable
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- BENEFITS -->
+
+                    <div class="row g-3 benefit-grid">
+
+
+                        <div class="col-6">
+
+                            <div class="benefit-item">
+
+                                <div class="benefit-icon">
+
+                                    <i class="bi bi-shield-check"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="benefit-title">
+                                        Secure Shopping
+                                    </div>
+
+                                    <div class="benefit-text">
+                                        Safe & secure checkout
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="benefit-item">
+
+                                <div class="benefit-icon">
+
+                                    <i class="bi bi-truck"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="benefit-title">
+                                        Fast Delivery
+                                    </div>
+
+                                    <div class="benefit-text">
+                                        Reliable delivery
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="benefit-item">
+
+                                <div class="benefit-icon">
+
+                                    <i class="bi bi-arrow-repeat"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="benefit-title">
+                                        Easy Returns
+                                    </div>
+
+                                    <div class="benefit-text">
+                                        Hassle-free returns
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="benefit-item">
+
+                                <div class="benefit-icon">
+
+                                    <i class="bi bi-headset"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="benefit-title">
+                                        Customer Support
+                                    </div>
+
+                                    <div class="benefit-text">
+                                        We're here to help
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DELIVERY
+    ====================================================== -->
+
+    <div class="delivery-card">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="delivery-icon">
+
+                <i class="bi bi-truck"></i>
+
+            </div>
+
+            <div>
+
+                <div class="delivery-title">
+                    Fast & Reliable Delivery
+                </div>
+
+                <div class="delivery-text">
+                    Your order will be carefully packed and delivered to your doorstep.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DESCRIPTION
+    ====================================================== -->
+
+    <div
+            th:if="${product.description != null
+                    && !product.description.isEmpty()}"
+            class="content-card">
+
+
+        <h2 class="section-title">
+
+            <i class="bi bi-file-text"></i>
+
+            Product Description
+
+        </h2>
+
+
+        <div
+                class="description-content"
+                style="white-space: pre-line;"
+                th:text="${product.description}">
+
+            Product description.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PRODUCT INFORMATION
+    ====================================================== -->
+
+    <div class="content-card">
+
+
+        <h2 class="section-title">
+
+            <i class="bi bi-info-circle"></i>
+
+            Product Information
+
+        </h2>
+
+
+        <div class="spec-row">
+
+            <span class="spec-label">
+                Product
+            </span>
+
+            <span
+                    class="spec-value"
+                    th:text="${product.name}">
+                Product
+            </span>
+
+        </div>
+
+
+        <div class="spec-row">
+
+            <span class="spec-label">
+                SKU
+            </span>
+
+            <span
+                    class="spec-value"
+                    th:text="${product.sku}">
+                SKU
+            </span>
+
+        </div>
+
+
+        <div
+                th:if="${product.category != null}"
+                class="spec-row">
+
+            <span class="spec-label">
+                Category
+            </span>
+
+            <span
+                    class="spec-value"
+                    th:text="${product.category.name}">
+                Category
+            </span>
+
+        </div>
+
+
+        <div
+                th:if="${product.subCategory != null}"
+                class="spec-row">
+
+            <span class="spec-label">
+                Subcategory
+            </span>
+
+            <span
+                    class="spec-value"
+                    th:text="${product.subCategory.name}">
+                Subcategory
+            </span>
+
+        </div>
+
+
+        <div
+                th:if="${product.brand != null}"
+                class="spec-row">
+
+            <span class="spec-label">
+                Brand
+            </span>
+
+            <span
+                    class="spec-value"
+                    th:text="${product.brand.name}">
+                Brand
+            </span>
+
+        </div>
+
+
+        <div
+                th:if="${product.weight != null}"
+                class="spec-row">
+
+            <span class="spec-label">
+                Weight
+            </span>
+
+            <span class="spec-value">
+
+                <span th:text="${product.weight}">
+                    0
+                </span>
+
+                <span th:text="${product.weightUnit}">
+                    kg
+                </span>
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="footer">
+
+
+    <div class="container">
+
+
+        <div class="row g-4">
+
+
+            <div class="col-lg-5 col-md-6">
+
+                <div class="footer-brand">
+
+                    <i class="bi bi-bag-heart-fill me-1"></i>
+
+                    Dreamz Shop
+
+                </div>
+
+
+                <p class="footer-description">
+
+                    Your trusted online shopping destination for
+                    quality products, great prices and a smooth
+                    shopping experience.
+
+                </p>
+
+
+                <div class="mt-3">
+
+                    <a href="#"
+                       class="social-icon">
+
+                        <i class="bi bi-facebook"></i>
+
+                    </a>
+
+                    <a href="#"
+                       class="social-icon">
+
+                        <i class="bi bi-instagram"></i>
+
+                    </a>
+
+                    <a href="#"
+                       class="social-icon">
+
+                        <i class="bi bi-twitter-x"></i>
+
+                    </a>
+
+                    <a href="#"
+                       class="social-icon">
+
+                        <i class="bi bi-youtube"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-2 col-md-6">
+
+                <div class="footer-title">
+                    Shop
+                </div>
+
+                <a
+                        th:href="@{/products}"
+                        class="footer-link">
+
+                    All Products
+
+                </a>
+
+                <a
+                        th:href="@{/}"
+                        class="footer-link">
+
+                    Categories
+
+                </a>
+
+                <a
+                        th:href="@{/}"
+                        class="footer-link">
+
+                    Offers
+
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-2 col-md-6">
+
+                <div class="footer-title">
+                    Account
+                </div>
+
+                <a
+                        th:href="@{/login}"
+                        class="footer-link">
+
+                    Login
+
+                </a>
+
+                <a
+                        th:href="@{/register}"
+                        class="footer-link">
+
+                    Register
+
+                </a>
+
+                <a
+                        th:href="@{/customer/cart}"
+                        class="footer-link">
+
+                    My Cart
+
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="footer-title">
+                    Customer Support
+                </div>
+
+                <span class="footer-link">
+                    <i class="bi bi-truck me-2"></i>
+                    Fast Delivery
+                </span>
+
+                <span class="footer-link">
+                    <i class="bi bi-shield-check me-2"></i>
+                    Secure Payments
+                </span>
+
+                <span class="footer-link">
+                    <i class="bi bi-arrow-repeat me-2"></i>
+                    Easy Returns
+                </span>
+
+                <span class="footer-link">
+                    <i class="bi bi-headset me-2"></i>
+                    Customer Support
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="footer-bottom
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-2">
+
+            <span>
+                © 2026 Dreamz Shop. All rights reserved.
+            </span>
+
+            <span>
+                Made for a better shopping experience.
+            </span>
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    function changeMainImage(element, imageUrl) {
+
+        const mainImage =
+            document.getElementById("mainProductImage");
+
+        if (mainImage) {
+
+            mainImage.style.opacity = "0.4";
+
+            setTimeout(function () {
+
+                mainImage.src = imageUrl;
+
+                mainImage.style.opacity = "1";
+
+            }, 120);
+
+        }
+
+
+        const thumbnails =
+            document.querySelectorAll(".thumbnail");
+
+        thumbnails.forEach(function (thumbnail) {
+
+            thumbnail.classList.remove("active");
+
+        });
+
+
+        if (element) {
+            element.classList.add("active");
+        }
+
+    }
+
+
+    function increaseQuantity() {
+
+        const input =
+            document.getElementById("quantity");
+
+        if (!input) {
+            return;
+        }
+
+
+        const max =
+            parseInt(input.max);
+
+        let value =
+            parseInt(input.value) || 1;
+
+
+        if (value < max) {
+            value++;
+        }
+
+
+        input.value = value;
+
+    }
+
+
+    function decreaseQuantity() {
+
+        const input =
+            document.getElementById("quantity");
+
+        if (!input) {
+            return;
+        }
+
+
+        let value =
+            parseInt(input.value) || 1;
+
+
+        if (value > 1) {
+            value--;
+        }
+
+
+        input.value = value;
+
+    }
+
+
+    function toggleWishlist() {
+
+        const icon =
+            document.getElementById("wishlistIcon");
+
+        if (!icon) {
+            return;
+        }
+
+
+        if (icon.classList.contains("bi-heart")) {
+
+            icon.classList.remove("bi-heart");
+
+            icon.classList.add("bi-heart-fill");
+
+            icon.style.color = "#e11d48";
+
+        } else {
+
+            icon.classList.remove("bi-heart-fill");
+
+            icon.classList.add("bi-heart");
+
+            icon.style.color = "";
+
+        }
+
+    }
+
+
+    function buyNow() {
+
+        const form =
+            document.getElementById("addToCartForm");
+
+        const quantity =
+            document.getElementById("quantity");
+
+
+        if (!form || !quantity) {
+            return;
+        }
+
+
+        const max =
+            parseInt(quantity.max);
+
+        const value =
+            parseInt(quantity.value) || 1;
+
+
+        if (value < 1 || value > max) {
+
+            alert("Please select a valid quantity.");
+
+            return;
+
+        }
+
+
+        alert(
+            "Buy Now checkout will be connected in the checkout module."
+        );
+
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            const form =
+                document.getElementById("addToCartForm");
+
+
+            if (!form) {
+                return;
+            }
+
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+
+                    const input =
+                        document.getElementById("quantity");
+
+
+                    const quantity =
+                        parseInt(input.value);
+
+
+                    const max =
+                        parseInt(input.max);
+
+
+                    if (
+                        isNaN(quantity)
+                        || quantity < 1
+                        || quantity > max
+                    ) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please enter a valid quantity."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const cartButton =
+                        form.querySelector(".add-cart-btn");
+
+
+                    if (cartButton) {
+
+                        cartButton.classList.add("pulse-cart");
+
+                        cartButton.innerHTML =
+                            '<i class="bi bi-check-circle me-1"></i> Adding...';
+
+                    }
+
+                }
+            );
+
+
+        }
+    );
+
+</script>
+
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

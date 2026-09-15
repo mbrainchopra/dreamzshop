@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${brand.id == null ? 'Add Brand | Dreamz Shop Admin' : 'Edit Brand | Dreamz Shop Admin'}">
+        Brand | Dreamz Shop Admin
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --sidebar-width:255px;
+            --green:#16a34a;
+            --green-dark:#15803d;
+            --green-deep:#166534;
+            --green-soft:#f0fdf4;
+            --green-light:#dcfce7;
+            --nav:#08111f;
+            --nav-2:#0f172a;
+            --ink:#111827;
+            --text:#1f2937;
+            --muted:#6b7280;
+            --border:#e5e7eb;
+            --bg:#f5f7f6;
+            --white:#fff;
+            --danger:#dc2626;
+            --shadow-sm:0 4px 14px rgba(15,23,42,.05);
+            --shadow:0 14px 38px rgba(15,23,42,.08);
+        }
+
+        *{
+            box-sizing:border-box;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            background:
+                    radial-gradient(circle at 90% 0%,rgba(34,197,94,.075),transparent 28%),
+                    var(--bg);
+            color:var(--text);
+            font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        button,
+        input,
+        textarea{
+            font:inherit;
+        }
+
+        ::selection{
+            background:var(--green);
+            color:#fff;
+        }
+
+        ::-webkit-scrollbar{
+            width:7px;
+            height:7px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#cbd5e1;
+            border-radius:20px;
+        }
+
+        ::-webkit-scrollbar-track{
+            background:transparent;
+        }
+
+        .admin-sidebar{
+            position:fixed;
+            inset:0 auto 0 0;
+            width:var(--sidebar-width);
+            z-index:1050;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            color:#fff;
+            background:
+                    radial-gradient(circle at 0 0,rgba(34,197,94,.14),transparent 28%),
+                    radial-gradient(circle at 100% 90%,rgba(34,197,94,.08),transparent 30%),
+                    linear-gradient(180deg,var(--nav),var(--nav-2) 48%,#102217 100%);
+            border-right:1px solid rgba(255,255,255,.06);
+            box-shadow:8px 0 35px rgba(0,0,0,.1);
+            transition:transform .3s ease;
+        }
+
+        .admin-sidebar::before{
+            content:"";
+            position:absolute;
+            width:280px;
+            height:280px;
+            left:-160px;
+            top:30%;
+            border-radius:50%;
+            background:rgba(34,197,94,.07);
+            filter:blur(25px);
+            pointer-events:none;
+        }
+
+        .sidebar-brand{
+            position:relative;
+            height:82px;
+            flex:0 0 auto;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:0 20px;
+            border-bottom:1px solid rgba(255,255,255,.07);
+        }
+
+        .sidebar-brand::after{
+            content:"";
+            position:absolute;
+            left:20px;
+            right:20px;
+            bottom:0;
+            height:1px;
+            background:linear-gradient(90deg,transparent,rgba(74,222,128,.55),transparent);
+        }
+
+        .brand-icon{
+            width:43px;
+            height:43px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 auto;
+            border-radius:13px;
+            color:#fff;
+            background:linear-gradient(135deg,#4ade80,#16a34a 55%,#15803d);
+            box-shadow:0 10px 25px rgba(22,163,74,.32);
+        }
+
+        .brand-icon i{
+            font-size:19px;
+        }
+
+        .brand-name{
+            color:#fff;
+            font-size:17px;
+            font-weight:800;
+            letter-spacing:-.4px;
+        }
+
+        .brand-label{
+            margin-top:3px;
+            color:#94a3b8;
+            font-size:9px;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:1.4px;
+        }
+
+        .sidebar-content{
+            flex:1;
+            overflow-y:auto;
+            padding:16px 12px;
+            scrollbar-width:thin;
+            scrollbar-color:rgba(255,255,255,.15) transparent;
+        }
+
+        .sidebar-section-title{
+            display:flex;
+            align-items:center;
+            gap:7px;
+            padding:9px 11px 7px;
+            color:#849488;
+            font-size:9px;
+            font-weight:800;
+            letter-spacing:1.3px;
+            text-transform:uppercase;
+        }
+
+        .sidebar-section-title::before{
+            content:"";
+            width:5px;
+            height:5px;
+            border-radius:50%;
+            background:#4ade80;
+            box-shadow:0 0 10px rgba(74,222,128,.6);
+        }
+
+        .sidebar-link{
+            min-height:45px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:4px;
+            padding:0 13px;
+            border:1px solid transparent;
+            border-radius:12px;
+            color:#cbd5e1;
+            font-size:12.5px;
+            font-weight:600;
+            transition:.2s ease;
+        }
+
+        .sidebar-link i{
+            width:21px;
+            color:#94a3b8;
+            font-size:16px;
+            text-align:center;
+        }
+
+        .sidebar-link:hover{
+            color:#fff;
+            background:rgba(255,255,255,.055);
+            border-color:rgba(255,255,255,.06);
+            transform:translateX(2px);
+        }
+
+        .sidebar-link:hover i{
+            color:#4ade80;
+        }
+
+        .sidebar-link.active{
+            color:#fff;
+            background:linear-gradient(90deg,rgba(34,197,94,.23),rgba(34,197,94,.07));
+            border-color:rgba(74,222,128,.13);
+            box-shadow:inset 3px 0 0 #22c55e;
+        }
+
+        .sidebar-link.active i{
+            color:#4ade80;
+        }
+
+        .sidebar-divider{
+            height:1px;
+            margin:15px 10px;
+            background:rgba(255,255,255,.07);
+        }
+
+        .sidebar-store-link{
+            margin-top:15px;
+            border-color:rgba(255,255,255,.09);
+            background:rgba(255,255,255,.04);
+        }
+
+        .sidebar-store-link:hover{
+            background:rgba(255,255,255,.08);
+        }
+
+        .admin-main{
+            min-height:100vh;
+            margin-left:var(--sidebar-width);
+        }
+
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:1000;
+            height:76px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 30px;
+            background:rgba(255,255,255,.94);
+            border-bottom:1px solid var(--border);
+            box-shadow:0 5px 22px rgba(15,23,42,.035);
+            backdrop-filter:blur(16px);
+        }
+
+        .topbar-left{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            min-width:0;
+        }
+
+        .mobile-menu-btn{
+            width:40px;
+            height:40px;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            border:1px solid var(--border);
+            border-radius:10px;
+            background:#fff;
+            color:var(--ink);
+            cursor:pointer;
+            font-size:19px;
+        }
+
+        .topbar-title{
+            margin:0;
+            color:var(--ink);
+            font-size:19px;
+            font-weight:800;
+            letter-spacing:-.4px;
+        }
+
+        .topbar-subtitle{
+            margin-top:3px;
+            color:var(--muted);
+            font-size:10.5px;
+        }
+
+        .topbar-right{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .view-store-btn{
+            min-height:40px;
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            padding:0 13px;
+            border:1px solid var(--border);
+            border-radius:10px;
+            background:#fff;
+            color:#374151;
+            font-size:11.5px;
+            font-weight:700;
+            transition:.2s ease;
+        }
+
+        .view-store-btn:hover{
+            color:var(--green-dark);
+            background:var(--green-soft);
+            border-color:#bbf7d0;
+            transform:translateY(-1px);
+        }
+
+        .admin-avatar{
+            position:relative;
+            width:40px;
+            height:40px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:50%;
+            color:var(--green-deep);
+            background:var(--green-light);
+            border:1px solid #bbf7d0;
+            font-size:14px;
+            font-weight:800;
+        }
+
+        .admin-avatar::after{
+            content:"";
+            position:absolute;
+            right:0;
+            bottom:1px;
+            width:9px;
+            height:9px;
+            border-radius:50%;
+            background:#22c55e;
+            border:2px solid #fff;
+        }
+
+        .sidebar-overlay{
+            position:fixed;
+            inset:0;
+            z-index:1040;
+            opacity:0;
+            visibility:hidden;
+            background:rgba(15,23,42,.5);
+            backdrop-filter:blur(3px);
+            transition:.25s ease;
+        }
+
+        .sidebar-overlay.show{
+            opacity:1;
+            visibility:visible;
+        }
+
+        .page-wrapper{
+            max-width:1200px;
+            margin:auto;
+            padding:30px 30px 55px;
+            animation:pageIn .45s ease both;
+        }
+
+        @keyframes pageIn{
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+            to{
+                opacity:1;
+                transform:none;
+            }
+        }
+
+        .page-header{
+            margin-bottom:24px;
+        }
+
+        .back-link{
+            min-height:36px;
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            color:#68736b;
+            font-size:12px;
+            font-weight:700;
+            transition:.2s ease;
+        }
+
+        .back-link:hover{
+            color:var(--green);
+            transform:translateX(-2px);
+        }
+
+        .page-heading{
+            display:flex;
+            align-items:center;
+            gap:15px;
+            margin-top:13px;
+        }
+
+        .page-heading-icon{
+            width:50px;
+            height:50px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 auto;
+            border-radius:14px;
+            background:linear-gradient(135deg,var(--green-light),var(--green-soft));
+            color:var(--green-deep);
+            font-size:21px;
+            box-shadow:0 8px 20px rgba(22,163,74,.08);
+        }
+
+        .page-title{
+            margin:0;
+            color:var(--ink);
+            font-size:28px;
+            font-weight:800;
+            letter-spacing:-.6px;
+        }
+
+        .page-subtitle{
+            margin-top:5px;
+            color:var(--muted);
+            font-size:11.5px;
+        }
+
+        .form-card{
+            overflow:hidden;
+            border:1px solid var(--border);
+            border-radius:20px;
+            background:#fff;
+            box-shadow:var(--shadow-sm);
+        }
+
+        .form-card-header{
+            padding:21px 25px;
+            border-bottom:1px solid var(--border);
+            background:#fbfcfb;
+        }
+
+        .form-card-title{
+            margin:0;
+            color:var(--ink);
+            font-size:15px;
+            font-weight:800;
+        }
+
+        .form-card-description{
+            margin-top:4px;
+            color:var(--muted);
+            font-size:10.5px;
+        }
+
+        .form-card-body{
+            padding:28px 30px;
+        }
+
+        .form-label{
+            margin-bottom:7px;
+            color:#303a33;
+            font-size:12px;
+            font-weight:750;
+        }
+
+        .required-star{
+            color:#dc3545;
+        }
+
+        .form-control{
+            min-height:45px;
+            border:1px solid #dfe5e0;
+            border-radius:10px;
+            color:#273029;
+            background:#fff;
+            font-size:12px;
+            box-shadow:none;
+            transition:border-color .2s ease,box-shadow .2s ease;
+        }
+
+        .form-control:focus{
+            border-color:#22c55e;
+            box-shadow:0 0 0 4px rgba(34,197,94,.09);
+        }
+
+        textarea.form-control{
+            min-height:125px;
+            resize:vertical;
+            padding-top:12px;
+        }
+
+        .field-help{
+            margin-top:6px;
+            color:#8a938c;
+            font-size:10px;
+            line-height:1.5;
+        }
+
+        .field-error{
+            margin-top:6px;
+            color:#c62828;
+            font-size:10.5px;
+            font-weight:600;
+        }
+
+        .field-error i{
+            margin-right:4px;
+        }
+
+        .logo-input-group .input-group-text{
+            min-width:45px;
+            justify-content:center;
+            background:#f8faf8;
+            border-color:#dfe5e0;
+            color:#7b867e;
+            border-radius:10px 0 0 10px;
+        }
+
+        .logo-input-group .form-control{
+            border-left:0;
+            border-radius:0 10px 10px 0;
+        }
+
+        .status-box{
+            min-height:82px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:20px;
+            padding:15px 16px;
+            border:1px solid var(--border);
+            border-radius:12px;
+            background:#fbfcfb;
+        }
+
+        .status-info{
+            display:flex;
+            align-items:center;
+            gap:11px;
+        }
+
+        .status-icon{
+            width:38px;
+            height:38px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 auto;
+            border-radius:10px;
+            background:var(--green-light);
+            color:var(--green);
+            font-size:17px;
+        }
+
+        .status-title{
+            color:var(--ink);
+            font-size:12px;
+            font-weight:750;
+        }
+
+        .status-description{
+            margin-top:2px;
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .form-switch{
+            padding-left:0;
+            margin:0;
+        }
+
+        .form-switch .form-check-input{
+            width:46px;
+            height:26px;
+            margin:0;
+            float:none;
+            cursor:pointer;
+            border:1px solid #cbd5e1;
+            background-color:#cbd5e1;
+            background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+            box-shadow:none;
+            transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease;
+        }
+
+        .form-switch .form-check-input:checked{
+            background-color:var(--green);
+            border-color:var(--green);
+            background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        }
+
+        .form-switch .form-check-input:focus{
+            box-shadow:0 0 0 4px rgba(34,197,94,.12);
+        }
+
+        .preview-card{
+            height:100%;
+            padding:20px;
+            border:1px solid var(--border);
+            border-radius:16px;
+            background:#fbfcfb;
+            box-shadow:var(--shadow-sm);
+        }
+
+        .preview-heading{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-bottom:15px;
+        }
+
+        .preview-heading > i{
+            color:var(--green);
+            font-size:16px;
+        }
+
+        .preview-title{
+            margin:0;
+            color:var(--ink);
+            font-size:13px;
+            font-weight:800;
+        }
+
+        .preview-subtitle{
+            margin:3px 0 0;
+            color:var(--muted);
+            font-size:9.5px;
+        }
+
+        .logo-preview{
+            width:100%;
+            min-height:190px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            border:1px dashed #cbd7ce;
+            border-radius:13px;
+            background:#f2f5f3;
+        }
+
+        .logo-preview img{
+            max-width:80%;
+            max-height:150px;
+            object-fit:contain;
+        }
+
+        .preview-placeholder{
+            text-align:center;
+            color:#a1aaa4;
+        }
+
+        .preview-placeholder i{
+            display:block;
+            margin-bottom:8px;
+            font-size:34px;
+        }
+
+        .preview-placeholder span{
+            font-size:10px;
+        }
+
+        .form-card-footer{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            padding:18px 30px;
+            border-top:1px solid var(--border);
+            background:#fbfcfb;
+        }
+
+        .footer-note{
+            color:#7b857e;
+            font-size:10px;
+        }
+
+        .footer-actions{
+            display:flex;
+            align-items:center;
+            gap:9px;
+        }
+
+        .cancel-btn,
+        .save-btn{
+            min-height:44px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+            padding:0 19px;
+            border-radius:10px;
+            font-size:11.5px;
+            font-weight:750;
+            line-height:1;
+            text-decoration:none;
+            transition:.2s ease;
+        }
+
+        .cancel-btn{
+            color:#58635b;
+            border:1px solid #d9e0da;
+            background:#fff;
+        }
+
+        .cancel-btn:hover{
+            color:#273029;
+            background:#f5f7f5;
+            transform:translateY(-1px);
+        }
+
+        .save-btn{
+            color:#fff;
+            border:1px solid var(--green);
+            background:linear-gradient(135deg,#22c55e,#15803d);
+            box-shadow:0 8px 20px rgba(22,163,74,.16);
+        }
+
+        .save-btn:hover{
+            color:#fff;
+            background:linear-gradient(135deg,#15803d,#166534);
+            transform:translateY(-2px);
+            box-shadow:0 12px 27px rgba(22,163,74,.23);
+        }
+
+        .sidebar-overlay.show{
+            display:block;
+        }
+
+        @media(max-width:1100px){
+            .admin-sidebar{
+                transform:translateX(-100%);
+            }
+
+            .admin-sidebar.show{
+                transform:translateX(0);
+            }
+
+            .admin-main{
+                margin-left:0;
+            }
+
+            .mobile-menu-btn{
+                display:inline-flex;
+            }
+
+            .topbar{
+                padding:0 20px;
+            }
+
+            .page-wrapper{
+                padding:26px 20px 45px;
+            }
+        }
+
+        @media(max-width:768px){
+            .topbar{
+                height:68px;
+            }
+
+            .topbar-subtitle,
+            .view-store-btn{
+                display:none;
+            }
+
+            .page-wrapper{
+                padding:20px 14px 40px;
+            }
+
+            .page-heading{
+                align-items:flex-start;
+            }
+
+            .page-heading-icon{
+                width:44px;
+                height:44px;
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:23px;
+            }
+
+            .page-subtitle{
+                font-size:10.5px;
+            }
+
+            .form-card-body{
+                padding:22px 18px;
+            }
+
+            .form-card-footer{
+                padding:17px 18px;
+                align-items:stretch;
+                flex-direction:column;
+            }
+
+            .footer-actions{
+                width:100%;
+            }
+
+            .cancel-btn,
+            .save-btn{
+                flex:1;
+            }
+
+            .preview-card{
+                margin-top:5px;
+            }
+        }
+
+        @media(max-width:480px){
+            .topbar-title{
+                font-size:16px;
+            }
+
+            .page-title{
+                font-size:21px;
+            }
+
+            .page-heading{
+                gap:10px;
+            }
+
+            .form-card-header{
+                padding:17px 18px;
+            }
+
+            .status-box{
+                align-items:flex-start;
+                flex-direction:column;
+            }
+
+            .footer-actions{
+                flex-direction:column;
+            }
+
+            .cancel-btn,
+            .save-btn{
+                width:100%;
+                flex:none;
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce){
+            *,
+            *::before,
+            *::after{
+                animation-duration:.01ms!important;
+                animation-iteration-count:1!important;
+                transition-duration:.01ms!important;
+                scroll-behavior:auto!important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="bi bi-bag-heart-fill"></i>
+        </div>
+
+        <div>
+            <div class="brand-name">Dreamz Shop</div>
+            <div class="brand-label">Admin Panel</div>
+        </div>
+    </div>
+
+    <div class="sidebar-content">
+
+        <div class="sidebar-section-title">Overview</div>
+
+        <a th:href="@{/admin/dashboard}" class="sidebar-link">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Store Management</div>
+
+        <a th:href="@{/admin/products}" class="sidebar-link">
+            <i class="bi bi-box-seam"></i>
+            <span>Products</span>
+        </a>
+
+        <a th:href="@{/admin/categories}" class="sidebar-link">
+            <i class="bi bi-folder2-open"></i>
+            <span>Categories</span>
+        </a>
+
+        <a th:href="@{/admin/subcategories}" class="sidebar-link">
+            <i class="bi bi-diagram-3"></i>
+            <span>Subcategories</span>
+        </a>
+
+        <a th:href="@{/admin/brands}" class="sidebar-link active">
+            <i class="bi bi-tags"></i>
+            <span>Brands</span>
+        </a>
+
+        <a th:href="@{/admin/banners}" class="sidebar-link">
+            <i class="bi bi-images"></i>
+            <span>Banners</span>
+        </a>
+
+        <a th:href="@{/admin/inventory}" class="sidebar-link">
+            <i class="bi bi-clipboard-data"></i>
+            <span>Inventory</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Sales</div>
+
+        <a th:href="@{/admin/orders}" class="sidebar-link">
+            <i class="bi bi-receipt"></i>
+            <span>Orders</span>
+        </a>
+
+        <a th:href="@{/admin/offers}" class="sidebar-link">
+            <i class="bi bi-percent"></i>
+            <span>Offers</span>
+        </a>
+
+        <a th:href="@{/admin/coupons}" class="sidebar-link">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Coupons</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Customers</div>
+
+        <a th:href="@{/admin/customers}" class="sidebar-link">
+            <i class="bi bi-people"></i>
+            <span>Customers</span>
+        </a>
+
+        <a th:href="@{/admin/reviews}" class="sidebar-link">
+            <i class="bi bi-star"></i>
+            <span>Reviews</span>
+        </a>
+
+        <a th:href="@{/admin/returns}" class="sidebar-link">
+            <i class="bi bi-arrow-return-left"></i>
+            <span>Returns</span>
+        </a>
+
+        <a th:href="@{/admin/refunds}" class="sidebar-link">
+            <i class="bi bi-cash-stack"></i>
+            <span>Refunds</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Analytics</div>
+
+        <a th:href="@{/admin/reports}" class="sidebar-link">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Reports</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <a th:href="@{/}" target="_blank" class="sidebar-link sidebar-store-link">
+            <i class="bi bi-shop"></i>
+            <span>View Store</span>
+            <i class="bi bi-box-arrow-up-right ms-auto" style="font-size:11px;"></i>
+        </a>
+
+    </div>
+
+</aside>
+
+<main class="admin-main">
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button type="button"
+                    class="mobile-menu-btn"
+                    id="mobileMenuBtn"
+                    aria-label="Open navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div>
+                <h2 class="topbar-title">
+                    <span th:if="${brand.id == null}">Add Brand</span>
+                    <span th:unless="${brand.id == null}">Edit Brand</span>
+                </h2>
+
+                <div class="topbar-subtitle">
+                    Brand management
+                </div>
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <a th:href="@{/}"
+               target="_blank"
+               class="view-store-btn">
+                <i class="bi bi-shop"></i>
+                View Store
+                <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+
+            <div class="admin-avatar">A</div>
+
+        </div>
+
+    </header>
+
+    <div class="page-wrapper">
+
+        <div class="page-header">
+
+            <a th:href="@{/admin/brands}" class="back-link">
+                <i class="bi bi-arrow-left"></i>
+                Back to Brands
+            </a>
+
+            <div class="page-heading">
+
+                <div class="page-heading-icon">
+                    <i th:if="${brand.id == null}" class="bi bi-tag"></i>
+                    <i th:unless="${brand.id == null}" class="bi bi-pencil-square"></i>
+                </div>
+
+                <div>
+
+                    <h1 class="page-title">
+                        <span th:if="${brand.id == null}">Add Brand</span>
+                        <span th:unless="${brand.id == null}">Edit Brand</span>
+                    </h1>
+
+                    <div class="page-subtitle">
+                        <span th:if="${brand.id == null}">
+                            Create a new brand for your product catalog.
+                        </span>
+                        <span th:unless="${brand.id == null}">
+                            Update the brand information and visibility.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:if="${brand.id == null}" class="form-card">
+
+            <div class="form-card-header">
+                <h3 class="form-card-title">Brand Information</h3>
+                <div class="form-card-description">
+                    Enter the basic information for this brand.
+                </div>
+            </div>
+
+            <form th:action="@{/admin/brands/save}"
+                  th:object="${brand}"
+                  method="post">
+
+                <input type="hidden"
+                       name="_csrf"
+                       th:value="${_csrf.token}">
+
+                <div class="form-card-body">
+
+                    <div class="row g-4">
+
+                        <div class="col-lg-7">
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="brandName">
+                                    Brand Name
+                                    <span class="required-star">*</span>
+                                </label>
+
+                                <input id="brandName"
+                                       type="text"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       placeholder="Enter brand name"
+                                       autocomplete="off"
+                                       required>
+
+                                <div th:if="${#fields.hasErrors('name')}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:errors="*{name}">
+                                        Invalid brand name.
+                                    </span>
+                                </div>
+
+                                <div th:if="${nameError}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:text="${nameError}">
+                                        Brand name already exists.
+                                    </span>
+                                </div>
+
+                                <div class="field-help">
+                                    Choose a clear and recognizable name for the brand.
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="brandDescription">
+                                    Description
+                                </label>
+
+                                <textarea id="brandDescription"
+                                          th:field="*{description}"
+                                          class="form-control"
+                                          placeholder="Enter a short description about this brand..."
+                                          rows="5"></textarea>
+
+                                <div th:if="${#fields.hasErrors('description')}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:errors="*{description}">
+                                        Invalid description.
+                                    </span>
+                                </div>
+
+                                <div class="field-help">
+                                    A short description helps administrators identify the brand quickly.
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="brandLogo">
+                                    Logo URL
+                                </label>
+
+                                <div class="input-group logo-input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </span>
+
+                                    <input id="brandLogo"
+                                           type="text"
+                                           th:field="*{logo}"
+                                           class="form-control"
+                                           placeholder="https://example.com/logo.png">
+
+                                </div>
+
+                                <div class="field-help">
+                                    Provide a publicly accessible image URL for the brand logo.
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Visibility
+                                </label>
+
+                                <div class="status-box">
+
+                                    <div class="status-info">
+
+                                        <div class="status-icon">
+                                            <i class="bi bi-eye"></i>
+                                        </div>
+
+                                        <div>
+                                            <div class="status-title">
+                                                Active Brand
+                                            </div>
+
+                                            <div class="status-description">
+                                                Allow this brand to be used in the store.
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-switch">
+                                        <input class="form-check-input brand-enabled-switch"
+                                               type="checkbox"
+                                               role="switch"
+                                               id="brandEnabled"
+                                               th:field="*{enabled}"
+                                               aria-label="Toggle brand visibility">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-5">
+
+                            <div class="preview-card">
+
+                                <div class="preview-heading">
+
+                                    <i class="bi bi-eye"></i>
+
+                                    <div>
+                                        <h4 class="preview-title">
+                                            Logo Preview
+                                        </h4>
+
+                                        <p class="preview-subtitle">
+                                            Brand logo appearance
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <div class="logo-preview" id="logoPreview">
+
+                                    <img id="logoPreviewImage"
+                                         th:if="${brand.logo != null and !brand.logo.isEmpty()}"
+                                         th:src="${brand.logo}"
+                                         alt="Brand logo preview">
+
+                                    <div id="logoPlaceholder"
+                                         class="preview-placeholder"
+                                         th:if="${brand.logo == null or brand.logo.isEmpty()}">
+
+                                        <i class="bi bi-image"></i>
+
+                                        <span>
+                                            Logo preview will appear here
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-card-footer">
+
+                    <div class="footer-note">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Required fields are marked with *
+                    </div>
+
+                    <div class="footer-actions">
+
+                        <a th:href="@{/admin/brands}"
+                           class="cancel-btn">
+                            <i class="bi bi-x-lg"></i>
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="save-btn">
+                            <i class="bi bi-check-lg"></i>
+                            Save Brand
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div th:unless="${brand.id == null}" class="form-card">
+
+            <div class="form-card-header">
+                <h3 class="form-card-title">Brand Information</h3>
+
+                <div class="form-card-description">
+                    Update the information for this brand.
+                </div>
+            </div>
+
+            <form th:action="@{/admin/brands/update/{id}(id=${brand.id})}"
+                  th:object="${brand}"
+                  method="post">
+
+                <input type="hidden"
+                       name="_csrf"
+                       th:value="${_csrf.token}">
+
+                <div class="form-card-body">
+
+                    <div class="row g-4">
+
+                        <div class="col-lg-7">
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="editBrandName">
+                                    Brand Name
+                                    <span class="required-star">*</span>
+                                </label>
+
+                                <input id="editBrandName"
+                                       type="text"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       placeholder="Enter brand name"
+                                       autocomplete="off"
+                                       required>
+
+                                <div th:if="${#fields.hasErrors('name')}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:errors="*{name}">
+                                        Invalid brand name.
+                                    </span>
+                                </div>
+
+                                <div th:if="${nameError}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:text="${nameError}">
+                                        Brand name already exists.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="editBrandDescription">
+                                    Description
+                                </label>
+
+                                <textarea id="editBrandDescription"
+                                          th:field="*{description}"
+                                          class="form-control"
+                                          placeholder="Enter a short description about this brand..."
+                                          rows="5"></textarea>
+
+                                <div th:if="${#fields.hasErrors('description')}"
+                                     class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:errors="*{description}">
+                                        Invalid description.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label" for="editBrandLogo">
+                                    Logo URL
+                                </label>
+
+                                <div class="input-group logo-input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </span>
+
+                                    <input id="editBrandLogo"
+                                           type="text"
+                                           th:field="*{logo}"
+                                           class="form-control"
+                                           placeholder="https://example.com/logo.png">
+
+                                </div>
+
+                                <div class="field-help">
+                                    Use a publicly accessible URL for the brand logo.
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Visibility
+                                </label>
+
+                                <div class="status-box">
+
+                                    <div class="status-info">
+
+                                        <div class="status-icon">
+                                            <i class="bi bi-eye"></i>
+                                        </div>
+
+                                        <div>
+                                            <div class="status-title">
+                                                Active Brand
+                                            </div>
+
+                                            <div class="status-description">
+                                                Allow this brand to be used in the store.
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-switch">
+                                        <input class="form-check-input brand-enabled-switch"
+                                               type="checkbox"
+                                               role="switch"
+                                               id="editBrandEnabled"
+                                               th:field="*{enabled}"
+                                               aria-label="Toggle brand visibility">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-5">
+
+                            <div class="preview-card">
+
+                                <div class="preview-heading">
+
+                                    <i class="bi bi-eye"></i>
+
+                                    <div>
+                                        <h4 class="preview-title">
+                                            Logo Preview
+                                        </h4>
+
+                                        <p class="preview-subtitle">
+                                            Current brand logo
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <div class="logo-preview" id="editLogoPreview">
+
+                                    <img id="editLogoPreviewImage"
+                                         th:if="${brand.logo != null and !brand.logo.isEmpty()}"
+                                         th:src="${brand.logo}"
+                                         alt="Brand logo preview">
+
+                                    <div id="editLogoPlaceholder"
+                                         class="preview-placeholder"
+                                         th:if="${brand.logo == null or brand.logo.isEmpty()}">
+
+                                        <i class="bi bi-image"></i>
+
+                                        <span>
+                                            Logo preview will appear here
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-card-footer">
+
+                    <div class="footer-note">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Changes will be saved immediately.
+                    </div>
+
+                    <div class="footer-actions">
+
+                        <a th:href="@{/admin/brands}"
+                           class="cancel-btn">
+                            <i class="bi bi-x-lg"></i>
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="save-btn">
+                            <i class="bi bi-check-lg"></i>
+                            Update Brand
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const sidebar = document.getElementById("adminSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+        function openSidebar() {
+            if (sidebar) {
+                sidebar.classList.add("show");
+            }
+
+            if (overlay) {
+                overlay.classList.add("show");
+            }
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+            if (sidebar) {
+                sidebar.classList.remove("show");
+            }
+
+            if (overlay) {
+                overlay.classList.remove("show");
+            }
+
+            document.body.style.overflow = "";
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener("click", openSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener("click", closeSidebar);
+        }
+
+        document.querySelectorAll(".sidebar-link").forEach(function (link) {
+            link.addEventListener("click", function () {
+                if (window.innerWidth <= 1100) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 1100) {
+                closeSidebar();
+            }
+        });
+
+        const brandLogoInput = document.getElementById("brandLogo");
+        const logoPreviewImage = document.getElementById("logoPreviewImage");
+        const logoPlaceholder = document.getElementById("logoPlaceholder");
+
+        function updateAddLogoPreview() {
+
+            if (!brandLogoInput) {
+                return;
+            }
+
+            const url = brandLogoInput.value.trim();
+
+            if (!url) {
+
+                if (logoPreviewImage) {
+                    logoPreviewImage.style.display = "none";
+                }
+
+                if (logoPlaceholder) {
+                    logoPlaceholder.style.display = "block";
+                }
+
+                return;
+            }
+
+            if (logoPreviewImage) {
+
+                logoPreviewImage.src = url;
+                logoPreviewImage.style.display = "block";
+
+                logoPreviewImage.onerror = function () {
+
+                    logoPreviewImage.style.display = "none";
+
+                    if (logoPlaceholder) {
+                        logoPlaceholder.style.display = "block";
+                    }
+
+                };
+            }
+
+            if (logoPlaceholder) {
+                logoPlaceholder.style.display = "none";
+            }
+        }
+
+        if (brandLogoInput) {
+            brandLogoInput.addEventListener("input", updateAddLogoPreview);
+        }
+
+        const editBrandLogoInput = document.getElementById("editBrandLogo");
+        const editLogoPreviewImage = document.getElementById("editLogoPreviewImage");
+        const editLogoPlaceholder = document.getElementById("editLogoPlaceholder");
+
+        function updateEditLogoPreview() {
+
+            if (!editBrandLogoInput) {
+                return;
+            }
+
+            const url = editBrandLogoInput.value.trim();
+
+            if (!url) {
+
+                if (editLogoPreviewImage) {
+                    editLogoPreviewImage.style.display = "none";
+                }
+
+                if (editLogoPlaceholder) {
+                    editLogoPlaceholder.style.display = "block";
+                }
+
+                return;
+            }
+
+            if (editLogoPreviewImage) {
+
+                editLogoPreviewImage.src = url;
+                editLogoPreviewImage.style.display = "block";
+
+                editLogoPreviewImage.onerror = function () {
+
+                    editLogoPreviewImage.style.display = "none";
+
+                    if (editLogoPlaceholder) {
+                        editLogoPlaceholder.style.display = "block";
+                    }
+
+                };
+            }
+
+            if (editLogoPlaceholder) {
+                editLogoPlaceholder.style.display = "none";
+            }
+        }
+
+        if (editBrandLogoInput) {
+            editBrandLogoInput.addEventListener("input", updateEditLogoPreview);
+        }
+
+        document.querySelectorAll(".brand-enabled-switch").forEach(function (switchInput) {
+
+            function syncSwitch() {
+                switchInput.setAttribute(
+                    "aria-checked",
+                    switchInput.checked ? "true" : "false"
+                );
+            }
+
+            switchInput.addEventListener("change", syncSwitch);
+
+            syncSwitch();
+        });
+
+    });
+</script>
+
+</body>
+</html>

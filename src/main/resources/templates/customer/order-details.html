@@ -1,0 +1,2876 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order Details | Dreamz Shop</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        /* =========================================================
+           ROOT
+        ========================================================= */
+
+        :root {
+
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #111827;
+            --text-soft: #374151;
+            --muted: #6b7280;
+
+            --border: #e5e7eb;
+
+            --bg: #f7f8f6;
+            --white: #ffffff;
+
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+
+            --shadow-sm:
+                    0 4px 18px rgba(0, 0, 0, .05);
+
+            --shadow-md:
+                    0 10px 30px rgba(0, 0, 0, .08);
+
+            --shadow-green:
+                    0 8px 24px rgba(22, 163, 74, .14);
+        }
+
+
+        /* =========================================================
+           GENERAL
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+
+            margin: 0;
+
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, .045),
+                            transparent 28%
+                    ),
+                    var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .order-page {
+
+            padding:
+                    30px 0 65px;
+
+            min-height: calc(100vh - 70px);
+        }
+
+
+        /* =========================================================
+           ALERTS
+        ========================================================= */
+
+        .custom-alert {
+
+            border: none;
+
+            border-radius: 14px;
+
+            padding: 13px 16px;
+
+            box-shadow: var(--shadow-sm);
+
+            font-size: 12px;
+
+            animation: fadeDown .4s ease both;
+        }
+
+        .custom-alert .btn-close {
+            font-size: 9px;
+        }
+
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .order-header {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 25px 27px;
+
+            margin-bottom: 22px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #ffffff 0%,
+                            #f0fdf4 100%
+                    );
+
+            border:
+                    1px solid #dff0e3;
+
+            border-radius: 22px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp .45s ease both;
+        }
+
+        .order-header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            right: -70px;
+            top: -95px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(22, 163, 74, .07);
+        }
+
+        .order-header-content {
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .order-heading {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+        .order-heading-icon {
+
+            width: 50px;
+            height: 50px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 15px;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 23px;
+        }
+
+        .page-title {
+
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 26px;
+
+            font-weight: 850;
+        }
+
+        .order-number {
+
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .order-number strong {
+
+            color: var(--text-soft);
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
+
+        .status-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 8px 13px;
+
+            border-radius: 999px;
+
+            background: var(--green-light);
+
+            color: var(--green-deep);
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .35px;
+        }
+
+        .status-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            animation: pulse 1.8s infinite;
+        }
+
+
+        /* =========================================================
+           INVOICE
+        ========================================================= */
+
+        .invoice-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            min-height: 39px;
+
+            padding: 8px 14px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            transition: all .2s ease;
+        }
+
+        .invoice-btn:hover {
+
+            background: #1f2937;
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(17, 24, 39, .15);
+        }
+
+
+        /* =========================================================
+           CARDS
+        ========================================================= */
+
+        .shop-card {
+
+            background: var(--white);
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 18px;
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                    transform .22s ease,
+                    box-shadow .22s ease,
+                    border-color .22s ease;
+
+            animation: fadeUp .45s ease both;
+        }
+
+        .shop-card:hover {
+
+            transform: translateY(-2px);
+
+            border-color: #dcece0;
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-body-custom {
+
+            padding: 21px;
+        }
+
+        .section-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 17px;
+
+            color: var(--text);
+
+            font-size: 15px;
+
+            font-weight: 850;
+        }
+
+        .section-title i {
+
+            color: var(--green);
+
+            font-size: 17px;
+        }
+
+
+        /* =========================================================
+           ORDER ITEMS
+        ========================================================= */
+
+        .order-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 14px 0;
+
+            border-bottom:
+                    1px solid #f0f1f2;
+
+            transition: all .2s ease;
+        }
+
+        .order-item:first-child {
+            padding-top: 0;
+        }
+
+        .order-item:last-child {
+
+            border-bottom: none;
+
+            padding-bottom: 0;
+        }
+
+        .order-item:hover {
+
+            transform: translateX(3px);
+        }
+
+        .product-image {
+
+            width: 76px;
+            height: 76px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            object-fit: cover;
+
+            border-radius: 13px;
+
+            background: #f8faf9;
+
+            border:
+                    1px solid #edf0ee;
+
+            transition: transform .25s ease;
+        }
+
+        .order-item:hover .product-image {
+
+            transform: scale(1.04);
+        }
+
+        .product-name {
+
+            margin-bottom: 4px;
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+        .product-sku {
+
+            color: #9ca3af;
+
+            font-size: 10px;
+        }
+
+        .product-quantity {
+
+            margin-top: 6px;
+
+            color: #6b7280;
+
+            font-size: 10px;
+        }
+
+        .product-price {
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+        .product-unit-price {
+
+            margin-top: 3px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+
+        /* =========================================================
+           ADDRESS
+        ========================================================= */
+
+        .address-box {
+
+            position: relative;
+
+            padding: 17px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f9fffb,
+                            #f3faf5
+                    );
+
+            border:
+                    1px solid #dceee1;
+
+            border-radius: 14px;
+        }
+
+        .address-top {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 7px;
+        }
+
+        .address-icon {
+
+            width: 30px;
+            height: 30px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 13px;
+        }
+
+        .address-name {
+
+            color: var(--text);
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+        .address-phone {
+
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+        .address-line {
+
+            color: #4b5563;
+
+            font-size: 11px;
+
+            line-height: 1.65;
+        }
+
+
+        /* =========================================================
+           TIMELINE
+        ========================================================= */
+
+        .timeline {
+
+            position: relative;
+
+            margin-top: 4px;
+        }
+
+        .timeline-item {
+
+            position: relative;
+
+            min-height: 61px;
+
+            padding-left: 43px;
+
+            padding-bottom: 22px;
+        }
+
+        .timeline-item:last-child {
+
+            min-height: auto;
+
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 13px;
+
+            top: 21px;
+
+            width: 2px;
+
+            height: calc(100% - 8px);
+
+            background: #e5e7eb;
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+
+            position: absolute;
+
+            left: 5px;
+            top: 1px;
+
+            width: 18px;
+            height: 18px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border:
+                    3px solid white;
+
+            border-radius: 50%;
+
+            background: #d1d5db;
+
+            box-shadow:
+                    0 0 0 1px #e5e7eb;
+
+            z-index: 2;
+        }
+
+        .timeline-item.active .timeline-dot {
+
+            background: var(--green);
+
+            box-shadow:
+                    0 0 0 4px var(--green-light);
+        }
+
+        .timeline-item.active::before {
+
+            background:
+                    linear-gradient(
+                            to bottom,
+                            var(--green),
+                            #d1d5db
+                    );
+        }
+
+        .timeline-label {
+
+            color: #9ca3af;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .timeline-item.active .timeline-label {
+
+            color: var(--green-deep);
+
+            font-weight: 850;
+        }
+
+        .timeline-date {
+
+            margin-top: 3px;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+
+        /* =========================================================
+           SPECIAL STATUS TIMELINE
+        ========================================================= */
+
+        .timeline-special {
+
+            margin-top: 6px;
+        }
+
+        .timeline-special .timeline-dot {
+
+            background: var(--warning);
+        }
+
+        .timeline-special.cancelled .timeline-dot {
+
+            background: var(--danger);
+        }
+
+        .timeline-special.refunded .timeline-dot {
+
+            background: var(--green);
+        }
+
+
+        /* =========================================================
+           CANCEL BOX
+        ========================================================= */
+
+        .cancel-box {
+
+            padding: 18px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #fffafa,
+                            #fff5f5
+                    );
+
+            border:
+                    1px solid #fecaca;
+
+            border-radius: 15px;
+
+            animation: fadeUp .55s ease both;
+        }
+
+        .cancel-title {
+
+            margin-bottom: 4px;
+
+            color: #991b1b;
+
+            font-size: 13px;
+
+            font-weight: 850;
+        }
+
+        .cancel-text {
+
+            margin: 0;
+
+            color: #7f1d1d;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+        .cancel-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            min-height: 37px;
+
+            padding: 8px 13px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: var(--danger);
+
+            color: white;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            transition: all .2s ease;
+        }
+
+        .cancel-btn:hover {
+
+            background: #b91c1c;
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 7px 18px rgba(220, 38, 38, .16);
+        }
+
+
+        /* =========================================================
+           PRICE SUMMARY
+        ========================================================= */
+
+        .summary-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 11px;
+
+            color: #374151;
+
+            font-size: 11px;
+        }
+
+        .summary-label {
+
+            color: #6b7280;
+        }
+
+        .summary-value {
+
+            color: #374151;
+
+            font-weight: 650;
+        }
+
+        .discount-value {
+
+            color: var(--green);
+
+            font-weight: 750;
+        }
+
+        .free-delivery {
+
+            color: var(--green);
+
+            font-weight: 800;
+        }
+
+        .summary-divider {
+
+            margin: 17px 0;
+
+            border-color: #edf0ee;
+
+            opacity: 1;
+        }
+
+        .grand-total {
+
+            color: var(--text);
+
+            font-size: 18px;
+
+            font-weight: 900;
+        }
+
+        .grand-total-value {
+
+            color: var(--green-deep);
+
+            font-size: 20px;
+
+            font-weight: 900;
+        }
+
+
+        /* =========================================================
+           PAYMENT CARD
+        ========================================================= */
+
+        .payment-method-box {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 13px;
+
+            background: #fafafa;
+
+            border:
+                    1px solid #eeeeee;
+
+            border-radius: 12px;
+
+            margin-bottom: 12px;
+        }
+
+        .payment-method-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+        .payment-icon {
+
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            background: var(--green-light);
+
+            color: var(--green);
+
+            font-size: 15px;
+        }
+
+        .payment-label {
+
+            color: #9ca3af;
+
+            font-size: 9px;
+        }
+
+        .payment-value {
+
+            margin-top: 2px;
+
+            color: var(--text);
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+        .payment-status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 5px 8px;
+
+            border-radius: 999px;
+
+            background: var(--warning-light);
+
+            color: #92400e;
+
+            font-size: 8px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =========================================================
+           ORDER INFO
+        ========================================================= */
+
+        .info-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 9px 0;
+
+            border-bottom:
+                    1px solid #f1f2f3;
+        }
+
+        .info-row:last-child {
+
+            border-bottom: none;
+
+            padding-bottom: 0;
+        }
+
+        .info-label {
+
+            color: #9ca3af;
+
+            font-size: 10px;
+        }
+
+        .info-value {
+
+            color: #374151;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            text-align: right;
+        }
+
+
+        /* =========================================================
+           TRUST BOX
+        ========================================================= */
+
+        .trust-box {
+
+            padding: 14px;
+
+            margin-top: 15px;
+
+            background: var(--green-soft);
+
+            border:
+                    1px solid #d7f0dd;
+
+            border-radius: 13px;
+        }
+
+        .trust-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 8px;
+
+            color: #4b5563;
+
+            font-size: 9px;
+        }
+
+        .trust-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .trust-item i {
+
+            color: var(--green);
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           MODAL
+        ========================================================= */
+
+        .modal-content {
+
+            border: none;
+
+            border-radius: 18px;
+
+            box-shadow:
+                    0 25px 70px rgba(0, 0, 0, .18);
+        }
+
+        .modal-header {
+
+            padding: 19px 20px;
+
+            border-bottom:
+                    1px solid #f0f0f0;
+        }
+
+        .modal-title {
+
+            font-size: 15px;
+        }
+
+        .modal-body {
+
+            padding: 20px;
+
+            color: #374151;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+        .modal-footer {
+
+            padding: 14px 20px;
+
+            border-top:
+                    1px solid #f0f0f0;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .shop-footer {
+
+            padding:
+                    38px 0 22px;
+
+            background: #111827;
+
+            color: white;
+        }
+
+        .footer-brand {
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+        .footer-brand span {
+
+            color: #4ade80;
+        }
+
+        .footer-description {
+
+            margin-top: 5px;
+
+            color: #9ca3af;
+
+            font-size: 10px;
+        }
+
+        .footer-services {
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 27px;
+
+            margin: 23px 0;
+        }
+
+        .footer-service {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: #d1d5db;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+        .footer-service i {
+
+            color: #4ade80;
+
+            font-size: 14px;
+        }
+
+        .footer-bottom {
+
+            padding-top: 17px;
+
+            border-top:
+                    1px solid rgba(255,255,255,.08);
+
+            color: #6b7280;
+
+            font-size: 9px;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+        ========================================================= */
+
+        @keyframes fadeUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(15px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+
+        }
+
+        @keyframes fadeDown {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(-10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+
+        }
+
+        @keyframes pulse {
+
+            0% {
+
+                transform: scale(1);
+
+                opacity: 1;
+            }
+
+            50% {
+
+                transform: scale(1.35);
+
+                opacity: .55;
+            }
+
+            100% {
+
+                transform: scale(1);
+
+                opacity: 1;
+            }
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 991px) {
+
+            .order-page {
+
+                padding-top: 22px;
+            }
+
+            .order-header {
+
+                padding: 21px;
+            }
+
+            .page-title {
+
+                font-size: 22px;
+            }
+
+            .right-column {
+
+                margin-top: 0;
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .order-page {
+
+                padding:
+                        18px 8px 45px;
+            }
+
+            .order-header {
+
+                padding: 18px;
+
+                border-radius: 18px;
+            }
+
+            .order-heading {
+
+                gap: 9px;
+            }
+
+            .order-heading-icon {
+
+                width: 43px;
+                height: 43px;
+
+                border-radius: 12px;
+
+                font-size: 19px;
+            }
+
+            .page-title {
+
+                font-size: 19px;
+            }
+
+            .order-number {
+
+                font-size: 10px;
+            }
+
+            .header-actions {
+
+                width: 100%;
+            }
+
+            .invoice-btn {
+
+                flex: 1;
+            }
+
+            .status-badge {
+
+                flex: 1;
+
+                justify-content: center;
+            }
+
+            .card-body-custom {
+
+                padding: 17px;
+            }
+
+            .product-image {
+
+                width: 62px;
+                height: 62px;
+            }
+
+            .product-name {
+
+                font-size: 11px;
+            }
+
+            .product-price {
+
+                font-size: 11px;
+            }
+
+            .grand-total {
+
+                font-size: 16px;
+            }
+
+            .grand-total-value {
+
+                font-size: 18px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .header-actions {
+
+                flex-direction: column;
+            }
+
+            .invoice-btn,
+            .status-badge {
+
+                width: 100%;
+            }
+
+            .order-item {
+
+                align-items: flex-start;
+            }
+
+            .product-image {
+
+                width: 55px;
+                height: 55px;
+            }
+
+            .product-price-wrap {
+
+                margin-left: auto;
+            }
+
+            .notification-like-actions {
+
+                flex-direction: column;
+            }
+
+            .footer-services {
+
+                gap: 14px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="order-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             SUCCESS MESSAGE
+        ====================================================== -->
+
+        <div
+                th:if="${success}"
+                class="alert alert-success alert-dismissible fade show custom-alert mb-3"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <span th:text="${success}">
+                Order cancelled successfully.
+            </span>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR MESSAGE
+        ====================================================== -->
+
+        <div
+                th:if="${error}"
+                class="alert alert-danger alert-dismissible fade show custom-alert mb-3"
+                role="alert">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            <span th:text="${error}">
+                Something went wrong.
+            </span>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             ORDER HEADER
+        ====================================================== -->
+
+        <section class="order-header">
+
+            <div class="order-header-content">
+
+                <div class="d-flex
+                            flex-wrap
+                            justify-content-between
+                            align-items-center
+                            gap-3">
+
+
+                    <div class="order-heading">
+
+                        <div class="order-heading-icon">
+
+                            <i class="bi bi-box-seam-fill"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h1 class="page-title">
+                                Order Details
+                            </h1>
+
+                            <div class="order-number">
+
+                                Order #
+
+                                <strong
+                                        th:text="${order.orderNumber}">
+                                    DZ123456
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                            class="d-flex
+                                   flex-wrap
+                                   align-items-center
+                                   gap-2
+                                   header-actions">
+
+
+                        <!-- INVOICE -->
+
+                        <a
+                                th:href="@{/customer/orders/{id}/invoice(id=${order.id})}"
+                                class="invoice-btn">
+
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                            Download Invoice
+
+                        </a>
+
+
+                        <!-- STATUS -->
+
+                        <span class="status-badge">
+
+                            <span class="status-dot"></span>
+
+                            <span
+                                    th:text="${#strings.replace(
+                                        order.orderStatus.name(),
+                                        '_',
+                                        ' '
+                                    )}">
+                                CONFIRMED
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CONTENT
+        ====================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================= -->
+
+            <div class="col-lg-8">
+
+
+                <!-- =================================================
+                     ORDER ITEMS
+                ================================================= -->
+
+                <section class="shop-card mb-4">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-bag-check-fill"></i>
+
+                            Ordered Items
+
+                        </div>
+
+
+                        <!-- EMPTY -->
+
+                        <div
+                                th:if="${order.items == null
+                                    or order.items.isEmpty()}"
+                                class="text-center py-4">
+
+                            <i
+                                    class="bi bi-box-seam text-muted"
+                                    style="font-size:35px;">
+                            </i>
+
+                            <p class="text-muted small mt-2 mb-0">
+                                No items found for this order.
+                            </p>
+
+                        </div>
+
+
+                        <!-- ITEMS -->
+
+                        <div
+                                th:each="item : ${order.items}"
+                                class="order-item">
+
+
+                            <!-- IMAGE -->
+
+                            <div>
+
+                                <img
+                                        th:if="${item.productImage != null
+                                            and !#strings.isEmpty(item.productImage)}"
+                                        th:src="${item.productImage}"
+                                        th:alt="${item.productName}"
+                                        class="product-image">
+
+
+                                <div
+                                        th:unless="${item.productImage != null
+                                            and !#strings.isEmpty(item.productImage)}"
+                                        class="product-image">
+
+                                    <i class="bi bi-image text-muted fs-4"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- INFO -->
+
+                            <div class="flex-grow-1">
+
+                                <div
+                                        class="product-name"
+                                        th:text="${item.productName}">
+
+                                    Product Name
+
+                                </div>
+
+
+                                <div
+                                        class="product-sku"
+                                        th:text="'SKU: ' + ${item.productSku}">
+
+                                    SKU: PRODUCT001
+
+                                </div>
+
+
+                                <div
+                                        class="product-quantity"
+                                        th:text="'Quantity: ' + ${item.quantity}">
+
+                                    Quantity: 1
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PRICE -->
+
+                            <div
+                                    class="text-end
+                                           product-price-wrap">
+
+                                <div
+                                        class="product-price"
+                                        th:text="${'₹' + #numbers.formatDecimal(
+                                            item.subtotal,
+                                            1,
+                                            2
+                                        )}">
+
+                                    ₹999.00
+
+                                </div>
+
+
+                                <div
+                                        class="product-unit-price"
+                                        th:text="${'₹' + #numbers.formatDecimal(
+                                            item.unitPrice,
+                                            1,
+                                            2
+                                        ) + ' each'}">
+
+                                    ₹999.00 each
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     DELIVERY ADDRESS
+                ================================================= -->
+
+                <section class="shop-card mb-4">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-geo-alt-fill"></i>
+
+                            Delivery Address
+
+                        </div>
+
+
+                        <div class="address-box">
+
+                            <div class="address-top">
+
+                                <span class="address-icon">
+
+                                    <i class="bi bi-person-fill"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <div
+                                            class="address-name"
+                                            th:text="${order.shippingFullName}">
+
+                                        Customer Name
+
+                                    </div>
+
+                                    <div
+                                            class="address-phone"
+                                            th:text="${order.shippingPhone}">
+
+                                        9876543210
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                    class="address-line"
+                                    th:text="${order.shippingAddressLine1}">
+
+                                Address Line 1
+
+                            </div>
+
+
+                            <div
+                                    th:if="${order.shippingAddressLine2 != null
+                                        and !#strings.isEmpty(order.shippingAddressLine2)}"
+                                    class="address-line"
+                                    th:text="${order.shippingAddressLine2}">
+
+                                Address Line 2
+
+                            </div>
+
+
+                            <div class="address-line">
+
+                                <span th:text="${order.shippingCity}">
+                                    Chennai
+                                </span>,
+
+                                <span th:text="${order.shippingState}">
+                                    Tamil Nadu
+                                </span>
+
+                                -
+
+                                <span th:text="${order.shippingPincode}">
+                                    600001
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ORDER TRACKING
+                ================================================= -->
+
+                <section class="shop-card mb-4">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-truck"></i>
+
+                            Order Tracking
+
+                        </div>
+
+
+                        <div class="timeline">
+
+
+                            <!-- ORDER PLACED -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'PENDING'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'PENDING'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Order Placed
+                                </div>
+
+
+                                <div
+                                        class="timeline-date"
+                                        th:text="${#temporals.format(
+                                            order.createdAt,
+                                            'dd MMM yyyy, hh:mm a'
+                                        )}">
+
+                                    06 Sep 2026, 10:30 AM
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CONFIRMED -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'CONFIRMED'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'CONFIRMED'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Order Confirmed
+                                </div>
+
+                            </div>
+
+
+                            <!-- PROCESSING -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'PROCESSING'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'PROCESSING'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Processing
+                                </div>
+
+                            </div>
+
+
+                            <!-- PACKED -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'PACKED'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'PACKED'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Packed
+                                </div>
+
+                            </div>
+
+
+                            <!-- SHIPPED -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'SHIPPED'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'SHIPPED'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Shipped
+                                </div>
+
+                            </div>
+
+
+                            <!-- OUT FOR DELIVERY -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'OUT_FOR_DELIVERY'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'OUT_FOR_DELIVERY'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Out for Delivery
+                                </div>
+
+                            </div>
+
+
+                            <!-- DELIVERED -->
+
+                            <div
+                                    class="timeline-item"
+                                    th:classappend="${order.orderStatus.name() == 'DELIVERED'
+                                        ? ' active'
+                                        : ''}">
+
+                                <span class="timeline-dot">
+
+                                    <i
+                                            th:if="${order.orderStatus.name() == 'DELIVERED'}"
+                                            class="bi bi-check"
+                                            style="color:white;font-size:9px;">
+                                    </i>
+
+                                </span>
+
+
+                                <div class="timeline-label">
+                                    Delivered
+                                </div>
+
+                            </div>
+
+
+                            <!-- CANCELLED -->
+
+                            <div
+                                    th:if="${order.orderStatus.name() == 'CANCELLED'}"
+                                    class="timeline-item timeline-special cancelled active">
+
+                                <span class="timeline-dot"></span>
+
+                                <div class="timeline-label text-danger">
+                                    Order Cancelled
+                                </div>
+
+                                <div class="timeline-date">
+                                    This order has been cancelled.
+                                </div>
+
+                            </div>
+
+
+                            <!-- RETURN REQUESTED -->
+
+                            <div
+                                    th:if="${order.orderStatus.name() == 'RETURN_REQUESTED'}"
+                                    class="timeline-item timeline-special active">
+
+                                <span class="timeline-dot"></span>
+
+                                <div class="timeline-label"
+                                     style="color:#b45309;">
+                                    Return Requested
+                                </div>
+
+                                <div class="timeline-date">
+                                    Your return request is being processed.
+                                </div>
+
+                            </div>
+
+
+                            <!-- REFUND REQUESTED -->
+
+                            <div
+                                    th:if="${order.orderStatus.name() == 'REFUND_REQUESTED'}"
+                                    class="timeline-item timeline-special active">
+
+                                <span class="timeline-dot"></span>
+
+                                <div class="timeline-label"
+                                     style="color:#b45309;">
+                                    Refund Requested
+                                </div>
+
+                                <div class="timeline-date">
+                                    Your refund is being processed.
+                                </div>
+
+                            </div>
+
+
+                            <!-- REFUNDED -->
+
+                            <div
+                                    th:if="${order.orderStatus.name() == 'REFUNDED'}"
+                                    class="timeline-item timeline-special refunded active">
+
+                                <span class="timeline-dot"></span>
+
+                                <div class="timeline-label text-success">
+                                    Refund Completed
+                                </div>
+
+                                <div class="timeline-date">
+                                    Your refund has been completed.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     CANCEL ORDER
+                ================================================= -->
+
+                <section
+                        th:if="${cancellable}"
+                        class="cancel-box mb-4">
+
+                    <div
+                            class="d-flex
+                                   flex-column
+                                   flex-md-row
+                                   justify-content-between
+                                   align-items-md-center
+                                   gap-3">
+
+
+                        <div>
+
+                            <div class="cancel-title">
+
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+                                Cancel this order?
+
+                            </div>
+
+
+                            <p class="cancel-text">
+
+                                You can cancel this order before it is shipped.
+
+                                Since this is a COD order, no online refund
+                                is required.
+
+                            </p>
+
+                        </div>
+
+
+                        <button
+                                type="button"
+                                class="cancel-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#cancelOrderModal">
+
+                            <i class="bi bi-x-circle-fill"></i>
+
+                            Cancel Order
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================= -->
+
+            <div class="col-lg-4 right-column">
+
+
+                <!-- =================================================
+                     PRICE SUMMARY
+                ================================================= -->
+
+                <section class="shop-card mb-4">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-receipt-cutoff"></i>
+
+                            Price Summary
+
+                        </div>
+
+
+                        <!-- SUBTOTAL -->
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Subtotal
+                            </span>
+
+                            <span
+                                    class="summary-value"
+                                    th:text="${'₹' + #numbers.formatDecimal(
+                                        order.subtotal,
+                                        1,
+                                        2
+                                    )}">
+
+                                ₹999.00
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- DISCOUNT -->
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Discount
+                            </span>
+
+                            <span
+                                    class="discount-value"
+                                    th:text="${'- ₹' + #numbers.formatDecimal(
+                                        order.discountAmount,
+                                        1,
+                                        2
+                                    )}">
+
+                                - ₹0.00
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- COUPON -->
+
+                        <div
+                                th:if="${order.couponDiscount != null
+                                    and order.couponDiscount > 0}"
+                                class="summary-row">
+
+                            <span class="summary-label">
+                                Coupon Discount
+                            </span>
+
+                            <span
+                                    class="discount-value"
+                                    th:text="${'- ₹' + #numbers.formatDecimal(
+                                        order.couponDiscount,
+                                        1,
+                                        2
+                                    )}">
+
+                                - ₹100.00
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- TAX -->
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Tax
+                            </span>
+
+                            <span
+                                    class="summary-value"
+                                    th:text="${'₹' + #numbers.formatDecimal(
+                                        order.taxAmount,
+                                        1,
+                                        2
+                                    )}">
+
+                                ₹50.00
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- DELIVERY -->
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Delivery
+                            </span>
+
+
+                            <span
+                                    th:if="${order.deliveryCharge != null
+                                        and order.deliveryCharge > 0}"
+                                    class="summary-value"
+                                    th:text="${'₹' + #numbers.formatDecimal(
+                                        order.deliveryCharge,
+                                        1,
+                                        2
+                                    )}">
+
+                                ₹40.00
+
+                            </span>
+
+
+                            <span
+                                    th:unless="${order.deliveryCharge != null
+                                        and order.deliveryCharge > 0}"
+                                    class="free-delivery">
+
+                                FREE
+
+                            </span>
+
+                        </div>
+
+
+                        <hr class="summary-divider">
+
+
+                        <!-- TOTAL -->
+
+                        <div class="summary-row mb-0">
+
+                            <span class="grand-total">
+                                Total
+                            </span>
+
+                            <span
+                                    class="grand-total-value"
+                                    th:text="${'₹' + #numbers.formatDecimal(
+                                        order.grandTotal,
+                                        1,
+                                        2
+                                    )}">
+
+                                ₹989.00
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PAYMENT
+                ================================================= -->
+
+                <section class="shop-card mb-4">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-credit-card-2-front-fill"></i>
+
+                            Payment
+
+                        </div>
+
+
+                        <div class="payment-method-box">
+
+                            <div class="payment-method-left">
+
+                                <span class="payment-icon">
+
+                                    <i class="bi bi-cash-stack"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="payment-label">
+                                        Payment Method
+                                    </div>
+
+                                    <div
+                                            class="payment-value"
+                                            th:text="${order.paymentMethod}">
+
+                                        COD
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <span
+                                    class="payment-status"
+                                    th:text="${order.paymentStatus}">
+
+                                PENDING
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="trust-box">
+
+                            <div class="trust-item">
+
+                                <i class="bi bi-shield-check-fill"></i>
+
+                                Secure order processing
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <i class="bi bi-cash-coin"></i>
+
+                                Cash on Delivery
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <i class="bi bi-truck"></i>
+
+                                Pay when your order arrives
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ORDER INFORMATION
+                ================================================= -->
+
+                <section class="shop-card">
+
+                    <div class="card-body-custom">
+
+                        <div class="section-title">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                            Order Information
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span class="info-label">
+                                Order Number
+                            </span>
+
+                            <span
+                                    class="info-value"
+                                    th:text="${order.orderNumber}">
+
+                                DZ123456
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span class="info-label">
+                                Order Date
+                            </span>
+
+                            <span
+                                    class="info-value"
+                                    th:text="${#temporals.format(
+                                        order.createdAt,
+                                        'dd MMM yyyy, hh:mm a'
+                                    )}">
+
+                                06 Sep 2026, 10:30 AM
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span class="info-label">
+                                Payment
+                            </span>
+
+                            <span
+                                    class="info-value"
+                                    th:text="${order.paymentMethod}">
+
+                                COD
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span class="info-label">
+                                Items
+                            </span>
+
+                            <span
+                                    class="info-value"
+                                    th:text="${order.items != null
+                                        ? #lists.size(order.items)
+                                        : 0}">
+
+                                1
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     CANCEL MODAL
+========================================================= -->
+
+<div
+        class="modal fade"
+        id="cancelOrderModal"
+        tabindex="-1"
+        aria-hidden="true">
+
+
+    <div
+            class="modal-dialog
+                   modal-dialog-centered">
+
+
+        <div class="modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold">
+
+                    <i
+                            class="bi bi-exclamation-triangle-fill
+                                   text-danger
+                                   me-2">
+                    </i>
+
+                    Cancel Order
+
+                </h5>
+
+
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <p class="mb-2">
+
+                    Are you sure you want to cancel
+
+                    <strong
+                            th:text="${order.orderNumber}">
+                        DZ123456
+                    </strong>?
+
+                </p>
+
+
+                <p class="text-muted small mb-0">
+
+                    The ordered product stock will be restored
+                    after cancellation.
+
+                    This action cannot be undone.
+
+                </p>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+
+                <button
+                        type="button"
+                        class="btn btn-light btn-sm"
+                        data-bs-dismiss="modal">
+
+                    Keep Order
+
+                </button>
+
+
+                <form
+                        th:action="@{/customer/orders/{id}/cancel(
+                            id=${order.id}
+                        )}"
+                        method="post"
+                        id="cancelOrderForm">
+
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <button
+                            type="submit"
+                            class="btn btn-danger btn-sm"
+                            id="confirmCancelBtn">
+
+                        <i class="bi bi-x-circle-fill me-1"></i>
+
+                        Yes, Cancel Order
+
+                    </button>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+
+                Dreamz <span>Shop</span>
+
+            </div>
+
+
+            <div class="footer-description">
+
+                Simple, secure and reliable online shopping.
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-cash-coin"></i>
+
+                Cash on Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const cancelForm =
+                document.getElementById(
+                    "cancelOrderForm"
+                );
+
+
+            const cancelButton =
+                document.getElementById(
+                    "confirmCancelBtn"
+                );
+
+
+            if (cancelForm && cancelButton) {
+
+                cancelForm.addEventListener(
+                    "submit",
+                    function () {
+
+                        if (
+                            cancelButton.dataset.submitted
+                            === "true"
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        cancelButton.dataset.submitted =
+                            "true";
+
+
+                        cancelButton.disabled = true;
+
+
+                        cancelButton.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-1"></span>' +
+                            'Cancelling...';
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

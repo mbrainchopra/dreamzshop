@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Cart | Dreamz Shop</title>
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <style>
+
+        /* =========================================================
+           ROOT
+           ========================================================= */
+
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-deep: #166534;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --background: #f7f8f6;
+            --white: #ffffff;
+
+            --danger: #dc2626;
+
+            --shadow-sm: 0 4px 18px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================================================
+           GENERAL
+           ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background:
+                    radial-gradient(
+                            circle at top left,
+                            rgba(22, 163, 74, 0.05),
+                            transparent 28%
+                    ),
+                    var(--background);
+            color: var(--text);
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .cart-page {
+            min-height: 100vh;
+            padding: 35px 0 60px;
+        }
+
+
+        /* =========================================================
+           PAGE HEADER
+           ========================================================= */
+
+        .page-header {
+            position: relative;
+            overflow: hidden;
+
+            background: linear-gradient(
+                    135deg,
+                    #ffffff 0%,
+                    #f0fdf4 100%
+            );
+
+            border: 1px solid #e4f2e7;
+            border-radius: 24px;
+
+            padding: 28px 30px;
+            margin-bottom: 24px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .page-header::after {
+            content: "";
+
+            position: absolute;
+            width: 180px;
+            height: 180px;
+
+            right: -70px;
+            top: -80px;
+
+            border-radius: 50%;
+
+            background: rgba(22, 163, 74, 0.08);
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .cart-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 28px;
+            font-weight: 800;
+
+            margin: 0;
+            color: #111827;
+        }
+
+        .cart-title-icon {
+            width: 48px;
+            height: 48px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: var(--green-light);
+            color: var(--green);
+
+            font-size: 23px;
+        }
+
+        .page-subtitle {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           BUTTONS
+           ========================================================= */
+
+        .action-btn {
+            border-radius: 12px;
+            font-weight: 600;
+            transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease,
+                    background 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-shop {
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #374151;
+            padding: 11px 17px;
+        }
+
+        .btn-shop:hover {
+            background: #f9fafb;
+            color: #111827;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-green {
+            border: none;
+            background: linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--green-dark)
+            );
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 13px 18px;
+
+            box-shadow:
+                    0 8px 18px rgba(22, 163, 74, 0.20);
+
+            transition: all 0.25s ease;
+        }
+
+        .btn-green:hover {
+            background: linear-gradient(
+                    135deg,
+                    var(--green-dark),
+                    var(--green-deep)
+            );
+            color: white;
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 12px 25px rgba(22, 163, 74, 0.28);
+        }
+
+
+        /* =========================================================
+           ALERTS
+           ========================================================= */
+
+        .custom-alert {
+            border: none;
+            border-radius: 14px;
+
+            padding: 15px 18px;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .alert-success.custom-alert {
+            background: #ecfdf3;
+            color: #166534;
+            border-left: 4px solid var(--green);
+        }
+
+        .alert-danger.custom-alert {
+            background: #fef2f2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+
+        /* =========================================================
+           CART LAYOUT
+           ========================================================= */
+
+        .cart-card {
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 22px;
+
+            overflow: hidden;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp 0.55s ease both;
+        }
+
+        .cart-card-header {
+            padding: 20px 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid var(--border);
+            background: #ffffff;
+        }
+
+        .cart-header-title {
+            margin: 0;
+
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .item-count {
+            background: var(--green-light);
+            color: var(--green-dark);
+
+            border-radius: 999px;
+
+            padding: 7px 13px;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           CART ITEM
+           ========================================================= */
+
+        .cart-item {
+            position: relative;
+
+            padding: 23px 24px;
+
+            border-bottom: 1px solid #eef0f2;
+
+            transition:
+                    background 0.25s ease,
+                    transform 0.25s ease;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item:hover {
+            background: #fbfefc;
+        }
+
+
+        /* =========================================================
+           PRODUCT IMAGE
+           ========================================================= */
+
+        .product-image-wrapper {
+            position: relative;
+
+            width: 108px;
+            height: 108px;
+
+            overflow: hidden;
+
+            border-radius: 17px;
+
+            background: #f3f4f6;
+            border: 1px solid #edf0f2;
+
+            flex-shrink: 0;
+        }
+
+        .product-image-wrapper a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            transition:
+                    transform 0.4s ease;
+        }
+
+        .product-image-wrapper:hover .product-image {
+            transform: scale(1.07);
+        }
+
+
+        /* =========================================================
+           PRODUCT DETAILS
+           ========================================================= */
+
+        .product-details {
+            min-width: 0;
+        }
+
+        .product-name {
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 750;
+
+            line-height: 1.4;
+
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+
+            transition: color 0.2s ease;
+        }
+
+        .product-name:hover {
+            color: var(--green);
+        }
+
+        .sku {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .unit-price {
+            margin-top: 10px;
+
+            color: #374151;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .unit-label {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stock-warning {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            margin-top: 8px;
+
+            padding: 5px 8px;
+
+            border-radius: 7px;
+
+            background: #fff7ed;
+            color: #c2410c;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           QUANTITY
+           ========================================================= */
+
+        .quantity-label {
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 700;
+
+            margin-bottom: 6px;
+        }
+
+        .quantity-group {
+            display: flex;
+            align-items: stretch;
+
+            width: 125px;
+
+            border: 1px solid #dfe4e1;
+            border-radius: 11px;
+
+            overflow: hidden;
+
+            background: #ffffff;
+
+            transition:
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease;
+        }
+
+        .quantity-group:focus-within {
+            border-color: var(--green);
+            box-shadow:
+                    0 0 0 3px rgba(22, 163, 74, 0.10);
+        }
+
+        .quantity-input {
+            width: 82px;
+
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+
+            text-align: center;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            padding: 9px 4px;
+        }
+
+        .quantity-update {
+            width: 42px;
+
+            border: none;
+            border-left: 1px solid #e5e7eb;
+
+            background: #f8faf9;
+            color: var(--green);
+
+            transition: all 0.2s ease;
+        }
+
+        .quantity-update:hover {
+            background: var(--green);
+            color: white;
+        }
+
+
+        /* =========================================================
+           SUBTOTAL
+           ========================================================= */
+
+        .subtotal-label {
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: 600;
+
+            margin-bottom: 4px;
+        }
+
+        .subtotal-price {
+            color: #111827;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           REMOVE BUTTON
+           ========================================================= */
+
+        .remove-btn {
+            width: 38px;
+            height: 38px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            border: 1px solid #fee2e2;
+            background: #fff;
+
+            color: #ef4444;
+
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================================
+           CART FOOTER
+           ========================================================= */
+
+        .cart-footer {
+            padding: 19px 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            background: #fafafa;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .clear-cart-btn {
+            border: 1px solid #fecaca;
+
+            background: white;
+            color: #dc2626;
+
+            border-radius: 10px;
+
+            padding: 9px 14px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: all 0.2s ease;
+        }
+
+        .clear-cart-btn:hover {
+            background: #fef2f2;
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           ORDER SUMMARY
+           ========================================================= */
+
+        .summary-card {
+            position: sticky;
+            top: 92px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 22px;
+
+            padding: 24px;
+
+            box-shadow: var(--shadow-md);
+
+            animation: fadeUp 0.65s ease both;
+        }
+
+        .summary-title {
+            margin: 0;
+
+            font-size: 19px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .summary-subtitle {
+            margin-top: 5px;
+
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 12px 0;
+
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .summary-row strong {
+            color: #374151;
+        }
+
+        .delivery-free {
+            color: var(--green) !important;
+            font-weight: 800;
+        }
+
+        .summary-divider {
+            border: 0;
+            border-top: 1px dashed #dfe4e1;
+
+            margin: 8px 0;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 14px 0 6px;
+        }
+
+        .total-label {
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .grand-total {
+            color: var(--green-dark);
+
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .checkout-btn {
+            width: 100%;
+
+            margin-top: 18px;
+
+            padding: 14px 18px;
+
+            border: none;
+            border-radius: 13px;
+
+            background: linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--green-dark)
+            );
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            box-shadow:
+                    0 10px 22px rgba(22, 163, 74, 0.22);
+
+            transition: all 0.25s ease;
+        }
+
+        .checkout-btn:hover {
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 14px 28px rgba(22, 163, 74, 0.30);
+        }
+
+        .secure-checkout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            margin-top: 14px;
+
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .secure-checkout i {
+            color: var(--green);
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           TRUST BOX
+           ========================================================= */
+
+        .trust-box {
+            margin-top: 16px;
+
+            padding: 15px;
+
+            border-radius: 14px;
+
+            background: var(--green-soft);
+            border: 1px solid #dcfce7;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #4b5563;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            margin-bottom: 10px;
+        }
+
+        .trust-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .trust-icon {
+            width: 30px;
+            height: 30px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            background: white;
+            color: var(--green);
+
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+
+            flex-shrink: 0;
+        }
+
+
+        /* =========================================================
+           EMPTY CART
+           ========================================================= */
+
+        .empty-box {
+            position: relative;
+            overflow: hidden;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            padding: 80px 25px;
+
+            text-align: center;
+
+            box-shadow: var(--shadow-sm);
+
+            animation: fadeUp 0.55s ease both;
+        }
+
+        .empty-box::before {
+            content: "";
+
+            position: absolute;
+
+            width: 240px;
+            height: 240px;
+
+            left: -100px;
+            top: -110px;
+
+            border-radius: 50%;
+
+            background: rgba(22, 163, 74, 0.05);
+        }
+
+        .empty-icon {
+            position: relative;
+
+            width: 90px;
+            height: 90px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: var(--green-soft);
+            color: var(--green);
+
+            font-size: 42px;
+
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 800;
+
+            color: #111827;
+        }
+
+        .empty-text {
+            max-width: 450px;
+
+            margin: 8px auto 25px;
+
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .shop-footer {
+            margin-top: 55px;
+
+            background: #111827;
+            color: white;
+
+            padding: 38px 0 25px;
+        }
+
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .footer-brand span {
+            color: #4ade80;
+        }
+
+        .footer-text {
+            margin-top: 7px;
+
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .footer-services {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+
+            gap: 28px;
+
+            margin: 25px 0;
+        }
+
+        .footer-service {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            color: #d1d5db;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .footer-service i {
+            color: #4ade80;
+            font-size: 17px;
+        }
+
+        .footer-bottom {
+            padding-top: 20px;
+
+            border-top: 1px solid rgba(255,255,255,0.08);
+
+            text-align: center;
+
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+           ========================================================= */
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-7px);
+            }
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 991px) {
+
+            .summary-card {
+                position: static;
+            }
+
+            .cart-page {
+                padding-top: 25px;
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .page-header {
+                padding: 21px;
+                border-radius: 19px;
+            }
+
+            .cart-title {
+                font-size: 22px;
+            }
+
+            .cart-title-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 20px;
+            }
+
+            .page-header .btn-shop {
+                width: 100%;
+            }
+
+            .cart-card {
+                border-radius: 18px;
+            }
+
+            .cart-card-header {
+                padding: 17px;
+            }
+
+            .cart-item {
+                padding: 19px 17px;
+            }
+
+            .product-image-wrapper {
+                width: 90px;
+                height: 90px;
+            }
+
+            .product-name {
+                font-size: 15px;
+            }
+
+            .cart-footer {
+                padding: 16px 17px;
+
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cart-footer .btn-shop,
+            .cart-footer form,
+            .cart-footer button {
+                width: 100%;
+            }
+
+            .summary-card {
+                border-radius: 18px;
+                padding: 20px;
+            }
+
+            .empty-box {
+                padding: 65px 18px;
+                border-radius: 20px;
+            }
+
+            .empty-title {
+                font-size: 21px;
+            }
+
+            .footer-services {
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+            }
+
+        }
+
+
+        @media (max-width: 575px) {
+
+            .cart-page {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            .product-image-wrapper {
+                width: 78px;
+                height: 78px;
+            }
+
+            .quantity-group {
+                width: 115px;
+            }
+
+            .quantity-input {
+                width: 74px;
+            }
+
+            .subtotal-price {
+                font-size: 16px;
+            }
+
+            .remove-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     CUSTOMER NAVBAR
+     ========================================================= -->
+
+<div th:replace="~{fragments/customer-navbar :: customerNavbar}">
+</div>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main class="cart-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <section class="page-header">
+
+            <div class="page-header-content">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            flex-wrap
+                            gap-3">
+
+                    <div>
+
+                        <h1 class="cart-title">
+
+                            <span class="cart-title-icon">
+                                <i class="bi bi-bag-check"></i>
+                            </span>
+
+                            My Shopping Cart
+
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Review your products and continue to a secure checkout.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                            th:href="@{/products}"
+                            class="btn btn-shop action-btn">
+
+                        <i class="bi bi-arrow-left me-2"></i>
+
+                        Continue Shopping
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SUCCESS MESSAGE
+             ===================================================== -->
+
+        <div
+                th:if="${success}"
+                class="alert alert-success custom-alert alert-dismissible fade show mb-4"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <span th:text="${success}">
+                Cart updated successfully.
+            </span>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR MESSAGE
+             ===================================================== -->
+
+        <div
+                th:if="${error}"
+                class="alert alert-danger custom-alert alert-dismissible fade show mb-4"
+                role="alert">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            <span th:text="${error}">
+                Something went wrong.
+            </span>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMPTY CART
+             ===================================================== -->
+
+        <section
+                th:if="${cart == null or cart.items == null or cart.items.isEmpty()}"
+                class="empty-box">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-cart-x"></i>
+
+            </div>
+
+            <h2 class="empty-title">
+                Your Cart is Empty
+            </h2>
+
+            <p class="empty-text">
+                Looks like you haven't added anything to your cart yet.
+                Explore our products and find something you love.
+            </p>
+
+            <a
+                    th:href="@{/products}"
+                    class="btn btn-green action-btn">
+
+                <i class="bi bi-bag me-2"></i>
+
+                Start Shopping
+
+            </a>
+
+        </section>
+
+
+        <!-- =====================================================
+             CART CONTENT
+             ===================================================== -->
+
+        <section
+                th:if="${cart != null and cart.items != null and !cart.items.isEmpty()}">
+
+            <div class="row g-4">
+
+
+                <!-- =================================================
+                     CART ITEMS
+                     ================================================= -->
+
+                <div class="col-lg-8">
+
+                    <div class="cart-card">
+
+
+                        <!-- CART HEADER -->
+
+                        <div class="cart-card-header">
+
+                            <h2 class="cart-header-title">
+
+                                <i class="bi bi-bag me-2"
+                                   style="color: var(--green);"></i>
+
+                                Cart Items
+
+                            </h2>
+
+                            <span class="item-count">
+
+                                <span th:text="${cart.totalItems}">
+                                    0
+                                </span>
+
+                                item(s)
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CART ITEMS
+                             ================================================= -->
+
+                        <div>
+
+                            <article
+                                    th:each="item : ${cart.items}"
+                                    class="cart-item">
+
+                                <div class="row align-items-center g-3">
+
+
+                                    <!-- =====================================
+                                         PRODUCT IMAGE
+                                         ===================================== -->
+
+                                    <div class="col-4 col-sm-3 col-md-2">
+
+                                        <div class="product-image-wrapper">
+
+                                            <a
+                                                    th:if="${item.product != null and item.product.slug != null}"
+                                                    th:href="@{/products/{slug}(slug=${item.product.slug})}">
+
+                                                <img
+                                                        th:src="${item.product.mainImage != null and !item.product.mainImage.isBlank()
+                                                                ? item.product.mainImage
+                                                                : '/images/product-placeholder.png'}"
+                                                        th:alt="${item.product.name}"
+                                                        class="product-image">
+
+                                            </a>
+
+
+                                            <img
+                                                    th:if="${item.product == null or item.product.slug == null}"
+                                                    src="/images/product-placeholder.png"
+                                                    alt="Product"
+                                                    class="product-image">
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- =====================================
+                                         PRODUCT DETAILS
+                                         ===================================== -->
+
+                                    <div class="col-8 col-sm-9 col-md-4">
+
+                                        <div class="product-details">
+
+                                            <a
+                                                    th:if="${item.product != null and item.product.slug != null}"
+                                                    th:href="@{/products/{slug}(slug=${item.product.slug})}"
+                                                    class="product-name"
+                                                    th:text="${item.product.name}">
+
+                                                Product Name
+
+                                            </a>
+
+
+                                            <div
+                                                    th:if="${item.product == null or item.product.slug == null}"
+                                                    class="product-name"
+                                                    th:text="${item.product != null ? item.product.name : 'Product'}">
+
+                                                Product Name
+
+                                            </div>
+
+
+                                            <div
+                                                    class="sku"
+                                                    th:if="${item.product != null and item.product.sku != null}">
+
+                                                SKU:
+                                                <span th:text="${item.product.sku}">
+                                                    SKU001
+                                                </span>
+
+                                            </div>
+
+
+                                            <div class="unit-price">
+
+                                                ₹<span
+                                                    th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">
+                                                    0.00
+                                                </span>
+
+                                                <span class="unit-label">
+                                                    / unit
+                                                </span>
+
+                                            </div>
+
+
+                                            <div
+                                                    th:if="${item.product != null
+                                                            and item.product.stockQuantity != null
+                                                            and item.quantity > item.product.stockQuantity}"
+                                                    class="stock-warning">
+
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                                Stock availability changed.
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- =====================================
+                                         QUANTITY
+                                         ===================================== -->
+
+                                    <div class="col-6 col-md-2">
+
+                                        <form
+                                                th:action="@{/customer/cart/update}"
+                                                method="post">
+
+                                            <input
+                                                    type="hidden"
+                                                    name="productId"
+                                                    th:value="${item.product.id}">
+
+
+                                            <label class="quantity-label d-block">
+
+                                                Quantity
+
+                                            </label>
+
+
+                                            <div class="quantity-group">
+
+                                                <input
+                                                        type="number"
+                                                        name="quantity"
+                                                        min="1"
+                                                        th:max="${item.product.stockQuantity}"
+                                                        th:value="${item.quantity}"
+                                                        class="form-control quantity-input"
+                                                        required>
+
+
+                                                <button
+                                                        type="submit"
+                                                        class="quantity-update"
+                                                        title="Update quantity">
+
+                                                    <i class="bi bi-check-lg"></i>
+
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+
+                                    <!-- =====================================
+                                         SUBTOTAL
+                                         ===================================== -->
+
+                                    <div class="col-5 col-md-2">
+
+                                        <div class="subtotal-label">
+                                            Subtotal
+                                        </div>
+
+                                        <div class="subtotal-price">
+
+                                            ₹<span
+                                                th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">
+                                                0.00
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- =====================================
+                                         REMOVE
+                                         ===================================== -->
+
+                                    <div class="col-1 col-md-2 text-end">
+
+                                        <form
+                                                th:action="@{/customer/cart/remove}"
+                                                method="post"
+                                                onsubmit="return confirmRemove();">
+
+                                            <input
+                                                    type="hidden"
+                                                    name="productId"
+                                                    th:value="${item.product.id}">
+
+
+                                            <button
+                                                    type="submit"
+                                                    class="remove-btn"
+                                                    title="Remove item">
+
+                                                <i class="bi bi-trash3"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CART FOOTER
+                             ================================================= -->
+
+                        <div class="cart-footer">
+
+                            <a
+                                    th:href="@{/products}"
+                                    class="btn btn-shop action-btn">
+
+                                <i class="bi bi-arrow-left me-2"></i>
+
+                                Continue Shopping
+
+                            </a>
+
+
+                            <form
+                                    th:action="@{/customer/cart/clear}"
+                                    method="post"
+                                    onsubmit="return confirmClear();">
+
+                                <button
+                                        type="submit"
+                                        class="clear-cart-btn action-btn">
+
+                                    <i class="bi bi-trash3 me-2"></i>
+
+                                    Clear Cart
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ORDER SUMMARY
+                     ================================================= -->
+
+                <div class="col-lg-4">
+
+                    <aside class="summary-card">
+
+                        <h2 class="summary-title">
+                            Order Summary
+                        </h2>
+
+                        <p class="summary-subtitle">
+                            Your current cart total
+                        </p>
+
+
+                        <!-- SUBTOTAL -->
+
+                        <div class="summary-row mt-3">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong>
+
+                                ₹<span
+                                    th:text="${#numbers.formatDecimal(cart.subtotal, 1, 2)}">
+                                    0.00
+                                </span>
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- DELIVERY -->
+
+                        <div class="summary-row">
+
+                            <span>
+                                Delivery
+                            </span>
+
+                            <span class="delivery-free">
+                                FREE
+                            </span>
+
+                        </div>
+
+
+                        <hr class="summary-divider">
+
+
+                        <!-- TOTAL -->
+
+                        <div class="total-row">
+
+                            <span class="total-label">
+                                Total
+                            </span>
+
+                            <span class="grand-total">
+
+                                ₹<span
+                                    th:text="${#numbers.formatDecimal(cart.subtotal, 1, 2)}">
+                                    0.00
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- CHECKOUT -->
+
+                        <a
+                                th:href="@{/customer/checkout}"
+                                class="checkout-btn d-flex align-items-center justify-content-center gap-2">
+
+                            Proceed to Checkout
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+
+                        <!-- SECURITY -->
+
+                        <div class="secure-checkout">
+
+                            <i class="bi bi-shield-lock-fill"></i>
+
+                            Secure & protected checkout
+
+                        </div>
+
+
+                        <!-- TRUST -->
+
+                        <div class="trust-box">
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </span>
+
+                                Safe and secure shopping
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-truck"></i>
+                                </span>
+
+                                Reliable doorstep delivery
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <span class="trust-icon">
+                                    <i class="bi bi-headset"></i>
+                                </span>
+
+                                Customer support available
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="shop-footer">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <div class="footer-brand">
+                Dreamz <span>Shop</span>
+            </div>
+
+            <div class="footer-text">
+                Your trusted online shopping platform
+            </div>
+
+        </div>
+
+
+        <div class="footer-services">
+
+            <div class="footer-service">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Shopping
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-truck"></i>
+
+                Fast Delivery
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                Easy Returns
+
+            </div>
+
+
+            <div class="footer-service">
+
+                <i class="bi bi-headset"></i>
+
+                Customer Support
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 Dreamz Shop. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+    function confirmRemove() {
+
+        return confirm(
+            "Are you sure you want to remove this item from your cart?"
+        );
+
+    }
+
+
+    function confirmClear() {
+
+        return confirm(
+            "Are you sure you want to clear your entire cart?"
+        );
+
+    }
+
+
+    /*
+     * Prevent quantity values below 1.
+     */
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const quantityInputs =
+            document.querySelectorAll(".quantity-input");
+
+        quantityInputs.forEach(function (input) {
+
+            input.addEventListener("input", function () {
+
+                const min =
+                    parseInt(input.getAttribute("min")) || 1;
+
+                const maxAttribute =
+                    input.getAttribute("max");
+
+                const max =
+                    maxAttribute
+                        ? parseInt(maxAttribute)
+                        : null;
+
+                let value =
+                    parseInt(input.value);
+
+                if (isNaN(value) || value < min) {
+                    value = min;
+                }
+
+                if (max !== null && value > max) {
+                    value = max;
+                }
+
+                input.value = value;
+
+            });
+
+        });
+
+
+        /*
+         * Small animation when cart items appear.
+         */
+        const cartItems =
+            document.querySelectorAll(".cart-item");
+
+        cartItems.forEach(function (item, index) {
+
+            item.style.animation =
+                "fadeUp 0.45s ease both";
+
+            item.style.animationDelay =
+                (index * 0.06) + "s";
+
+        });
+
+    });
+
+</script>
+
+
+<!-- Bootstrap JS -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

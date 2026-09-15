@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<body>
+<div th:fragment="admin-layout">
+    <aside class="ds-sidebar" id="dsAdminSidebar">
+        <div class="ds-brand">
+            <div class="ds-brand-mark"><i class="bi bi-bag-heart-fill"></i></div>
+            <div class="ds-brand-copy">
+                <div class="ds-brand-name">Dreamz Shop</div>
+                <div class="ds-brand-sub">ADMIN CONSOLE</div>
+            </div>
+            <button class="ds-sidebar-close" type="button" aria-label="Close menu"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="ds-sidebar-scroll">
+            <div class="ds-nav-label">Overview</div>
+            <a class="ds-nav-link" th:href="@{/admin/dashboard}" data-nav="dashboard"><span class="ds-nav-icon"><i class="bi bi-grid-1x2-fill"></i></span><span>Dashboard</span></a>
+
+            <div class="ds-nav-label">Catalog</div>
+            <a class="ds-nav-link" th:href="@{/admin/products}" data-nav="products"><span class="ds-nav-icon"><i class="bi bi-box-seam-fill"></i></span><span>Products</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/categories}" data-nav="categories"><span class="ds-nav-icon"><i class="bi bi-diagram-3-fill"></i></span><span>Categories</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/subcategories}" data-nav="subcategories"><span class="ds-nav-icon"><i class="bi bi-diagram-2-fill"></i></span><span>Subcategories</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/brands}" data-nav="brands"><span class="ds-nav-icon"><i class="bi bi-tags-fill"></i></span><span>Brands</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/inventory}" data-nav="inventory"><span class="ds-nav-icon"><i class="bi bi-boxes"></i></span><span>Inventory</span></a>
+
+            <div class="ds-nav-label">Sales</div>
+            <a class="ds-nav-link" th:href="@{/admin/orders}" data-nav="orders"><span class="ds-nav-icon"><i class="bi bi-receipt-cutoff"></i></span><span>Orders</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/returns}" data-nav="returns"><span class="ds-nav-icon"><i class="bi bi-arrow-return-left"></i></span><span>Returns</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/refunds}" data-nav="refunds"><span class="ds-nav-icon"><i class="bi bi-cash-coin"></i></span><span>Refunds</span></a>
+
+            <div class="ds-nav-label">Marketing</div>
+            <a class="ds-nav-link" th:href="@{/admin/coupons}" data-nav="coupons"><span class="ds-nav-icon"><i class="bi bi-ticket-perforated-fill"></i></span><span>Coupons</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/offers}" data-nav="offers"><span class="ds-nav-icon"><i class="bi bi-percent"></i></span><span>Offers</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/banners}" data-nav="banners"><span class="ds-nav-icon"><i class="bi bi-images"></i></span><span>Banners</span></a>
+
+            <div class="ds-nav-label">Engagement</div>
+            <a class="ds-nav-link" th:href="@{/admin/reviews}" data-nav="reviews"><span class="ds-nav-icon"><i class="bi bi-star-fill"></i></span><span>Reviews</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/customers}" data-nav="customers"><span class="ds-nav-icon"><i class="bi bi-people-fill"></i></span><span>Customers</span></a>
+
+            <div class="ds-nav-label">Insights</div>
+            <a class="ds-nav-link" th:href="@{/admin/reports}" data-nav="reports"><span class="ds-nav-icon"><i class="bi bi-bar-chart-fill"></i></span><span>Reports</span></a>
+
+            <div class="ds-nav-label" sec:authorize="hasRole('ADMIN')">Administration</div>
+            <a class="ds-nav-link" th:href="@{/admin/staff}" data-nav="staff" sec:authorize="hasRole('ADMIN')"><span class="ds-nav-icon"><i class="bi bi-person-badge-fill"></i></span><span>Staff</span></a>
+        </div>
+
+        <div class="ds-sidebar-footer">
+            <a class="ds-store-link" th:href="@{/}"><i class="bi bi-shop"></i><span>View Store</span><i class="bi bi-arrow-up-right ms-auto"></i></a>
+            <div class="ds-admin-mini">
+                <div class="ds-admin-avatar"><i class="bi bi-person-fill"></i></div>
+                <div class="ds-admin-info"><strong>Administrator</strong><small>Control Center</small></div>
+                <form th:action="@{/logout}" method="post" class="ms-auto">
+                    <button class="ds-logout" type="submit" title="Logout" aria-label="Logout"><i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <div class="ds-sidebar-backdrop" id="dsSidebarBackdrop"></div>
+
+    <header class="ds-topbar">
+        <div class="ds-topbar-left">
+            <button class="ds-menu-toggle" type="button" aria-label="Open menu" aria-controls="dsAdminSidebar" aria-expanded="false"><i class="bi bi-list"></i></button>
+            <div>
+                <div class="ds-page-kicker">DREAMZ SHOP</div>
+                <h1 class="ds-page-title" id="dsPageTitle">Admin Console</h1>
+            </div>
+        </div>
+        <div class="ds-topbar-right">
+            <div class="ds-live-pill"><span class="ds-live-dot"></span> System Online</div>
+            <a class="ds-home-btn" th:href="@{/}" title="Storefront"><i class="bi bi-house-door-fill"></i></a>
+        </div>
+    </header>
+</div>
+</body>
+</html>
