@@ -1,318 +1,846 @@
 <!DOCTYPE html>
-
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Manage Offers | Dreamz Shop</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order Details | Dreamz Shop</title>
+
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+
     <style>
 
+        /* =========================================================
+           ROOT
+           ========================================================= */
+
         :root {
-            --green: #16a34a;
-            --green-dark: #15803d;
-            --green-light: #dcfce7;
-            --green-soft: #f0fdf4;
 
-            --sidebar: #10231a;
-            --sidebar-hover: #193d2a;
+            --dz-primary: #16a34a;
+            --dz-primary-dark: #15803d;
+            --dz-primary-deep: #166534;
 
-            --bg: #f4f7f5;
-            --card: #ffffff;
-            --border: #e3ebe6;
+            --dz-primary-soft: #f0fdf4;
+            --dz-primary-light: #dcfce7;
 
-            --text: #17211b;
-            --muted: #6b7280;
+            --dz-sidebar: #08111f;
+            --dz-sidebar-green: #102217;
 
-            --red: #dc2626;
-            --red-soft: #fee2e2;
+            --dz-bg: #f5f7f6;
+            --dz-card: #ffffff;
+            --dz-border: #e5e7eb;
 
-            --orange: #d97706;
-            --orange-soft: #fef3c7;
+            --dz-ink: #111827;
+            --dz-text: #1f2937;
+            --dz-muted: #6b7280;
 
-            --blue: #2563eb;
-            --blue-soft: #dbeafe;
+            --dz-danger: #dc2626;
+            --dz-danger-soft: #fee2e2;
+
+            --dz-sidebar-width: 255px;
+
+            --dz-shadow:
+                    0 10px 30px rgba(15, 23, 42, .07);
+
+            --dz-shadow-hover:
+                    0 18px 42px rgba(15, 23, 42, .11);
         }
 
+
+        /* =========================================================
+           GLOBAL
+           ========================================================= */
 
         * {
             box-sizing: border-box;
         }
 
 
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Inter, Arial, sans-serif;
+        html {
+            scroll-behavior: smooth;
         }
 
 
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            color: var(--dz-text);
+
+            background:
+                    radial-gradient(
+                            circle at 92% 0%,
+                            rgba(34, 197, 94, .075),
+                            transparent 26%
+                    ),
+                    radial-gradient(
+                            circle at 3% 100%,
+                            rgba(37, 99, 235, .025),
+                            transparent 24%
+                    ),
+                    var(--dz-bg);
+
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+
+            animation:
+                    dzPageIn .45s ease both;
+        }
 
 
-        .sidebar {
+        a,
+        button,
+        .btn,
+        .form-control,
+        .form-select,
+        .dreamz-link {
+            transition:
+                    all .22s cubic-bezier(.2, .7, .2, 1);
+        }
+
+
+        ::selection {
+
+            background:
+                    var(--dz-primary-light);
+
+            color:
+                    var(--dz-primary-deep);
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+           ========================================================= */
+
+        @keyframes dzPageIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(7px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+
+        @keyframes dzContent {
+
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+
+        @keyframes dzAlert {
+
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+
+        @keyframes dzGlow {
+
+            from {
+
+                transform:
+                        translate(0, 0)
+                        scale(.85);
+
+                opacity: .4;
+            }
+
+            to {
+
+                transform:
+                        translate(125px, 22px)
+                        scale(1.2);
+
+                opacity: .9;
+            }
+        }
+
+
+        @keyframes dzFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+
+
+        @keyframes dzShine {
+
+            0%,
+            55% {
+                left: -82px;
+            }
+
+            75%,
+            100% {
+                left: 110px;
+            }
+        }
+
+
+        /* =========================================================
+           SIDEBAR
+           EXACT MANAGE ORDERS DESIGN
+           ========================================================= */
+
+        .dreamz-sidebar {
+
             position: fixed;
 
-            top: 0;
-            left: 0;
+            inset: 0 auto 0 0;
 
-            width: 250px;
-            height: 100vh;
+            width:
+                    var(--dz-sidebar-width);
 
-            padding: 20px 14px;
+            z-index: 1100;
 
-            background: var(--sidebar);
+            display: flex;
+
+            flex-direction: column;
+
+            color: #fff;
+
+            background:
+                    radial-gradient(
+                            circle at 0% 0%,
+                            rgba(34, 197, 94, .15),
+                            transparent 28%
+                    ),
+                    radial-gradient(
+                            circle at 100% 90%,
+                            rgba(34, 197, 94, .08),
+                            transparent 30%
+                    ),
+                    linear-gradient(
+                            180deg,
+                            var(--dz-sidebar),
+                            #0f172a 48%,
+                            var(--dz-sidebar-green)
+                    );
+
+            border-right:
+                    1px solid rgba(255, 255, 255, .06);
+
+            box-shadow:
+                    8px 0 35px rgba(0, 0, 0, .11);
+
+            overflow: hidden;
+        }
+
+
+        .dreamz-sidebar::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            left: -170px;
+            top: 28%;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(34, 197, 94, .07);
+
+            filter:
+                    blur(28px);
+
+            animation:
+                    dzGlow 7s ease-in-out infinite alternate;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           BRAND
+           ========================================================= */
+
+        .dreamz-brand {
+
+            position: relative;
+
+            flex-shrink: 0;
+
+            padding: 18px 16px;
+
+            border-bottom:
+                    1px solid rgba(255, 255, 255, .07);
+        }
+
+
+        .dreamz-brand-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            color: #fff;
+
+            text-decoration: none;
+        }
+
+
+        .dreamz-brand-link:hover {
+
+            color: #fff;
+
+            transform:
+                    translateX(2px);
+        }
+
+
+        .dreamz-brand-icon {
+
+            width: 43px;
+            height: 43px;
+
+            flex: 0 0 43px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            color: #fff;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #4ade80,
+                            #16a34a 58%,
+                            #15803d
+                    );
+
+            box-shadow:
+                    0 10px 25px rgba(22, 163, 74, .3);
+
+            animation:
+                    dzFloat 3s ease-in-out infinite;
+        }
+
+
+        .dreamz-brand-icon::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 62px;
+            height: 130px;
+
+            top: -45px;
+            left: -82px;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            transparent,
+                            rgba(255, 255, 255, .45),
+                            transparent
+                    );
+
+            transform:
+                    rotate(25deg);
+
+            animation:
+                    dzShine 4.7s ease-in-out infinite;
+        }
+
+
+        .dreamz-brand-link strong {
+
+            display: block;
+
+            color: #fff;
+
+            font-size: 16px;
+
+            font-weight: 800;
+
+            letter-spacing: -.35px;
+        }
+
+
+        .dreamz-brand-link small {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: #94a3b8;
+
+            font-size: 8px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.35px;
+        }
+
+
+        /* =========================================================
+           SIDEBAR CONTENT
+           ========================================================= */
+
+        .dreamz-sidebar-content {
+
+            flex: 1;
 
             overflow-y: auto;
 
-            z-index: 1000;
+            padding: 13px 11px 16px;
+
+            scrollbar-width: thin;
+
+            scrollbar-color:
+                    rgba(255, 255, 255, .15)
+                    transparent;
         }
 
 
-        .brand {
-            padding: 8px 15px 22px;
+        /* =========================================================
+           SECTION TITLES
+           ========================================================= */
 
-            margin-bottom: 18px;
+        .dreamz-section-title {
 
-            border-bottom:
-                    1px solid rgba(255,255,255,.10);
-
-            color: white;
-
-            font-size: 24px;
-            font-weight: 800;
-
-            letter-spacing: -.5px;
-        }
-
-
-        .brand span {
-            color: #4ade80;
-        }
-
-
-        .brand small {
-            display: block;
-
-            margin-top: 4px;
-
-            color: #9ca3af;
-
-            font-size: 10px;
-            font-weight: 700;
-
-            letter-spacing: 1px;
-        }
-
-
-        .sidebar-link {
             display: flex;
 
             align-items: center;
 
-            gap: 12px;
+            gap: 7px;
 
-            width: 100%;
-            min-height: 44px;
+            padding: 10px 10px 7px;
 
-            padding: 0 14px;
+            color: #64748b;
 
-            margin-bottom: 5px;
+            font-size: 8px;
 
-            border: none;
-            border-radius: 10px;
+            font-weight: 800;
 
-            background: transparent;
+            text-transform: uppercase;
 
-            color: #d1d5db;
+            letter-spacing: 1.2px;
+        }
+
+
+        .dreamz-section-title::before {
+
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background:
+                    #4ade80;
+
+            box-shadow:
+                    0 0 10px rgba(74, 222, 128, .55);
+        }
+
+
+        /* =========================================================
+           SIDEBAR LINKS
+           ========================================================= */
+
+        .dreamz-link {
+
+            position: relative;
+
+            min-height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            margin: 3px 0;
+
+            padding: 0 12px;
+
+            border:
+                    1px solid transparent;
+
+            border-radius: 11px;
+
+            color: #cbd5e1;
 
             text-decoration: none;
 
-            font-size: 14px;
+            font-size: 12px;
+
             font-weight: 650;
 
-            transition: .2s ease;
+            overflow: hidden;
         }
 
 
-        .sidebar-link i {
-            width: 20px;
+        .dreamz-link i {
+
+            width: 21px;
+
+            flex: 0 0 21px;
+
+            color: #94a3b8;
 
             text-align: center;
 
-            font-size: 17px;
+            font-size: 15px;
         }
 
 
-        .sidebar-link:hover {
-            background: var(--sidebar-hover);
+        .dreamz-link:hover {
 
-            color: white;
+            color: #fff;
 
-            transform: translateX(2px);
+            background:
+                    rgba(255, 255, 255, .055);
+
+            border-color:
+                    rgba(255, 255, 255, .06);
+
+            transform:
+                    translateX(3px);
         }
 
 
-        .sidebar-link.active {
-            background: var(--green);
+        .dreamz-link:hover i {
 
-            color: white;
+            color:
+                    #4ade80;
+
+            transform:
+                    scale(1.08);
+        }
+
+
+        /* ACTIVE ORDERS */
+
+        .dreamz-link.active {
+
+            color: #fff;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            rgba(34, 197, 94, .24),
+                            rgba(34, 197, 94, .07)
+                    );
+
+            border-color:
+                    rgba(74, 222, 128, .13);
 
             box-shadow:
-                    0 8px 22px rgba(22,163,74,.22);
+                    inset 3px 0 0 #22c55e;
         }
 
 
-        .logout-area {
-            margin-top: 18px;
+        .dreamz-link.active i {
 
-            padding-top: 18px;
+            color:
+                    #4ade80;
+
+            text-shadow:
+                    0 0 12px rgba(74, 222, 128, .42);
+        }
+
+
+        .dreamz-store-link {
+
+            margin-top: 12px;
+
+            background:
+                    rgba(255, 255, 255, .04);
+
+            border-color:
+                    rgba(255, 255, 255, .07);
+        }
+
+
+        /* =========================================================
+           SIDEBAR FOOTER
+           ========================================================= */
+
+        .dreamz-sidebar-footer {
+
+            flex-shrink: 0;
+
+            padding: 12px;
 
             border-top:
-                    1px solid rgba(255,255,255,.10);
+                    1px solid rgba(255, 255, 255, .07);
+
+            background:
+                    rgba(0, 0, 0, .12);
         }
 
 
-        .logout-area form {
-            margin: 0;
-        }
+        .dreamz-user {
 
-
-
-
-        .main-content {
-            min-height: 100vh;
-
-            margin-left: 250px;
-
-            padding: 28px;
-        }
-
-
-
-
-        .top-bar {
             display: flex;
-
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 22px;
-        }
-
-
-        .page-title h1 {
-            margin: 0;
-
-            color: var(--text);
-
-            font-size: 28px;
-            font-weight: 800;
-
-            letter-spacing: -.5px;
-        }
-
-
-        .page-title h1 i {
-            color: var(--green);
-        }
-
-
-        .page-title p {
-            margin: 7px 0 0;
-
-            color: var(--muted);
-
-            font-size: 14px;
-        }
-
-
-        .admin-profile {
-            display: inline-flex;
 
             align-items: center;
 
             gap: 9px;
 
-            min-height: 44px;
+            padding: 9px;
 
-            padding: 0 15px;
-
-            background: white;
-
-            border:
-                    1px solid var(--border);
+            margin-bottom: 8px;
 
             border-radius: 11px;
 
-            color: #374151;
+            background:
+                    rgba(255, 255, 255, .045);
 
-            font-size: 13px;
-            font-weight: 700;
-
-            box-shadow:
-                    0 4px 15px rgba(0,0,0,.04);
+            border:
+                    1px solid rgba(255, 255, 255, .05);
         }
 
 
-        .admin-profile i {
-            color: var(--green);
+        .dreamz-user-avatar {
 
-            font-size: 18px;
-        }
+            width: 35px;
+            height: 35px;
 
+            flex: 0 0 35px;
 
-
-
-        .header-card {
             display: flex;
 
             align-items: center;
-            justify-content: space-between;
 
-            gap: 20px;
-
-            margin-bottom: 20px;
-
-            padding: 22px 24px;
-
-            background: white;
-
-            border:
-                    1px solid var(--border);
-
-            border-radius: 16px;
-
-            box-shadow:
-                    0 5px 22px rgba(16,35,26,.05);
-        }
-
-
-        .header-icon {
-            display: inline-flex;
-
-            align-items: center;
             justify-content: center;
 
-            width: 48px;
-            height: 48px;
+            border-radius: 50%;
 
-            flex: 0 0 48px;
+            color: #fff;
 
-            border-radius: 13px;
+            background:
+                    linear-gradient(
+                            135deg,
+                            #22c55e,
+                            #15803d
+                    );
 
-            background: var(--green-soft);
-
-            color: var(--green);
-
-            font-size: 21px;
+            box-shadow:
+                    0 6px 18px rgba(22, 163, 74, .22);
         }
 
 
-        .header-content {
+        .dreamz-user strong {
+
+            display: block;
+
+            color: #fff;
+
+            font-size: 10.5px;
+
+            font-weight: 700;
+        }
+
+
+        .dreamz-user small {
+
+            display: block;
+
+            margin-top: 2px;
+
+            color: #94a3b8;
+
+            font-size: 8px;
+        }
+
+
+        .dreamz-logout {
+
+            width: 100%;
+
+            min-height: 39px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            border:
+                    1px solid rgba(248, 113, 113, .18);
+
+            border-radius: 10px;
+
+            color: #cbd5e1;
+
+            background: transparent;
+
+            font-size: 10.5px;
+
+            font-weight: 700;
+        }
+
+
+        .dreamz-logout:hover {
+
+            color: #fecaca;
+
+            background:
+                    rgba(220, 38, 38, .12);
+
+            border-color:
+                    rgba(248, 113, 113, .25);
+
+            transform:
+                    translateY(-1px);
+        }
+
+
+        /* =========================================================
+           SIDEBAR OVERLAY
+           ========================================================= */
+
+        .dreamz-sidebar-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 1090;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            background:
+                    rgba(15, 23, 42, .50);
+
+            backdrop-filter:
+                    blur(3px);
+
+            transition:
+                    all .3s ease;
+        }
+
+
+        .dreamz-sidebar-overlay.show {
+
+            opacity: 1;
+
+            visibility: visible;
+        }
+
+
+        /* =========================================================
+           TOPBAR
+           ========================================================= */
+
+        .dreamz-topbar {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            min-height: 76px;
+
+            margin-left:
+                    var(--dz-sidebar-width);
+
+            padding: 0 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 18px;
+
+            background:
+                    rgba(255, 255, 255, .90);
+
+            border-bottom:
+                    1px solid rgba(229, 231, 235, .86);
+
+            backdrop-filter:
+                    blur(18px);
+
+            -webkit-backdrop-filter:
+                    blur(18px);
+        }
+
+
+        .dreamz-topbar-left {
+
+            min-width: 0;
+
             display: flex;
 
             align-items: center;
@@ -321,1365 +849,3066 @@
         }
 
 
-        .header-content h2 {
-            margin: 0;
+        .dreamz-menu-btn {
 
-            color: var(--text);
+            width: 40px;
+            height: 40px;
 
-            font-size: 19px;
-            font-weight: 800;
-        }
-
-
-        .header-content p {
-            margin: 4px 0 0;
-
-            color: var(--muted);
-
-            font-size: 12px;
-        }
-
-
-
-
-        .btn {
-            display: inline-flex;
+            display: none;
 
             align-items: center;
+
             justify-content: center;
 
-            gap: 7px;
-
-            min-height: 42px;
-
-            padding: 0 16px;
+            border:
+                    1px solid var(--dz-border);
 
             border-radius: 10px;
 
-            font-size: 13px;
-            font-weight: 750;
+            background: #fff;
 
-            line-height: 1;
+            color: var(--dz-ink);
 
-            transition:
-                    transform .2s ease,
-                    box-shadow .2s ease,
-                    background .2s ease;
+            font-size: 19px;
         }
 
 
-        .btn-success {
-            background: var(--green);
+        .dreamz-menu-btn:hover {
 
-            border-color: var(--green);
+            color:
+                    var(--dz-primary);
 
-            color: white;
+            border-color:
+                    #bbf7d0;
+
+            background:
+                    var(--dz-primary-soft);
         }
 
 
-        .btn-success:hover {
-            background: var(--green-dark);
+        .dreamz-topbar-eyebrow {
 
-            border-color: var(--green-dark);
+            margin-bottom: 2px;
 
-            color: white;
+            color:
+                    var(--dz-primary-dark);
 
-            transform: translateY(-1px);
+            font-size: 7.5px;
 
-            box-shadow:
-                    0 7px 18px rgba(22,163,74,.20);
-        }
-
-
-        .btn-outline-dark {
-            border-color: #d6dfda;
-
-            color: #374151;
-
-            background: white;
-        }
-
-
-        .btn-outline-dark:hover {
-            background: #f8faf9;
-
-            border-color: #b8c6be;
-
-            color: #17211b;
-        }
-
-
-        .btn-outline-primary {
-            border-color: #bfdbfe;
-
-            color: #2563eb;
-
-            background: white;
-        }
-
-
-        .btn-outline-primary:hover {
-            background: var(--blue-soft);
-
-            color: #1d4ed8;
-
-            border-color: #93c5fd;
-        }
-
-
-        .btn-outline-danger {
-            border-color: #fecaca;
-
-            color: var(--red);
-
-            background: white;
-        }
-
-
-        .btn-outline-danger:hover {
-            background: var(--red-soft);
-
-            color: #b91c1c;
-
-            border-color: #fca5a5;
-        }
-
-
-
-
-        .alert {
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            margin-bottom: 20px;
-
-            border-radius: 11px;
-
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-
-
-
-        .table-card {
-            background: white;
-
-            border:
-                    1px solid var(--border);
-
-            border-radius: 16px;
-
-            padding: 22px;
-
-            box-shadow:
-                    0 5px 22px rgba(16,35,26,.05);
-        }
-
-
-        .table-header {
-            display: flex;
-
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 18px;
-        }
-
-
-        .table-heading {
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            margin: 0;
-
-            color: var(--text);
-
-            font-size: 16px;
             font-weight: 800;
-        }
-
-
-        .table-heading i {
-            color: var(--green);
-        }
-
-
-        .table-count {
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            min-height: 29px;
-
-            padding: 0 10px;
-
-            border-radius: 20px;
-
-            background: var(--green-soft);
-
-            color: var(--green-dark);
-
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-
-
-
-        .table-wrapper {
-            overflow-x: auto;
-
-            border:
-                    1px solid var(--border);
-
-            border-radius: 12px;
-        }
-
-
-        .table {
-            min-width: 1050px;
-
-            margin: 0;
-
-            vertical-align: middle;
-        }
-
-
-        .table thead th {
-            padding: 14px;
-
-            background: #f8faf9;
-
-            border-bottom:
-                    1px solid var(--border);
-
-            color: #69736d;
-
-            font-size: 10px;
-            font-weight: 800;
-
-            letter-spacing: .7px;
 
             text-transform: uppercase;
 
-            white-space: nowrap;
+            letter-spacing: 1.1px;
         }
 
 
-        .table tbody td {
-            padding: 15px 14px;
+        .dreamz-topbar-title {
 
-            border-bottom:
-                    1px solid #eef2ef;
+            margin: 0;
 
-            color: #374151;
+            color:
+                    var(--dz-ink);
 
-            font-size: 13px;
+            font-size: 18px;
 
-            white-space: nowrap;
-        }
-
-
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-
-        .table tbody tr {
-            transition: .15s ease;
-        }
-
-
-        .table tbody tr:hover {
-            background: #fbfdfc;
-        }
-
-
-
-
-        .offer-wrapper {
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-        }
-
-
-        .offer-icon {
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            width: 38px;
-            height: 38px;
-
-            flex: 0 0 38px;
-
-            border-radius: 10px;
-
-            background: var(--green-soft);
-
-            color: var(--green);
-
-            font-size: 16px;
-        }
-
-
-        .offer-code {
-            color: var(--text);
-
-            font-size: 13px;
             font-weight: 800;
 
-            letter-spacing: .2px;
+            letter-spacing: -.35px;
         }
 
 
-        .offer-description {
-            max-width: 230px;
+        .dreamz-topbar-subtitle {
 
-            margin-top: 3px;
+            margin: 3px 0 0;
+
+            color:
+                    var(--dz-muted);
+
+            font-size: 9.5px;
+
+            white-space: nowrap;
 
             overflow: hidden;
-
-            color: var(--muted);
-
-            font-size: 11px;
 
             text-overflow: ellipsis;
         }
 
 
+        .dreamz-topbar-right {
 
-
-        .type-badge {
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            min-height: 29px;
-
-            padding: 0 10px;
-
-            border-radius: 20px;
-
-            background: #f3f4f6;
-
-            color: #4b5563;
-
-            font-size: 10px;
-            font-weight: 800;
-
-            text-transform: capitalize;
-        }
-
-
-
-
-        .discount-value {
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            min-width: 62px;
-            min-height: 32px;
-
-            padding: 0 10px;
-
-            border-radius: 9px;
-
-            background: var(--green-soft);
-
-            color: var(--green-dark);
-
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-
-
-
-        .minimum-value {
-            color: #374151;
-
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-
-        .no-limit {
-            color: #9ca3af;
-
-            font-size: 13px;
-        }
-
-
-
-
-        .validity {
-            color: #4b5563;
-
-            font-size: 11px;
-
-            line-height: 1.7;
-        }
-
-
-        .validity strong {
-            color: #374151;
-
-            font-weight: 750;
-        }
-
-
-        .validity-divider {
-            color: #9ca3af;
-
-            margin: 0 3px;
-        }
-
-
-
-
-        .status-badge {
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            gap: 6px;
-
-            min-height: 31px;
-
-            padding: 0 11px;
-
-            border-radius: 20px;
-
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-
-        .status-active {
-            background: var(--green-light);
-
-            color: var(--green-dark);
-        }
-
-
-        .status-inactive {
-            background: #f3f4f6;
-
-            color: #6b7280;
-        }
-
-
-
-
-        .action-group {
             display: flex;
 
             align-items: center;
-            justify-content: flex-end;
+
+            gap: 9px;
+
+            flex-shrink: 0;
+        }
+
+
+        .dreamz-store-btn {
+
+            min-height: 39px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 0 12px;
+
+            border:
+                    1px solid var(--dz-border);
+
+            border-radius: 10px;
+
+            background: #fff;
+
+            color: #374151;
+
+            font-size: 10.5px;
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+
+        .dreamz-store-btn:hover {
+
+            color:
+                    var(--dz-primary-dark);
+
+            background:
+                    var(--dz-primary-soft);
+
+            border-color:
+                    #bbf7d0;
+
+            transform:
+                    translateY(-1px);
+        }
+
+
+        .dreamz-admin-avatar {
+
+            width: 39px;
+            height: 39px;
+
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            color:
+                    var(--dz-primary-deep);
+
+            background:
+                    var(--dz-primary-light);
+
+            border:
+                    1px solid #bbf7d0;
+
+            font-size: 14px;
+        }
+
+
+        .dreamz-admin-avatar::after {
+
+            content: "";
+
+            position: absolute;
+
+            right: 0;
+
+            bottom: 1px;
+
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background:
+                    #22c55e;
+
+            border:
+                    2px solid #fff;
+        }
+
+
+        /* =========================================================
+           MAIN CONTENT
+           ========================================================= */
+
+        .main-content {
+
+            min-height:
+                    calc(100vh - 76px);
+
+            margin-left:
+                    var(--dz-sidebar-width);
+
+            padding: 30px;
+
+            animation:
+                    dzContent .5s .04s ease both;
+        }
+
+
+        /* =========================================================
+           PAGE HEADER
+           ========================================================= */
+
+        .page-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+
+            padding: 23px 25px;
+
+            border:
+                    1px solid rgba(229, 231, 235, .90);
+
+            border-radius: 17px;
+
+            background: #fff;
+
+            box-shadow:
+                    var(--dz-shadow);
+        }
+
+
+        .page-title h1 {
+
+            margin: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 25px;
+
+            font-weight: 800;
+
+            letter-spacing: -.55px;
+        }
+
+
+        .page-title h1 i {
+
+            color:
+                    var(--dz-primary);
+        }
+
+
+        .page-title p {
+
+            margin: 6px 0 0;
+
+            color:
+                    var(--dz-muted);
+
+            font-size: 12px;
+        }
+
+
+        .back-btn {
+
+            min-height: 40px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
 
             gap: 7px;
-        }
 
+            padding: 0 13px;
 
-        .action-btn {
-            min-width: 76px;
+            border:
+                    1px solid #d7ded9;
 
-            min-height: 37px;
+            border-radius: 10px;
 
-            padding: 0 11px;
+            color: #4b5563;
+
+            background: #fff;
 
             font-size: 11px;
+
+            font-weight: 750;
+
+            text-decoration: none;
         }
 
 
-        .action-btn i {
-            font-size: 13px;
+        .back-btn:hover {
+
+            color:
+                    var(--dz-primary-dark);
+
+            background:
+                    var(--dz-primary-soft);
+
+            border-color:
+                    #bbf7d0;
+
+            transform:
+                    translateY(-1px);
         }
 
 
-        .action-form {
+        /* =========================================================
+           ALERTS
+           ========================================================= */
+
+        .alert {
+
+            border-radius: 11px;
+
+            font-size: 12px;
+
+            animation:
+                    dzAlert .35s ease both;
+        }
+
+
+        /* =========================================================
+           DETAILS GRID
+           ========================================================= */
+
+        .details-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                    minmax(0, 2fr)
+                    minmax(280px, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================================================
+           CARD
+           ========================================================= */
+
+        .detail-card {
+
+            background: #fff;
+
+            border:
+                    1px solid rgba(229, 231, 235, .90);
+
+            border-radius: 15px;
+
+            box-shadow:
+                    var(--dz-shadow);
+
+            overflow: hidden;
+        }
+
+
+        .detail-card-header {
+
+            min-height: 62px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 0 20px;
+
+            border-bottom:
+                    1px solid #edf1ee;
+
+            background:
+                    linear-gradient(
+                            180deg,
+                            #fff,
+                            #fcfdfc
+                    );
+        }
+
+
+        .detail-card-header h3 {
+
             margin: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 14px;
+
+            font-weight: 800;
         }
 
 
+        .detail-card-header h3 i {
+
+            color:
+                    var(--dz-primary);
+
+            font-size: 16px;
+        }
 
 
-        .empty-state {
-            padding: 65px 20px;
+        .detail-card-body {
+
+            padding: 20px;
+        }
+
+
+        /* =========================================================
+           ORDER NUMBER
+           ========================================================= */
+
+        .detail-order-number {
+
+            margin-bottom: 15px;
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 19px;
+
+            font-weight: 800;
+        }
+
+
+        .detail-order-number span {
+
+            color:
+                    var(--dz-primary-dark);
+        }
+
+
+        /* =========================================================
+           INFO ROW
+           ========================================================= */
+
+        .detail-info-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding: 10px 0;
+
+            border-bottom:
+                    1px solid #eef2ef;
+
+            font-size: 11.5px;
+        }
+
+
+        .detail-info-row:last-child {
+            border-bottom: 0;
+        }
+
+
+        .detail-label {
+
+            color:
+                    var(--dz-muted);
+
+            font-weight: 650;
+        }
+
+
+        .detail-value {
+
+            color:
+                    var(--dz-ink);
+
+            font-weight: 750;
+
+            text-align: right;
+        }
+
+
+        /* =========================================================
+           STATUS BADGES
+           ========================================================= */
+
+        .detail-status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            min-height: 27px;
+
+            padding: 0 10px;
+
+            border-radius: 50px;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        .detail-status::before {
+
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background:
+                    currentColor;
+        }
+
+
+        .status-pending {
+
+            background:
+                    #f3f4f6;
+
+            color:
+                    #4b5563;
+        }
+
+
+        .status-confirmed {
+
+            background:
+                    #dbeafe;
+
+            color:
+                    #1d4ed8;
+        }
+
+
+        .status-processing {
+
+            background:
+                    #e0e7ff;
+
+            color:
+                    #4338ca;
+        }
+
+
+        .status-packed {
+
+            background:
+                    #fef3c7;
+
+            color:
+                    #92400e;
+        }
+
+
+        .status-shipped {
+
+            background:
+                    #cffafe;
+
+            color:
+                    #155e75;
+        }
+
+
+        .status-out-for-delivery {
+
+            background:
+                    #dcfce7;
+
+            color:
+                    #166534;
+        }
+
+
+        .status-delivered {
+
+            background:
+                    #d1fae5;
+
+            color:
+                    #065f46;
+        }
+
+
+        .status-cancelled {
+
+            background:
+                    #fee2e2;
+
+            color:
+                    #991b1b;
+        }
+
+
+        .status-return-requested {
+
+            background:
+                    #fef3c7;
+
+            color:
+                    #92400e;
+        }
+
+
+        .status-returned {
+
+            background:
+                    #e5e7eb;
+
+            color:
+                    #374151;
+        }
+
+
+        .status-refund-requested {
+
+            background:
+                    #fce7f3;
+
+            color:
+                    #9d174d;
+        }
+
+
+        .status-refunded {
+
+            background:
+                    #d1fae5;
+
+            color:
+                    #065f46;
+        }
+
+
+        /* =========================================================
+           CUSTOMER
+           ========================================================= */
+
+        .customer-name {
+
+            margin-bottom: 13px;
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 17px;
+
+            font-weight: 800;
+        }
+
+
+        .customer-line {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 9px;
+
+            color:
+                    var(--dz-muted);
+
+            font-size: 11.5px;
+        }
+
+
+        .customer-line i {
+
+            width: 18px;
+
+            color:
+                    var(--dz-primary);
 
             text-align: center;
         }
 
 
-        .empty-icon {
-            display: inline-flex;
+        /* =========================================================
+           ADDRESS
+           ========================================================= */
 
-            align-items: center;
-            justify-content: center;
+        .address-box {
 
-            width: 78px;
-            height: 78px;
+            padding: 15px;
 
-            border-radius: 23px;
+            border:
+                    1px solid #dceee1;
 
-            background: var(--green-soft);
+            border-radius: 11px;
 
-            color: #86a892;
+            background:
+                    var(--dz-primary-soft);
 
-            font-size: 34px;
+            color:
+                    #374151;
+
+            font-size: 12px;
+
+            line-height: 1.75;
         }
 
 
-        .empty-state h4 {
-            margin-top: 18px;
+        .address-name {
 
-            margin-bottom: 7px;
+            color:
+                    var(--dz-ink);
 
-            color: var(--text);
-
-            font-size: 18px;
             font-weight: 800;
         }
 
 
-        .empty-state p {
+        /* =========================================================
+           ITEMS
+           ========================================================= */
+
+        .items-card {
+
             margin-bottom: 20px;
-
-            color: var(--muted);
-
-            font-size: 13px;
         }
 
 
+        .items-table-wrap {
 
-
-        .pagination-wrapper {
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            margin-top: 22px;
+            overflow-x: auto;
         }
 
 
-        .pagination {
+        .items-table {
+
+            width: 100%;
+
             margin: 0;
+
+            border-collapse: collapse;
         }
 
 
-        .page-link {
+        .items-table thead th {
+
+            padding: 13px 16px;
+
+            color:
+                    #64748b;
+
+            background:
+                    #f8faf9;
+
+            border-bottom:
+                    1px solid #e5ebe7;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .65px;
+
+            white-space: nowrap;
+        }
+
+
+        .items-table tbody td {
+
+            padding: 15px 16px;
+
+            color:
+                    #374151;
+
+            border-bottom:
+                    1px solid #eef1ef;
+
+            font-size: 11.5px;
+
+            vertical-align: middle;
+        }
+
+
+        .items-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+
+        .items-table tbody tr:hover {
+            background:
+                    rgba(22, 163, 74, .035);
+        }
+
+
+        .product-cell {
+
             display: flex;
 
             align-items: center;
+
+            gap: 11px;
+        }
+
+
+        .product-image {
+
+            width: 52px;
+            height: 52px;
+
+            flex: 0 0 52px;
+
+            object-fit: cover;
+
+            border-radius: 9px;
+
+            border:
+                    1px solid var(--dz-border);
+
+            background:
+                    #f8faf9;
+        }
+
+
+        .product-placeholder {
+
+            width: 52px;
+            height: 52px;
+
+            flex: 0 0 52px;
+
+            display: flex;
+
+            align-items: center;
+
             justify-content: center;
 
-            min-width: 39px;
-            min-height: 39px;
+            border-radius: 9px;
 
-            border-color: var(--border);
+            background:
+                    var(--dz-primary-soft);
 
-            color: var(--green-dark);
+            color:
+                    var(--dz-primary);
 
-            font-size: 12px;
+            font-size: 19px;
+        }
+
+
+        .product-name {
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 11.5px;
+
+            font-weight: 800;
+        }
+
+
+        .product-sku {
+
+            margin-top: 3px;
+
+            color:
+                    #8a948e;
+
+            font-size: 9px;
+        }
+
+
+        .quantity-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 29px;
+
+            min-height: 26px;
+
+            padding: 0 8px;
+
+            border-radius: 8px;
+
+            background:
+                    #f3f4f6;
+
+            color:
+                    #374151;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+
+        .price {
+
+            color:
+                    var(--dz-ink);
+
+            font-weight: 750;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           TOTALS
+           ========================================================= */
+
+        .totals-box {
+
+            width:
+                    min(430px, 100%);
+
+            margin-left: auto;
+
+            padding: 20px;
+        }
+
+
+        .total-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding: 7px 0;
+
+            color:
+                    #4b5563;
+
+            font-size: 11.5px;
+        }
+
+
+        .total-row strong {
+
+            color:
+                    var(--dz-ink);
+
             font-weight: 750;
         }
 
 
-        .page-link:hover {
-            background: var(--green-soft);
+        .total-row.discount {
 
-            color: var(--green-dark);
+            color:
+                    var(--dz-primary-dark);
         }
 
 
-        .page-item.active .page-link {
-            background: var(--green);
+        .grand-total {
 
-            border-color: var(--green);
+            display: flex;
 
-            color: white;
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-top: 9px;
+
+            padding-top: 14px;
+
+            border-top:
+                    2px solid #e5ebe7;
+
+            color:
+                    var(--dz-ink);
+
+            font-size: 17px;
+
+            font-weight: 900;
         }
 
 
-        .page-item.disabled .page-link {
-            background: #f8faf9;
-
-            color: #b4bdb7;
+        .grand-total span:last-child {
+            color:
+                    var(--dz-primary-dark);
         }
 
 
+        /* =========================================================
+           PAYMENT
+           ========================================================= */
+
+        .payment-value {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 5px 9px;
+
+            border-radius: 7px;
+
+            background:
+                    #f3f4f6;
+
+            color:
+                    #374151;
+
+            font-size: 10px;
+
+            font-weight: 750;
+        }
 
 
-        @media (max-width: 900px) {
+        /* =========================================================
+           UPDATE STATUS
+           ========================================================= */
 
-            .sidebar {
-                position: relative;
+        .status-update-box {
 
-                width: 100%;
-                height: auto;
+            padding: 16px;
 
-                min-height: auto;
+            border:
+                    1px solid #e0ebe3;
+
+            border-radius: 11px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #fbfefc,
+                            #f7faf8
+                    );
+        }
+
+
+        .current-status-label {
+
+            margin-bottom: 7px;
+
+            color:
+                    var(--dz-muted);
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+
+        .current-status {
+
+            margin-bottom: 16px;
+        }
+
+
+        .status-form {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .status-select {
+
+            min-height: 40px;
+
+            flex: 1;
+
+            padding: 0 11px;
+
+            border:
+                    1px solid #dbe1e7;
+
+            border-radius: 9px;
+
+            background:
+                    #fff;
+
+            color:
+                    #374151;
+
+            font-size: 11px;
+
+            font-weight: 650;
+
+            outline: none;
+        }
+
+
+        .status-select:focus {
+
+            border-color:
+                    #4ade80;
+
+            box-shadow:
+                    0 0 0 .22rem
+                    rgba(34, 197, 94, .12);
+        }
+
+
+        .update-status-btn {
+
+            min-height: 40px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            padding: 0 14px;
+
+            border:
+                    1px solid var(--dz-primary);
+
+            border-radius: 9px;
+
+            background:
+                    var(--dz-primary);
+
+            color: #fff;
+
+            font-size: 10.5px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+
+        .update-status-btn:hover {
+
+            background:
+                    var(--dz-primary-dark);
+
+            border-color:
+                    var(--dz-primary-dark);
+
+            transform:
+                    translateY(-1px);
+
+            box-shadow:
+                    0 7px 16px
+                    rgba(22, 163, 74, .16);
+        }
+
+
+        /* =========================================================
+           NOTES
+           ========================================================= */
+
+        .notes-box {
+
+            padding: 15px;
+
+            border:
+                    1px solid #e5ebe7;
+
+            border-radius: 10px;
+
+            background:
+                    #f8faf9;
+
+            color:
+                    #4b5563;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1100px) {
+
+            :root {
+                --dz-sidebar-width: 230px;
+            }
+
+
+            .dreamz-topbar {
+                padding: 0 20px;
             }
 
 
             .main-content {
+                padding: 24px 20px;
+            }
+
+
+            .details-grid {
+
+                grid-template-columns:
+                        minmax(0, 1fr)
+                        minmax(260px, .8fr);
+            }
+
+        }
+
+
+        @media (max-width: 991px) {
+
+            .dreamz-sidebar {
+
+                transform:
+                        translateX(-100%);
+
+                transition:
+                        transform .35s
+                        cubic-bezier(.4, 0, .2, 1);
+            }
+
+
+            .dreamz-sidebar.show {
+
+                transform:
+                        translateX(0);
+            }
+
+
+            .dreamz-menu-btn {
+
+                display: inline-flex;
+            }
+
+
+            .dreamz-topbar {
+
                 margin-left: 0;
 
-                padding: 20px;
+                min-height: 70px;
+
+                padding: 0 18px;
             }
 
 
-            .top-bar {
-                align-items: flex-start;
+            .main-content {
 
-                flex-direction: column;
+                margin-left: 0;
+
+                min-height:
+                        calc(100vh - 70px);
+
+                padding: 22px 20px;
             }
 
 
-            .admin-profile {
-                width: 100%;
+            .dreamz-store-btn {
+                display: none;
+            }
+
+
+            .details-grid {
+
+                grid-template-columns: 1fr;
             }
 
         }
 
 
-        @media (max-width: 650px) {
+        @media (max-width: 767px) {
 
-            .main-content {
-                padding: 15px;
+            .dreamz-topbar {
+
+                min-height: 66px;
+
+                padding: 0 13px;
             }
 
 
-            .header-card {
-                align-items: flex-start;
+            .dreamz-topbar-title {
+                font-size: 16px;
+            }
 
-                flex-direction: column;
+
+            .dreamz-topbar-subtitle {
+                display: none;
+            }
+
+
+            .dreamz-topbar-eyebrow {
+                font-size: 7px;
+            }
+
+
+            .dreamz-admin-avatar {
+
+                width: 36px;
+                height: 36px;
+            }
+
+
+            .main-content {
+
+                padding:
+                        16px 13px 28px;
+            }
+
+
+            .page-header {
+
+                align-items:
+                        flex-start;
+
+                flex-direction:
+                        column;
+
+                gap: 13px;
 
                 padding: 18px;
             }
 
 
-            .header-card .btn {
-                width: 100%;
+            .page-title h1 {
+                font-size: 21px;
             }
 
 
-            .table-card {
+            .detail-card-header {
+
+                padding: 0 15px;
+            }
+
+
+            .detail-card-body {
                 padding: 15px;
             }
 
 
+            .status-form {
+
+                flex-direction:
+                        column;
+
+                align-items:
+                        stretch;
+            }
+
+
+            .status-select,
+            .update-status-btn {
+
+                width: 100%;
+            }
+
+
+            .items-table {
+                min-width: 760px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
             .page-title h1 {
-                font-size: 23px;
+                font-size: 19px;
+            }
+
+
+            .detail-info-row {
+
+                align-items:
+                        flex-start;
+
+                flex-direction:
+                        column;
+
+                gap: 4px;
+            }
+
+
+            .detail-value {
+                text-align: left;
+            }
+
+
+            .totals-box {
+                padding: 15px;
+            }
+
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration:
+                        .01ms !important;
+
+                animation-iteration-count:
+                        1 !important;
+
+                transition-duration:
+                        .01ms !important;
+
+                scroll-behavior:
+                        auto !important;
             }
 
         }
 
     </style>
-    <style>
-        :root{--admin-primary:#16a34a;--admin-primary-dark:#15803d;--admin-ink:#111827;--admin-muted:#6b7280;--admin-bg:#f6f8f7;--admin-border:#e5e7eb;--admin-nav:#0f172a;--admin-shadow:0 10px 30px rgba(15,23,42,.07)}
-        html{scroll-behavior:smooth}body{background:var(--admin-bg)!important;color:#17211b;min-height:100vh;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
-        a,button,.btn,.nav-link,.sidebar-link,.card,.table tbody tr,.form-control,.form-select{transition:all .22s cubic-bezier(.2,.7,.2,1)}
-        body{animation:adminPageIn .45s ease both}@keyframes adminPageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-        .admin-global-nav{position:sticky!important;top:0;z-index:1050;min-height:72px;padding:0 22px;background:linear-gradient(135deg,#0b1220,#111827 55%,#12301c)!important;border:0!important;box-shadow:0 8px 28px rgba(15,23,42,.16)!important;backdrop-filter:blur(14px)}
-        .admin-global-nav .container,.admin-global-nav .container-fluid{min-height:72px}.admin-global-nav .navbar-brand,.admin-global-nav .brand{display:flex;align-items:center;gap:10px;color:#fff!important;font-weight:800;text-decoration:none;letter-spacing:.1px}.admin-global-nav .brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#15803d);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 7px 18px rgba(34,197,94,.25)}
-        .admin-global-nav .nav-link,.admin-global-nav .navbar-nav .nav-link{color:#cbd5e1!important;border-radius:10px;padding:9px 11px!important;font-size:13px;font-weight:650;position:relative}.admin-global-nav .nav-link:hover,.admin-global-nav .nav-link.active{color:#fff!important;background:rgba(255,255,255,.08);transform:translateY(-1px)}.admin-global-nav .nav-link.active:after{content:"";position:absolute;left:11px;right:11px;bottom:3px;height:2px;border-radius:2px;background:#4ade80}.admin-global-nav .navbar-toggler{border-color:rgba(255,255,255,.2)!important}.admin-global-nav .navbar-toggler:focus{box-shadow:0 0 0 .18rem rgba(74,222,128,.18)!important}.admin-global-nav .btn-logout{border:1px solid rgba(255,255,255,.14);color:#fecaca;background:rgba(239,68,68,.08);border-radius:10px;font-weight:700}.admin-global-nav .btn-logout:hover{background:#dc2626;color:#fff;transform:translateY(-1px)}
 
-        body>nav.navbar:not(.admin-global-nav){background:linear-gradient(135deg,#0b1220,#111827 55%,#12301c)!important;box-shadow:0 8px 28px rgba(15,23,42,.16)!important;min-height:72px;border:0!important}body>nav.navbar:not(.admin-global-nav) .navbar-brand{font-weight:800}body>nav.navbar:not(.admin-global-nav) .nav-link{color:#cbd5e1!important;border-radius:10px}body>nav.navbar:not(.admin-global-nav) .nav-link:hover{color:#fff!important;background:rgba(255,255,255,.08);transform:translateY(-1px)}
-        .page-wrapper,.container.py-4{animation:contentIn .55s .05s ease both}@keyframes contentIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-        .card,.page-header,.product-card,.report-card,.filter-card,.stat-card{box-shadow:var(--admin-shadow)!important;border-color:rgba(229,231,235,.85)!important}.card:hover,.stat-card:hover,.report-card:hover,.product-card:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(15,23,42,.10)!important}
-        .btn,.add-btn{border-radius:10px!important}.btn:not(.btn-close):hover,.add-btn:hover{transform:translateY(-1px)}.form-control,.form-select{border-radius:10px!important;border-color:#dbe1e7!important}.form-control:focus,.form-select:focus{border-color:#4ade80!important;box-shadow:0 0 0 .22rem rgba(34,197,94,.12)!important}
-        .table tbody tr:hover{background:rgba(22,163,74,.035)!important}.table img,.product-image,.thumb{transition:transform .3s ease}.table img:hover,.product-image:hover,.thumb:hover{transform:scale(1.04)}
-        .pagination .page-link{border-radius:9px!important;margin:0 2px;transition:.2s}.pagination .page-link:hover{transform:translateY(-1px)}
-        .alert{animation:alertIn .35s ease both}@keyframes alertIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-        .reveal{opacity:0;transform:translateY(12px);animation:reveal .5s ease forwards}@keyframes reveal{to{opacity:1;transform:none}}
-        @media(max-width:991.98px){.admin-global-nav{padding:0 14px}.admin-global-nav .navbar-collapse{padding:10px 0 14px}.admin-global-nav .nav-link{margin:2px 0}.page-wrapper{padding:20px!important}.admin-sidebar{z-index:1060!important}}
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-
-    </style>
-    <style>
-        :root{
-            --dz-primary:#16a34a;
-            --dz-primary-dark:#15803d;
-            --dz-primary-deep:#166534;
-            --dz-primary-soft:#f0fdf4;
-            --dz-primary-light:#dcfce7;
-            --dz-ink:#111827;
-            --dz-text:#1f2937;
-            --dz-muted:#6b7280;
-            --dz-bg:#f5f7f6;
-            --dz-border:#e5e7eb;
-            --dz-sidebar:#08111f;
-            --dz-sidebar-2:#102217;
-            --dz-sidebar-width:255px;
-            --dz-shadow:0 10px 30px rgba(15,23,42,.07);
-            --dz-shadow-hover:0 18px 42px rgba(15,23,42,.11);
-        }
-        html{scroll-behavior:smooth}
-        body{
-            background:
-                    radial-gradient(circle at 92% 0%,rgba(34,197,94,.075),transparent 26%),
-                    radial-gradient(circle at 3% 100%,rgba(37,99,235,.025),transparent 24%),
-                    var(--dz-bg)!important;
-            color:var(--dz-text)!important;
-            min-height:100vh;
-            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
-            -webkit-font-smoothing:antialiased;
-            animation:dzPageIn .45s ease both;
-        }
-        a,button,.btn,.form-control,.form-select,.card,.table tbody tr,.dreamz-link,.dreamz-store-btn,.dreamz-logout{transition:all .22s cubic-bezier(.2,.7,.2,1)}
-        .dreamz-sidebar{
-            position:fixed;
-            inset:0 auto 0 0;
-            width:var(--dz-sidebar-width);
-            z-index:1100;
-            display:flex;
-            flex-direction:column;
-            color:#fff;
-            background:
-                    radial-gradient(circle at 0% 0%,rgba(34,197,94,.15),transparent 28%),
-                    radial-gradient(circle at 100% 90%,rgba(34,197,94,.08),transparent 30%),
-                    linear-gradient(180deg,var(--dz-sidebar),#0f172a 48%,var(--dz-sidebar-2));
-            border-right:1px solid rgba(255,255,255,.06);
-            box-shadow:8px 0 35px rgba(0,0,0,.11);
-            overflow:hidden;
-        }
-        .dreamz-sidebar:before{
-            content:"";
-            position:absolute;
-            width:300px;height:300px;
-            left:-170px;top:28%;
-            border-radius:50%;
-            background:rgba(34,197,94,.07);
-            filter:blur(28px);
-            animation:dzGlow 7s ease-in-out infinite alternate;
-            pointer-events:none;
-        }
-        .dreamz-brand{position:relative;flex-shrink:0;padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
-        .dreamz-brand-link{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none}
-        .dreamz-brand-link:hover{color:#fff;transform:translateX(2px)}
-        .dreamz-brand-icon{
-            width:43px;height:43px;flex:0 0 43px;
-            display:flex;align-items:center;justify-content:center;
-            border-radius:13px;color:#fff;
-            background:linear-gradient(135deg,#4ade80,#16a34a 58%,#15803d);
-            box-shadow:0 10px 25px rgba(22,163,74,.3);
-            position:relative;overflow:hidden;
-            animation:dzFloat 3s ease-in-out infinite;
-        }
-        .dreamz-brand-icon:after{
-            content:"";position:absolute;width:62px;height:130px;top:-45px;left:-82px;
-            background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
-            transform:rotate(25deg);animation:dzShine 4.7s ease-in-out infinite;
-        }
-        .dreamz-brand-link strong{display:block;font-size:16px;font-weight:800;letter-spacing:-.35px}
-        .dreamz-brand-link small{display:block;margin-top:3px;color:#94a3b8;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.35px}
-        .dreamz-sidebar-content{flex:1;overflow-y:auto;padding:13px 11px 16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
-        .dreamz-section-title{
-            display:flex;align-items:center;gap:7px;
-            padding:10px 10px 7px;
-            color:#64748b;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px
-        }
-        .dreamz-section-title:before{content:"";width:5px;height:5px;border-radius:50%;background:#4ade80;box-shadow:0 0 10px rgba(74,222,128,.55)}
-        .dreamz-link{
-            position:relative;
-            min-height:43px;
-            display:flex;align-items:center;gap:11px;
-            margin:3px 0;padding:0 12px;
-            border:1px solid transparent;border-radius:11px;
-            color:#cbd5e1;text-decoration:none;
-            font-size:12px;font-weight:650;overflow:hidden;
-        }
-        .dreamz-link i{width:21px;flex:0 0 21px;color:#94a3b8;text-align:center;font-size:15px}
-        .dreamz-link:hover{color:#fff;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.06);transform:translateX(3px)}
-        .dreamz-link:hover i{color:#4ade80;transform:scale(1.08)}
-        .dreamz-link.active{
-            color:#fff;
-            background:linear-gradient(90deg,rgba(34,197,94,.24),rgba(34,197,94,.07));
-            border-color:rgba(74,222,128,.13);
-            box-shadow:inset 3px 0 0 #22c55e;
-        }
-        .dreamz-link.active i{color:#4ade80;text-shadow:0 0 12px rgba(74,222,128,.42)}
-        .dreamz-store-link{margin-top:12px;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.07)}
-        .dreamz-sidebar-footer{flex-shrink:0;padding:12px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.12)}
-        .dreamz-user{
-            display:flex;align-items:center;gap:9px;padding:9px;margin-bottom:8px;
-            border-radius:11px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.05)
-        }
-        .dreamz-user-avatar{
-            width:35px;height:35px;flex:0 0 35px;border-radius:50%;
-            display:flex;align-items:center;justify-content:center;color:#fff;
-            background:linear-gradient(135deg,#22c55e,#15803d);
-            box-shadow:0 6px 18px rgba(22,163,74,.22)
-        }
-        .dreamz-user strong{display:block;color:#fff;font-size:10.5px;font-weight:700}
-        .dreamz-user small{display:block;margin-top:2px;color:#94a3b8;font-size:8px}
-        .dreamz-logout{
-            width:100%;min-height:39px;display:flex;align-items:center;justify-content:center;gap:7px;
-            border:1px solid rgba(248,113,113,.18);border-radius:10px;color:#cbd5e1;background:transparent;
-            font-size:10.5px;font-weight:700
-        }
-        .dreamz-logout:hover{color:#fecaca;background:rgba(220,38,38,.12);border-color:rgba(248,113,113,.25);transform:translateY(-1px)}
-        .dreamz-topbar{
-            position:sticky;top:0;z-index:1000;
-            min-height:76px;padding:0 28px;
-            display:flex;align-items:center;justify-content:space-between;gap:18px;
-            background:rgba(255,255,255,.9);
-            border-bottom:1px solid rgba(229,231,235,.86);
-            backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-        }
-        .dreamz-topbar-left{display:flex;align-items:center;gap:13px;min-width:0}
-        .dreamz-menu-btn{
-            width:40px;height:40px;display:none;align-items:center;justify-content:center;
-            border:1px solid var(--dz-border);border-radius:10px;background:#fff;color:var(--dz-ink);font-size:19px
-        }
-        .dreamz-menu-btn:hover{color:var(--dz-primary);border-color:#bbf7d0;background:var(--dz-primary-soft)}
-        .dreamz-topbar-eyebrow{color:var(--dz-primary-dark);font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;margin-bottom:2px}
-        .dreamz-topbar-title{margin:0;color:var(--dz-ink);font-size:18px;font-weight:800;letter-spacing:-.35px}
-        .dreamz-topbar-subtitle{margin:3px 0 0;color:var(--dz-muted);font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .dreamz-topbar-right{display:flex;align-items:center;gap:9px;flex-shrink:0}
-        .dreamz-store-btn{
-            min-height:39px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;
-            border:1px solid var(--dz-border);border-radius:10px;background:#fff;color:#374151;
-            font-size:10.5px;font-weight:700;text-decoration:none
-        }
-        .dreamz-store-btn:hover{color:var(--dz-primary-dark);background:var(--dz-primary-soft);border-color:#bbf7d0;transform:translateY(-1px)}
-        .dreamz-admin-avatar{
-            width:39px;height:39px;position:relative;display:flex;align-items:center;justify-content:center;
-            border-radius:50%;color:var(--dz-primary-deep);background:var(--dz-primary-light);border:1px solid #bbf7d0;font-size:14px
-        }
-        .dreamz-admin-avatar:after{content:"";position:absolute;right:0;bottom:1px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid #fff}
-        .dreamz-sidebar-overlay{
-            position:fixed;inset:0;z-index:1090;opacity:0;visibility:hidden;
-            background:rgba(15,23,42,.5);backdrop-filter:blur(3px);transition:all .3s ease
-        }
-        .dreamz-sidebar-overlay.show{opacity:1;visibility:visible}
-        body>.navbar:not(.dreamz-topbar),
-        body>nav.navbar:not(.dreamz-topbar),
-        body>.admin-navbar{display:none!important}
-        .admin-main,.main-content,.page-wrapper,.container.py-4,.container-fluid.px-4.py-4{
-            margin-left:var(--dz-sidebar-width)!important;
-            max-width:none;
-        }
-        body>.dreamz-topbar{margin-left:var(--dz-sidebar-width)}
-        .page-content,.main-content,.page-wrapper{padding:28px 30px!important}
-        .card,.page-header,.product-card,.report-card,.filter-card,.stat-card,.orders-card,.card-box{
-            border-color:rgba(229,231,235,.88)!important;
-            box-shadow:var(--dz-shadow)!important;
-        }
-        .card:hover,.product-card:hover,.report-card:hover,.filter-card:hover,.stat-card:hover,.orders-card:hover,.card-box:hover{
-            box-shadow:var(--dz-shadow-hover)!important;
-        }
-        .btn,.add-btn,.add-banner-btn,.submit-button,.filter-btn,.reset-btn{border-radius:10px!important}
-        .btn:not(.btn-close):hover,.add-btn:hover,.add-banner-btn:hover,.submit-button:hover,.filter-btn:hover,.reset-btn:hover{transform:translateY(-1px)}
-        .form-control,.form-select,.styled-input,.styled-textarea{border-radius:10px!important;border-color:#dbe1e7!important}
-        .form-control:focus,.form-select:focus,.styled-input:focus,.styled-textarea:focus{border-color:#4ade80!important;box-shadow:0 0 0 .22rem rgba(34,197,94,.12)!important}
-        .table tbody tr:hover{background:rgba(22,163,74,.035)!important}
-        img,.product-image,.thumb,.banner-image img{transition:transform .3s ease}
-        .table img:hover,.product-image:hover,.thumb:hover,.banner-image:hover img{transform:scale(1.03)}
-        .alert{animation:dzAlert .35s ease both}
-        main,.page-content,.main-content,.page-wrapper,.container.py-4{animation:dzContent .5s .04s ease both}
-        .pagination .page-link{border-radius:9px!important;margin:0 2px}
-        .pagination .page-link:hover{transform:translateY(-1px)}
-        @keyframes dzPageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-        @keyframes dzContent{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-        @keyframes dzAlert{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-        @keyframes dzGlow{from{transform:translate(0,0) scale(.85);opacity:.4}to{transform:translate(125px,22px) scale(1.2);opacity:.9}}
-        @keyframes dzFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-        @keyframes dzShine{0%,55%{left:-82px}75%,100%{left:110px}}
-        @media(max-width:991px){
-            .dreamz-sidebar{transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-            .dreamz-sidebar.show{transform:translateX(0)}
-            .dreamz-menu-btn{display:inline-flex}
-            .dreamz-topbar,.admin-main,.main-content,.page-wrapper,.container.py-4,.container-fluid.px-4.py-4{margin-left:0!important}
-            .dreamz-topbar{padding:0 18px}
-            .dreamz-store-btn{display:none}
-            .page-content,.main-content,.page-wrapper{padding:22px 20px!important}
-        }
-        @media(max-width:767px){
-            .dreamz-topbar{min-height:68px;padding:0 13px}
-            .dreamz-topbar-title{font-size:16px}
-            .dreamz-topbar-subtitle{display:none}
-            .dreamz-topbar-eyebrow{font-size:7px}
-            .dreamz-admin-avatar{width:36px;height:36px}
-            .page-content,.main-content,.page-wrapper{padding:17px 13px 28px!important}
-        }
-        @media(prefers-reduced-motion:reduce){
-            *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-        }
-    </style>    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
-<body class="">
-    <div th:replace="~{fragments/admin-layout :: admin-layout}"></div><div class="dreamz-sidebar-overlay" id="dreamzSidebarOverlay"></div><aside class="dreamz-sidebar" id="dreamzSidebar">
+
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR OVERLAY
+     ========================================================= -->
+
+<div class="dreamz-sidebar-overlay"
+     id="dreamzSidebarOverlay">
+</div>
+
+
+<!-- =========================================================
+     SIDEBAR
+     EXACT MANAGE ORDERS DESIGN
+     ========================================================= -->
+
+<aside class="dreamz-sidebar"
+       id="dreamzSidebar">
+
+
+    <!-- BRAND -->
+
     <div class="dreamz-brand">
-        <a class="dreamz-brand-link" href="/admin/dashboard">
-            <span class="dreamz-brand-icon"><i class="bi bi-bag-heart-fill"></i></span>
+
+        <a class="dreamz-brand-link"
+           th:href="@{/admin/dashboard}">
+
+            <span class="dreamz-brand-icon">
+
+                <i class="bi bi-bag-heart-fill"></i>
+
+            </span>
+
+
             <span>
-<strong>Dreamz Shop</strong>
-<small>Admin Panel</small>
-</span>
+
+                <strong>
+                    Dreamz Shop
+                </strong>
+
+                <small>
+                    Admin Panel
+                </small>
+
+            </span>
+
         </a>
+
     </div>
+
+
+    <!-- SIDEBAR CONTENT -->
+
     <div class="dreamz-sidebar-content">
-        <div class="dreamz-section-title">Overview</div>
-        <a class="dreamz-link" href="/admin/dashboard"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a>
-        <div class="dreamz-section-title">Store Management</div>
-        <a class="dreamz-link" href="/admin/products"><i class="bi bi-box-seam"></i><span>Products</span></a>
-        <a class="dreamz-link" href="/admin/categories"><i class="bi bi-folder2-open"></i><span>Categories</span></a>
-        <a class="dreamz-link" href="/admin/subcategories"><i class="bi bi-diagram-3"></i><span>Subcategories</span></a>
-        <a class="dreamz-link" href="/admin/banners"><i class="bi bi-images"></i><span>Banners</span></a>
-        <a class="dreamz-link" href="/admin/brands"><i class="bi bi-tags"></i><span>Brands</span></a>
-        <a class="dreamz-link" href="/admin/inventory"><i class="bi bi-clipboard-data"></i><span>Inventory</span></a>
-        <div class="dreamz-section-title">Sales</div>
-        <a class="dreamz-link" href="/admin/orders"><i class="bi bi-bag-check"></i><span>Orders</span></a>
-        <a class="dreamz-link" href="/admin/offers"><i class="bi bi-percent"></i><span>Offers</span></a>
-        <a class="dreamz-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i><span>Coupons</span></a>
-        <div class="dreamz-section-title">Customers</div>
-        <a class="dreamz-link" href="/admin/customers"><i class="bi bi-people"></i><span>Customers</span></a>
-        <a class="dreamz-link" href="/admin/reviews"><i class="bi bi-star"></i><span>Reviews</span></a>
-        <a class="dreamz-link" href="/admin/returns"><i class="bi bi-arrow-return-left"></i><span>Returns</span></a>
-        <a class="dreamz-link" href="/admin/refunds"><i class="bi bi-cash-stack"></i><span>Refunds</span></a>
-        <div class="dreamz-section-title">Analytics</div>
-        <a class="dreamz-link" href="/admin/reports"><i class="bi bi-bar-chart-line"></i><span>Reports</span></a>
-        <a class="dreamz-link dreamz-store-link" href="/static"><i class="bi bi-shop"></i><span>View Store</span></a>
-    </div>
-    <div class="dreamz-sidebar-footer">
-        <div class="dreamz-user">
-            <span class="dreamz-user-avatar"><i class="bi bi-person-fill"></i></span>
+
+
+        <!-- OVERVIEW -->
+
+        <div class="dreamz-section-title">
+            Overview
+        </div>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/dashboard}">
+
+            <i class="bi bi-grid-1x2-fill"></i>
+
             <span>
-<strong>Administrator</strong>
-<small>Store Management</small>
-</span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <!-- STORE MANAGEMENT -->
+
+        <div class="dreamz-section-title">
+            Store Management
         </div>
-        <form class="m-0" method="post" th:action="@{/logout}">
-            <button class="dreamz-logout" type="submit"><i class="bi bi-box-arrow-right"></i><span>Logout</span></button>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/products}">
+
+            <i class="bi bi-box-seam"></i>
+
+            <span>
+                Products
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/categories}">
+
+            <i class="bi bi-folder2-open"></i>
+
+            <span>
+                Categories
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/subcategories}">
+
+            <i class="bi bi-diagram-3"></i>
+
+            <span>
+                Subcategories
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/banners}">
+
+            <i class="bi bi-images"></i>
+
+            <span>
+                Banners
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/brands}">
+
+            <i class="bi bi-tags"></i>
+
+            <span>
+                Brands
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/inventory}">
+
+            <i class="bi bi-clipboard-data"></i>
+
+            <span>
+                Inventory
+            </span>
+
+        </a>
+
+
+        <!-- SALES -->
+
+        <div class="dreamz-section-title">
+            Sales
+        </div>
+
+
+        <!-- ACTIVE ORDERS -->
+
+        <a class="dreamz-link active"
+           th:href="@{/admin/orders}">
+
+            <i class="bi bi-bag-check"></i>
+
+            <span>
+                Orders
+            </span>
+
+        </a>
+
+
+
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/coupons}">
+
+            <i class="bi bi-ticket-perforated"></i>
+
+            <span>
+                Coupons
+            </span>
+
+        </a>
+
+
+        <!-- CUSTOMERS -->
+
+        <div class="dreamz-section-title">
+            Customers
+        </div>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/customers}">
+
+            <i class="bi bi-people"></i>
+
+            <span>
+                Customers
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/reviews}">
+
+            <i class="bi bi-star"></i>
+
+            <span>
+                Reviews
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/returns}">
+
+            <i class="bi bi-arrow-return-left"></i>
+
+            <span>
+                Returns
+            </span>
+
+        </a>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/refunds}">
+
+            <i class="bi bi-cash-stack"></i>
+
+            <span>
+                Refunds
+            </span>
+
+        </a>
+
+
+        <!-- ANALYTICS -->
+
+        <div class="dreamz-section-title">
+            Analytics
+        </div>
+
+
+        <a class="dreamz-link"
+           th:href="@{/admin/reports}">
+
+            <i class="bi bi-bar-chart-line"></i>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+        <!-- VIEW STORE -->
+
+        <a class="dreamz-link dreamz-store-link"
+           href="/static">
+
+            <i class="bi bi-shop"></i>
+
+            <span>
+                View Store
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="dreamz-sidebar-footer">
+
+
+        <div class="dreamz-user">
+
+            <span class="dreamz-user-avatar">
+
+                <i class="bi bi-person-fill"></i>
+
+            </span>
+
+
+            <span>
+
+                <strong>
+                    Administrator
+                </strong>
+
+                <small>
+                    Store Management
+                </small>
+
+            </span>
+
+        </div>
+
+
+        <form class="m-0"
+              method="post"
+              th:action="@{/logout}">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+
+            <button class="dreamz-logout"
+                    type="submit">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
         </form>
+
     </div>
-</aside><header class="dreamz-topbar">
+
+</aside>
+
+
+<!-- =========================================================
+     TOP BAR
+     ========================================================= -->
+
+<header class="dreamz-topbar">
+
+
     <div class="dreamz-topbar-left">
-        <button aria-label="Open admin navigation" class="dreamz-menu-btn" id="dreamzMenuBtn" type="button">
+
+
+        <button class="dreamz-menu-btn"
+                id="dreamzMenuBtn"
+                type="button"
+                aria-label="Open admin navigation">
+
             <i class="bi bi-list"></i>
+
         </button>
+
+
         <div>
-            <div class="dreamz-topbar-eyebrow">Dreamz Shop Administration</div>
-            <h1 class="dreamz-topbar-title">Offer Management</h1>
-            <p class="dreamz-topbar-subtitle">Manage active, scheduled and expired promotional offers.</p>
+
+            <div class="dreamz-topbar-eyebrow">
+                Dreamz Shop Administration
+            </div>
+
+
+            <h1 class="dreamz-topbar-title">
+                Order Management
+            </h1>
+
+
+            <p class="dreamz-topbar-subtitle">
+                View and manage customer order details.
+            </p>
+
         </div>
+
     </div>
+
+
     <div class="dreamz-topbar-right">
-        <a class="dreamz-store-btn" href="/static"><i class="bi bi-shop"></i><span>View Store</span></a>
-        <div class="dreamz-admin-avatar" title="Administrator"><i class="bi bi-person-fill"></i></div>
+
+
+        <a class="dreamz-store-btn"
+           href="/static">
+
+            <i class="bi bi-shop"></i>
+
+            <span>
+                View Store
+            </span>
+
+        </a>
+
+
+        <div class="dreamz-admin-avatar"
+             title="Administrator">
+
+            <i class="bi bi-person-fill"></i>
+
+        </div>
+
     </div>
+
 </header>
 
 
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
 
 <main class="main-content">
 
-    <div class="top-bar">
-        <div class="page-title">
-            <h1>
-                <i class="bi bi-percent"></i>
 
-                Manage Offers
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+
+        <div class="page-title">
+
+            <h1>
+
+                <i class="bi bi-bag-check"></i>
+
+                Order Details
 
             </h1>
+
+
             <p>
-
-                Create, activate and manage promotional
-                discounts for your store.
-
+                View complete information about this customer order.
             </p>
-        </div>
-        <div class="admin-profile">
-            <i class="bi bi-shield-check"></i>
-
-            Administrator
 
         </div>
-    </div>
 
-    <div class="header-card">
-        <div class="header-content">
-            <div class="header-icon">
-                <i class="bi bi-tags-fill"></i>
-            </div>
-            <div>
-                <h2>
-                    Offers &amp; Promotions
-                </h2>
-                <p>
-                    Manage discount campaigns and promotional pricing.
-                </p>
-            </div>
-        </div>
-        <a class="btn btn-success" href="/admin/offers/add">
-            <i class="bi bi-plus-lg"></i>
 
-            Add Offer
+        <a class="back-btn"
+           th:href="@{/admin/orders}">
+
+            <i class="bi bi-arrow-left"></i>
+
+            <span>
+                Back to Orders
+            </span>
 
         </a>
+
     </div>
 
-    <div class="alert alert-success" th:if="${successMessage != null}">
-        <i class="bi bi-check-circle-fill"></i>
-        <span th:text="${successMessage}">
-            Offer created successfully.
+
+    <!-- =====================================================
+         SUCCESS
+         ===================================================== -->
+
+    <div class="alert alert-success"
+         th:if="${success != null}">
+
+        <i class="bi bi-check-circle-fill me-1"></i>
+
+        <span th:text="${success}">
+            Order status updated successfully.
         </span>
+
     </div>
 
-    <div class="alert alert-danger" th:if="${errorMessage != null}">
-        <i class="bi bi-exclamation-circle-fill"></i>
-        <span th:text="${errorMessage}">
+
+    <!-- =====================================================
+         ERROR
+         ===================================================== -->
+
+    <div class="alert alert-danger"
+         th:if="${error != null}">
+
+        <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+        <span th:text="${error}">
             Something went wrong.
         </span>
+
     </div>
 
-    <div class="table-card">
-        <div class="table-header">
-            <h3 class="table-heading">
-                <i class="bi bi-list-ul"></i>
 
-                All Offers
+    <!-- =====================================================
+         ORDER + CUSTOMER
+         ===================================================== -->
+
+    <div class="details-grid">
+
+
+        <!-- =================================================
+             ORDER INFORMATION
+             ================================================= -->
+
+        <div class="detail-card">
+
+
+            <div class="detail-card-header">
+
+                <h3>
+
+                    <i class="bi bi-receipt"></i>
+
+                    Order Information
+
+                </h3>
+
+
+                <span class="detail-status"
+                      th:classappend="'status-' + ${#strings.toLowerCase(#strings.replace(order.orderStatus.name(), '_', '-'))}"
+                      th:text="${#strings.replace(order.orderStatus.name(), '_', ' ')}">
+
+                    CONFIRMED
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+
+                <div class="detail-order-number">
+
+                    Order #
+
+                    <span th:text="${order.orderNumber}">
+                        DZ123456
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Order ID
+                    </span>
+
+                    <span class="detail-value"
+                          th:text="${order.id}">
+                        3
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Order Date
+                    </span>
+
+                    <span class="detail-value"
+                          th:if="${order.createdAt != null}"
+                          th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, hh:mm a')}">
+
+                        21 Sep 2026, 10:30 AM
+
+                    </span>
+
+                    <span class="detail-value"
+                          th:unless="${order.createdAt != null}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Payment Status
+                    </span>
+
+                    <span class="detail-value"
+                          th:if="${order.paymentStatus != null}"
+                          th:text="${#strings.replace(order.paymentStatus.name(), '_', ' ')}">
+
+                        PAID
+
+                    </span>
+
+                    <span class="detail-value"
+                          th:unless="${order.paymentStatus != null}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Payment Method
+                    </span>
+
+                    <span class="detail-value"
+                          th:if="${order.paymentMethod != null}"
+                          th:text="${#strings.replace(order.paymentMethod.name(), '_', ' ')}">
+
+                        COD
+
+                    </span>
+
+                    <span class="detail-value"
+                          th:unless="${order.paymentMethod != null}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Total Items
+                    </span>
+
+                    <span class="detail-value"
+                          th:text="${order.totalItems}">
+
+                        1
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CUSTOMER
+             ================================================= -->
+
+        <div class="detail-card">
+
+
+            <div class="detail-card-header">
+
+                <h3>
+
+                    <i class="bi bi-person"></i>
+
+                    Customer
+
+                </h3>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+
+                <!-- CUSTOMER NAME -->
+
+                <div class="customer-name"
+                     th:text="${order.user != null and order.user.fullName != null ? order.user.fullName : (order.shippingFullName != null ? order.shippingFullName : 'N/A')}">
+
+                    Customer Name
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="customer-line"
+                     th:if="${order.user != null and order.user.email != null}">
+
+                    <i class="bi bi-envelope"></i>
+
+                    <span th:text="${order.user.email}">
+                        customer@email.com
+                    </span>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="customer-line"
+                     th:if="${order.shippingPhone != null and !order.shippingPhone.isEmpty()}">
+
+                    <i class="bi bi-telephone"></i>
+
+                    <span th:text="${order.shippingPhone}">
+                        9876543210
+                    </span>
+
+                </div>
+
+
+                <!-- USER ID -->
+
+                <div class="customer-line"
+                     th:if="${order.user != null and order.user.id != null}">
+
+                    <i class="bi bi-person-badge"></i>
+
+                    <span>
+
+                        Customer ID:
+
+                        <strong th:text="${order.user.id}">
+                            1
+                        </strong>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DELIVERY ADDRESS
+         ===================================================== -->
+
+    <div class="detail-card mb-4">
+
+
+        <div class="detail-card-header">
+
+            <h3>
+
+                <i class="bi bi-geo-alt"></i>
+
+                Delivery Address
 
             </h3>
-            <span class="table-count" th:text="${offers.totalElements + ' Offers'}">
 
-                0 Offers
+        </div>
+
+
+        <div class="detail-card-body">
+
+
+            <div class="address-box">
+
+
+                <span class="address-name"
+                      th:if="${order.shippingFullName != null}"
+                      th:text="${order.shippingFullName}">
+
+                    Customer Name
+
+                </span>
+
+
+                <br th:if="${order.shippingFullName != null}">
+
+
+                <span th:if="${order.shippingPhone != null}"
+                      th:text="${order.shippingPhone}">
+
+                    9876543210
+
+                </span>
+
+
+                <br th:if="${order.shippingPhone != null}">
+
+
+                <span th:if="${order.shippingAddressLine1 != null}"
+                      th:text="${order.shippingAddressLine1}">
+
+                    Address Line 1
+
+                </span>
+
+
+                <br th:if="${order.shippingAddressLine1 != null}">
+
+
+                <span th:if="${order.shippingAddressLine2 != null
+                              and !order.shippingAddressLine2.isEmpty()}"
+                      th:text="${order.shippingAddressLine2}">
+
+                    Address Line 2
+
+                </span>
+
+
+                <br th:if="${order.shippingAddressLine2 != null
+                            and !order.shippingAddressLine2.isEmpty()}">
+
+
+                <span th:if="${order.shippingCity != null}"
+                      th:text="${order.shippingCity}">
+
+                    City
+
+                </span>
+
+
+                <span th:if="${order.shippingState != null}">
+
+                    ,
+
+                    <span th:text="${order.shippingState}">
+                        State
+                    </span>
+
+                </span>
+
+
+                <span th:if="${order.shippingPincode != null}">
+
+                    -
+
+                    <span th:text="${order.shippingPincode}">
+                        620001
+                    </span>
+
+                </span>
+
+
+                <br>
+
+
+                <span th:if="${order.shippingLandmark != null
+                              and !order.shippingLandmark.isEmpty()}">
+
+                    Landmark:
+
+                    <span th:text="${order.shippingLandmark}">
+                        Landmark
+                    </span>
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDER ITEMS
+         ===================================================== -->
+
+    <div class="detail-card items-card">
+
+
+        <div class="detail-card-header">
+
+            <h3>
+
+                <i class="bi bi-box-seam"></i>
+
+                Ordered Items
+
+            </h3>
+
+
+            <span class="text-muted"
+                  style="font-size:10px;font-weight:700;"
+                  th:text="${order.totalItems + ' item(s)'}">
+
+                1 item(s)
 
             </span>
+
         </div>
 
-        <div class="empty-state" th:if="${offers.content.isEmpty()}">
-            <div class="empty-icon">
-                <i class="bi bi-percent"></i>
-            </div>
-            <h4>
-                No Offers Found
-            </h4>
-            <p>
 
-                You haven't created any promotional offers yet.
+        <div class="items-table-wrap">
 
-            </p>
-            <a class="btn btn-success" href="/admin/offers/add">
-                <i class="bi bi-plus-lg"></i>
 
-                Create Your First Offer
+            <table class="items-table">
 
-            </a>
-        </div>
 
-        <div class="table-wrapper" th:if="${!offers.content.isEmpty()}">
-            <table class="table table-hover">
                 <thead>
+
                 <tr>
+
                     <th>
-                        Offer
+                        Product
                     </th>
+
                     <th>
-                        Type
+                        SKU
                     </th>
+
                     <th>
-                        Discount
+                        Price
                     </th>
+
                     <th>
-                        Minimum Order
+                        Quantity
                     </th>
-                    <th>
-                        Validity
-                    </th>
-                    <th>
-                        Status
-                    </th>
+
                     <th class="text-end">
-                        Actions
+                        Subtotal
                     </th>
+
                 </tr>
+
                 </thead>
+
+
                 <tbody>
-                <tr th:each="offer : ${offers.content}">
+
+
+                <tr th:each="item : ${order.items}">
+
+
+                    <!-- PRODUCT -->
 
                     <td>
-                        <div class="offer-wrapper">
-                            <div class="offer-icon">
-                                <i class="bi bi-percent"></i>
-                            </div>
-                            <div>
-                                <div class="offer-code" th:text="${offer.code}">
 
-                                    SUMMER20
+
+                        <div class="product-cell">
+
+
+                            <img class="product-image"
+                                 th:if="${item.productImage != null
+                                         and !item.productImage.isEmpty()}"
+                                 th:src="${item.productImage}"
+                                 alt="Product">
+
+
+                            <div class="product-placeholder"
+                                 th:unless="${item.productImage != null
+                                             and !item.productImage.isEmpty()}">
+
+                                <i class="bi bi-box-seam"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <div class="product-name"
+                                     th:text="${item.productName != null ? item.productName : 'Product'}">
+
+                                    Product Name
 
                                 </div>
-                                <div class="offer-description" th:text="${offer.description != null
-                                            and !offer.description.isEmpty()
-                                            ? offer.description
-                                            : 'No description'}">
 
-                                    Summer discount
 
-                                </div>
-                            </div>
-                        </div>
-                    </td>
+                                <div class="product-sku"
+                                     th:if="${item.productSku != null}">
 
-                    <td>
-<span class="type-badge" th:text="${#strings.replace(
-                                  offer.discountType.name(),
-                                  '_',
-                                  ' '
-                              )}">
+                                    SKU:
 
-                            PERCENTAGE
-
-                        </span>
-                    </td>
-
-                    <td>
-<span class="discount-value" th:if="${offer.discountType.name() == 'PERCENTAGE'}">
-<span th:text="${offer.discountValue}">
-                                20
-                            </span>
-
-                            %
-
-                        </span>
-                        <span class="discount-value" th:unless="${offer.discountType.name() == 'PERCENTAGE'}">
-
-                            ₹<span th:text="${offer.discountValue}">
-                                500
-                            </span>
-</span>
-                    </td>
-
-                    <td>
-<span class="minimum-value" th:if="${offer.minimumOrderAmount != null}">
-
-                            ₹<span th:text="${#numbers.formatDecimal(
-                                    offer.minimumOrderAmount,
-                                    1,
-                                    2
-                                )}">
-
-                                0.00
-
-                            </span>
-</span>
-                        <span class="no-limit" th:unless="${offer.minimumOrderAmount != null}">
-
-                            No minimum
-
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="validity">
-                            <div>
-                                <i class="bi bi-calendar-check me-1"></i>
-                                <strong>
-                                    Start:
-                                </strong>
-                                <span th:if="${offer.startDate != null}" th:text="${#temporals.format(
-                                            offer.startDate,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    01 Sep 2026, 10:00 AM
-
-                                </span>
-                                <span th:unless="${offer.startDate != null}">
-                                    —
-                                </span>
-                            </div>
-                            <div>
-                                <i class="bi bi-calendar-x me-1"></i>
-                                <strong>
-                                    End:
-                                </strong>
-                                <span th:if="${offer.endDate != null}" th:text="${#temporals.format(
-                                            offer.endDate,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    30 Sep 2026, 11:59 PM
-
-                                </span>
-                                <span th:unless="${offer.endDate != null}">
-                                    —
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-
-                    <td>
-<span class="status-badge" th:classappend="${offer.enabled
-                                    ? 'status-active'
-                                    : 'status-inactive'}">
-<i class="bi" th:classappend="${offer.enabled
-                                        ? 'bi-check-circle-fill'
-                                        : 'bi-pause-circle-fill'}">
-</i>
-<span th:text="${offer.enabled
-                                        ? 'ACTIVE'
-                                        : 'INACTIVE'}">
-
-                                ACTIVE
-
-                            </span>
-</span>
-                    </td>
-
-                    <td class="text-end">
-                        <div class="action-group">
-
-                            <a class="btn btn-outline-dark action-btn" th:href="@{/admin/offers/edit/{id}(id=${offer.id})}">
-                                <i class="bi bi-pencil"></i>
-
-                                Edit
-
-                            </a>
-
-                            <form class="action-form" method="post" th:action="@{/admin/offers/toggle/{id}(id=${offer.id})}">
-                                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                                <button class="btn btn-outline-primary action-btn" type="submit">
-                                    <i class="bi" th:classappend="${offer.enabled
-                                                ? 'bi-pause-fill'
-                                                : 'bi-play-fill'}">
-                                    </i>
-                                    <span th:text="${offer.enabled
-                                                ? 'Disable'
-                                                : 'Enable'}">
-
-                                        Disable
-
+                                    <span th:text="${item.productSku}">
+                                        SKU001
                                     </span>
-                                </button>
-                            </form>
 
-                            <form class="action-form" method="post" onsubmit="return confirm('Are you sure you want to delete this offer?');" th:action="@{/admin/offers/delete/{id}(id=${offer.id})}">
-                                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                                <button class="btn btn-outline-danger action-btn" type="submit">
-                                    <i class="bi bi-trash3"></i>
+                                </div>
 
-                                    Delete
+                            </div>
 
-                                </button>
-                            </form>
                         </div>
+
                     </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
 
-        <div class="pagination-wrapper" th:if="${offers.totalPages &gt; 1}">
-            <nav aria-label="Offers pagination">
-                <ul class="pagination">
 
-                    <li class="page-item" th:classappend="${offers.first
-                                ? 'disabled'
-                                : ''}">
-                        <a aria-label="Previous" class="page-link" th:href="@{/admin/offers(
-                                    page=${offers.number - 1},
-                                    size=${pageSize}
-                                )}">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
+                    <!-- SKU -->
 
-                    <li class="page-item" th:classappend="${pageNumber == offers.number
-                                ? 'active'
-                                : ''}" th:each="pageNumber :
-                                ${#numbers.sequence(
-                                    0,
-                                    offers.totalPages - 1
-                                )}">
-                        <a class="page-link" th:href="@{/admin/offers(
-                                    page=${pageNumber},
-                                    size=${pageSize}
-                                )}" th:text="${pageNumber + 1}">
+                    <td>
+
+                        <span th:text="${item.productSku != null ? item.productSku : 'N/A'}">
+
+                            SKU001
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- PRICE -->
+
+                    <td>
+
+                        <span class="price">
+
+                            ₹
+
+                            <span th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">
+
+                                999.00
+
+                            </span>
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- QUANTITY -->
+
+                    <td>
+
+                        <span class="quantity-badge"
+                              th:text="${item.quantity}">
 
                             1
 
-                        </a>
-                    </li>
+                        </span>
 
-                    <li class="page-item" th:classappend="${offers.last
-                                ? 'disabled'
-                                : ''}">
-                        <a aria-label="Next" class="page-link" th:href="@{/admin/offers(
-                                    page=${offers.number + 1},
-                                    size=${pageSize}
-                                )}">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                    </td>
+
+
+                    <!-- SUBTOTAL -->
+
+                    <td class="text-end">
+
+                        <span class="price">
+
+                            ₹
+
+                            <span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">
+
+                                999.00
+
+                            </span>
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
         </div>
+
+
+        <!-- =================================================
+             TOTALS
+             ================================================= -->
+
+        <div class="totals-box">
+
+
+            <!-- SUBTOTAL -->
+
+            <div class="total-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong>
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.subtotal, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+
+            <!-- DISCOUNT -->
+
+            <div class="total-row discount"
+                 th:if="${order.discountAmount != null
+                         and order.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) != 0}">
+
+                <span>
+                    Discount
+                </span>
+
+                <strong>
+
+                    -
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.discountAmount, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+
+            <!-- COUPON -->
+
+            <div class="total-row discount"
+                 th:if="${order.couponDiscount != null
+                         and order.couponDiscount.compareTo(T(java.math.BigDecimal).ZERO) != 0}">
+
+                <span>
+                    Coupon Discount
+                </span>
+
+                <strong>
+
+                    -
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.couponDiscount, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+
+            <!-- TAX -->
+
+            <div class="total-row">
+
+                <span>
+                    Tax
+                </span>
+
+                <strong>
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.taxAmount, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+
+            <!-- DELIVERY -->
+
+            <div class="total-row">
+
+                <span>
+                    Delivery Charge
+                </span>
+
+                <strong>
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.deliveryCharge, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+
+            <!-- GRAND TOTAL -->
+
+            <div class="grand-total">
+
+                <span>
+                    Grand Total
+                </span>
+
+                <span>
+
+                    ₹
+
+                    <span th:text="${#numbers.formatDecimal(order.grandTotal, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </span>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- =====================================================
+         PAYMENT + UPDATE STATUS
+         ===================================================== -->
+
+    <div class="details-grid mt-4">
+
+
+        <!-- =================================================
+             PAYMENT INFORMATION
+             ================================================= -->
+
+        <div class="detail-card">
+
+
+            <div class="detail-card-header">
+
+                <h3>
+
+                    <i class="bi bi-credit-card"></i>
+
+                    Payment Information
+
+                </h3>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Payment Status
+                    </span>
+
+                    <span class="detail-value"
+                          th:if="${order.paymentStatus != null}"
+                          th:text="${#strings.replace(order.paymentStatus.name(), '_', ' ')}">
+
+                        PAID
+
+                    </span>
+
+                    <span class="detail-value"
+                          th:unless="${order.paymentStatus != null}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row">
+
+                    <span class="detail-label">
+                        Payment Method
+                    </span>
+
+                    <span class="detail-value"
+                          th:if="${order.paymentMethod != null}"
+                          th:text="${#strings.replace(order.paymentMethod.name(), '_', ' ')}">
+
+                        COD
+
+                    </span>
+
+                    <span class="detail-value"
+                          th:unless="${order.paymentMethod != null}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row"
+                     th:if="${order.razorpayOrderId != null
+                             and !order.razorpayOrderId.isEmpty()}">
+
+                    <span class="detail-label">
+                        Razorpay Order ID
+                    </span>
+
+                    <span class="detail-value"
+                          th:text="${order.razorpayOrderId}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row"
+                     th:if="${order.razorpayPaymentId != null
+                             and !order.razorpayPaymentId.isEmpty()}">
+
+                    <span class="detail-label">
+                        Razorpay Payment ID
+                    </span>
+
+                    <span class="detail-value"
+                          th:text="${order.razorpayPaymentId}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-info-row"
+                     th:if="${order.razorpaySignature != null
+                             and !order.razorpaySignature.isEmpty()}">
+
+                    <span class="detail-label">
+                        Razorpay Signature
+                    </span>
+
+                    <span class="detail-value"
+                          th:text="${order.razorpaySignature}">
+
+                        N/A
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             UPDATE ORDER STATUS
+             ================================================= -->
+
+        <div class="detail-card">
+
+
+            <div class="detail-card-header">
+
+                <h3>
+
+                    <i class="bi bi-arrow-repeat"></i>
+
+                    Update Status
+
+                </h3>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+
+                <div class="status-update-box">
+
+
+                    <!-- CURRENT -->
+
+                    <div class="current-status-label">
+                        Current Order Status
+                    </div>
+
+
+                    <div class="current-status">
+
+                        <span class="detail-status"
+                              th:classappend="'status-' + ${#strings.toLowerCase(#strings.replace(order.orderStatus.name(), '_', '-'))}"
+                              th:text="${#strings.replace(order.orderStatus.name(), '_', ' ')}">
+
+                            CONFIRMED
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- FORM -->
+
+                    <form class="status-form"
+                          method="post"
+                          th:action="@{/admin/orders/{id}/status(id=${order.id})}">
+
+
+                        <!-- CSRF -->
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+
+                        <!-- STATUS -->
+
+                        <select class="status-select"
+                                name="status"
+                                required>
+
+
+                            <option th:each="status : ${statuses}"
+                                    th:value="${status.name()}"
+                                    th:text="${#strings.replace(status.name(), '_', ' ')}"
+                                    th:selected="${status == order.orderStatus}">
+
+                                CONFIRMED
+
+                            </option>
+
+
+                        </select>
+
+
+                        <!-- BUTTON -->
+
+                        <button class="update-status-btn"
+                                type="submit">
+
+                            <i class="bi bi-check2"></i>
+
+                            <span>
+                                Update
+                            </span>
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CUSTOMER NOTES
+         ===================================================== -->
+
+    <div class="detail-card mt-4"
+         th:if="${order.customerNotes != null
+                 and !order.customerNotes.isEmpty()}">
+
+
+        <div class="detail-card-header">
+
+            <h3>
+
+                <i class="bi bi-chat-left-text"></i>
+
+                Customer Notes
+
+            </h3>
+
+        </div>
+
+
+        <div class="detail-card-body">
+
+            <div class="notes-box"
+                 th:text="${order.customerNotes}">
+
+                Customer notes
+
+            </div>
+
+        </div>
+
+    </div>
+
+
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
+
+
+<!-- =========================================================
+     SIDEBAR SCRIPT
+     SAME RESPONSIVE BEHAVIOUR AS MANAGE ORDERS
+     ========================================================= -->
+
 <script>
-    (() => {
-        const path = location.pathname.replace(/\/$/, '') || '/';
-        document.querySelectorAll('.admin-global-nav a.nav-link, body>nav.navbar a.nav-link').forEach(a => {
-            const href = a.getAttribute('href') || '';
-            if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
-            const clean = href.replace(/\/$/, '');
-            if (clean === path || (clean !== '/admin/dashboard' && path.startsWith(clean + '/'))) a.classList.add('active');
-        });
-        document.querySelectorAll('main, .page-wrapper, .container.py-4, .card, .stat-card, .report-card, .product-card').forEach((el,i)=>{
-            if (!el.classList.contains('reveal')) { el.classList.add('reveal'); el.style.animationDelay = Math.min(i*35,350)+'ms'; }
-        });
-        document.querySelectorAll('.btn, button, .sidebar-link').forEach(el => {
-            el.addEventListener('click', () => { el.style.transform='scale(.98)'; setTimeout(()=>el.style.transform='',120); }, {passive:true});
-        });
-    })();
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            const sidebar =
+                document.getElementById(
+                    "dreamzSidebar"
+                );
+
+
+            const overlay =
+                document.getElementById(
+                    "dreamzSidebarOverlay"
+                );
+
+
+            const menu =
+                document.getElementById(
+                    "dreamzMenuBtn"
+                );
+
+
+            function closeSidebar() {
+
+                if (sidebar) {
+
+                    sidebar.classList.remove(
+                        "show"
+                    );
+
+                }
+
+
+                if (overlay) {
+
+                    overlay.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+
+
+            function openSidebar() {
+
+                if (sidebar) {
+
+                    sidebar.classList.add(
+                        "show"
+                    );
+
+                }
+
+
+                if (overlay) {
+
+                    overlay.classList.add(
+                        "show"
+                    );
+
+                }
+
+            }
+
+
+            if (menu) {
+
+                menu.addEventListener(
+                    "click",
+                    openSidebar
+                );
+
+            }
+
+
+            if (overlay) {
+
+                overlay.addEventListener(
+                    "click",
+                    closeSidebar
+                );
+
+            }
+
+
+            window.addEventListener(
+                "resize",
+                function () {
+
+                    if (
+                        window.innerWidth > 991
+                    ) {
+
+                        closeSidebar();
+
+                    }
+
+                }
+            );
+
+        }
+    );
 
 </script>
-<script>
-    document.addEventListener("DOMContentLoaded",function(){
-        const sidebar=document.getElementById("dreamzSidebar");
-        const overlay=document.getElementById("dreamzSidebarOverlay");
-        const menu=document.getElementById("dreamzMenuBtn");
-        const closeSidebar=()=>{sidebar&&sidebar.classList.remove("show");overlay&&overlay.classList.remove("show");};
-        const openSidebar=()=>{sidebar&&sidebar.classList.add("show");overlay&&overlay.classList.add("show");};
-        if(menu) menu.addEventListener("click",openSidebar);
-        if(overlay) overlay.addEventListener("click",closeSidebar);
-        document.querySelectorAll(".dreamz-link").forEach(link=>{
-            const href=link.getAttribute("href")||"";
-            const path=window.location.pathname.replace(/\/$/,"")||"/";
-            const clean=href.replace(/\/$/,"");
-            if(clean && clean!="/" && (path===clean || (clean!="/admin/dashboard" && path.startsWith(clean+"/")))) link.classList.add("active");
-            link.addEventListener("click",()=>{if(window.innerWidth<=991) closeSidebar();});
-        });
-        document.querySelectorAll(".dreamz-link,.btn,.add-btn,.submit-button,.filter-btn,.reset-btn").forEach(el=>{
-            el.addEventListener("pointerdown",()=>el.classList.add("is-pressed"));
-            el.addEventListener("pointerup",()=>el.classList.remove("is-pressed"));
-            el.addEventListener("pointercancel",()=>el.classList.remove("is-pressed"));
-            el.addEventListener("pointerleave",()=>el.classList.remove("is-pressed"));
-        });
-    });
-</script>    <script th:src="@{/js/admin-common.js}"></script>
+
+
 </body>
+
 </html>

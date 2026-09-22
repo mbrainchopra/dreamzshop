@@ -19,6 +19,12 @@ public class OfferController {
 
     private final OfferService offerService;
 
+
+    // =========================================================
+    // OFFERS LIST
+    // GET /admin/offers
+    // =========================================================
+
     @GetMapping
     public String offers(
             @RequestParam(defaultValue = "0") int page,
@@ -53,6 +59,12 @@ public class OfferController {
         return "admin/offers";
     }
 
+
+    // =========================================================
+    // ADD OFFER PAGE
+    // GET /admin/offers/add
+    // =========================================================
+
     @GetMapping("/add")
     public String addOffer(Model model) {
 
@@ -63,6 +75,12 @@ public class OfferController {
 
         return "admin/offer-form";
     }
+
+
+    // =========================================================
+    // SAVE OFFER
+    // POST /admin/offers/save
+    // =========================================================
 
     @PostMapping("/save")
     public String saveOffer(
@@ -92,22 +110,47 @@ public class OfferController {
         }
     }
 
+
+    // =========================================================
+    // EDIT OFFER
+    // GET /admin/offers/edit/{id}
+    // =========================================================
+
     @GetMapping("/edit/{id}")
     public String editOffer(
             @PathVariable Long id,
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
 
-        Offer offer =
-                offerService.getOffer(id);
+        try {
 
-        model.addAttribute(
-                "offer",
-                offer
-        );
+            Offer offer =
+                    offerService.getOffer(id);
 
-        return "admin/offer-form";
+            model.addAttribute(
+                    "offer",
+                    offer
+            );
+
+            return "admin/offer-form";
+
+        } catch (IllegalArgumentException ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    ex.getMessage()
+            );
+
+            return "redirect:/admin/offers";
+        }
     }
+
+
+    // =========================================================
+    // UPDATE OFFER
+    // POST /admin/offers/update/{id}
+    // =========================================================
 
     @PostMapping("/update/{id}")
     public String updateOffer(
@@ -118,10 +161,7 @@ public class OfferController {
 
         try {
 
-            offerService.updateOffer(
-                    id,
-                    offer
-            );
+            offerService.updateOffer(id, offer);
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
@@ -138,6 +178,12 @@ public class OfferController {
 
         return "redirect:/admin/offers";
     }
+
+
+    // =========================================================
+    // TOGGLE OFFER
+    // POST /admin/offers/toggle/{id}
+    // =========================================================
 
     @PostMapping("/toggle/{id}")
     public String toggleOffer(
@@ -164,6 +210,12 @@ public class OfferController {
 
         return "redirect:/admin/offers";
     }
+
+
+    // =========================================================
+    // DELETE OFFER
+    // POST /admin/offers/delete/{id}
+    // =========================================================
 
     @PostMapping("/delete/{id}")
     public String deleteOffer(

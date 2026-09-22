@@ -1727,7 +1727,20 @@
                                 </div>
 
                             </div>
+                            <div class="mt-2"
+                                 th:if="${order.orderStatus.name() == 'DELIVERED'}">
 
+                                <a th:href="@{/customer/orders/{orderId}/return/{itemId}
+                 (orderId=${order.id}, itemId=${item.id})}"
+                                   class="btn btn-sm btn-outline-danger">
+
+                                    <i class="bi bi-arrow-return-left me-1"></i>
+
+                                    Return Product
+
+                                </a>
+
+                            </div>
 
                             <!-- PRICE -->
 
