@@ -20,6 +20,12 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
+
+    // =========================================================
+    // INVENTORY LIST
+    // URL: /admin/inventory
+    // =========================================================
+
     @GetMapping
     public String inventoryList(
             @RequestParam(required = false) String keyword,
@@ -29,46 +35,79 @@ public class InventoryController {
 
         int pageSize = 10;
 
+        // ---------------------------------------------
+        // SAFE PAGE
+        // ---------------------------------------------
+
         int safePage = Math.max(page, 0);
 
-        Pageable pageable = PageRequest.of(
-                safePage,
-                pageSize,
-                Sort.by(
-                        Sort.Direction.ASC,
-                        "name"
-                )
-        );
+        // ---------------------------------------------
+        // NORMALIZE SEARCH
+        // ---------------------------------------------
+
+        String searchKeyword = null;
+
+        if (keyword != null
+                && !keyword.trim().isEmpty()) {
+
+            searchKeyword = keyword.trim();
+        }
+
+        // ---------------------------------------------
+        // PAGE REQUEST
+        // ---------------------------------------------
+
+        Pageable pageable =
+                PageRequest.of(
+                        safePage,
+                        pageSize,
+                        Sort.by(
+                                Sort.Direction.ASC,
+                                "name"
+                        )
+                );
+
+        // ---------------------------------------------
+        // GET PRODUCTS
+        // ---------------------------------------------
 
         Page<Product> productPage =
                 inventoryService.getAllProducts(
-                        keyword,
+                        searchKeyword,
                         pageable
                 );
+
+        // ---------------------------------------------
+        // HANDLE INVALID PAGE
+        // ---------------------------------------------
 
         if (productPage.getTotalPages() > 0
                 && safePage >= productPage.getTotalPages()) {
 
-            pageable = PageRequest.of(
-                    productPage.getTotalPages() - 1,
-                    pageSize,
-                    Sort.by(
-                            Sort.Direction.ASC,
-                            "name"
-                    )
-            );
+            safePage =
+                    productPage.getTotalPages() - 1;
+
+            pageable =
+                    PageRequest.of(
+                            safePage,
+                            pageSize,
+                            Sort.by(
+                                    Sort.Direction.ASC,
+                                    "name"
+                            )
+                    );
 
             productPage =
                     inventoryService.getAllProducts(
-                            keyword,
+                            searchKeyword,
                             pageable
                     );
         }
 
-        /*
-         * These counts now come from the complete database,
-         * not just the currently displayed page.
-         */
+        // ---------------------------------------------
+        // INVENTORY COUNTS
+        // ---------------------------------------------
+
         long totalProducts =
                 inventoryService.getTotalProductCount();
 
@@ -77,6 +116,10 @@ public class InventoryController {
 
         long outOfStockProducts =
                 inventoryService.getOutOfStockProductCount();
+
+        // ---------------------------------------------
+        // MODEL
+        // ---------------------------------------------
 
         model.addAttribute(
                 "productPage",
@@ -90,7 +133,9 @@ public class InventoryController {
 
         model.addAttribute(
                 "keyword",
-                keyword == null ? "" : keyword
+                searchKeyword == null
+                        ? ""
+                        : searchKeyword
         );
 
         model.addAttribute(
@@ -121,6 +166,12 @@ public class InventoryController {
         return "admin/inventory";
     }
 
+
+    // =========================================================
+    // INVENTORY PRODUCT DETAILS
+    // URL: /admin/inventory/product/{id}
+    // =========================================================
+
     @GetMapping("/product/{productId}")
     public String productInventory(
             @PathVariable Long productId,
@@ -132,11 +183,16 @@ public class InventoryController {
         try {
 
             Product product =
-                    inventoryService.getProduct(productId);
+                    inventoryService.getProduct(
+                            productId
+                    );
+
+            int safePage =
+                    Math.max(page, 0);
 
             Pageable pageable =
                     PageRequest.of(
-                            Math.max(page, 0),
+                            safePage,
                             10,
                             Sort.by(
                                     Sort.Direction.DESC,
@@ -149,6 +205,33 @@ public class InventoryController {
                             productId,
                             pageable
                     );
+
+            // -----------------------------------------
+            // HANDLE INVALID TRANSACTION PAGE
+            // -----------------------------------------
+
+            if (transactionPage.getTotalPages() > 0
+                    && safePage >= transactionPage.getTotalPages()) {
+
+                safePage =
+                        transactionPage.getTotalPages() - 1;
+
+                pageable =
+                        PageRequest.of(
+                                safePage,
+                                10,
+                                Sort.by(
+                                        Sort.Direction.DESC,
+                                        "createdAt"
+                                )
+                        );
+
+                transactionPage =
+                        inventoryService.getTransactions(
+                                productId,
+                                pageable
+                        );
+            }
 
             model.addAttribute(
                     "product",
@@ -177,21 +260,28 @@ public class InventoryController {
 
             model.addAttribute(
                     "lowStock",
-                    inventoryService.isLowStock(product)
+                    inventoryService.isLowStock(
+                            product
+                    )
             );
 
             return "admin/inventory-details";
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    e.getMessage()
+                    ex.getMessage()
             );
 
             return "redirect:/admin/inventory";
         }
     }
+
+
+    // =========================================================
+    // STOCK IN
+    // =========================================================
 
     @PostMapping("/stock-in")
     public String stockIn(
@@ -211,19 +301,24 @@ public class InventoryController {
 
             redirectAttributes.addFlashAttribute(
                     "success",
-                    "Stock added successfully"
+                    "Stock added successfully."
             );
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    e.getMessage()
+                    ex.getMessage()
             );
         }
 
         return "redirect:/admin/inventory";
     }
+
+
+    // =========================================================
+    // STOCK OUT
+    // =========================================================
 
     @PostMapping("/stock-out")
     public String stockOut(
@@ -243,19 +338,24 @@ public class InventoryController {
 
             redirectAttributes.addFlashAttribute(
                     "success",
-                    "Stock removed successfully"
+                    "Stock removed successfully."
             );
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    e.getMessage()
+                    ex.getMessage()
             );
         }
 
         return "redirect:/admin/inventory";
     }
+
+
+    // =========================================================
+    // ADJUST STOCK
+    // =========================================================
 
     @PostMapping("/adjust")
     public String adjustStock(
@@ -275,14 +375,14 @@ public class InventoryController {
 
             redirectAttributes.addFlashAttribute(
                     "success",
-                    "Stock adjusted successfully"
+                    "Stock adjusted successfully."
             );
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    e.getMessage()
+                    ex.getMessage()
             );
         }
 

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -16,47 +17,68 @@ public class ReportsController {
 
     private final ReportsService reportsService;
 
-
-    public ReportsController(
-            ReportsService reportsService
-    ) {
-        this.reportsService =
-                reportsService;
+    public ReportsController(ReportsService reportsService) {
+        this.reportsService = reportsService;
     }
-
 
     // =========================================================
     // REPORTS DASHBOARD
+    // URL: /admin/reports
     // =========================================================
 
     @GetMapping
     public String reports(
             @RequestParam(required = false)
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate startDate,
 
             @RequestParam(required = false)
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate,
 
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
 
+        // =====================================================
+        // DEFAULT DATE RANGE
+        // =====================================================
+
         if (startDate == null) {
-            startDate =
-                    LocalDate.now()
-                            .minusDays(30);
+            startDate = LocalDate.now().minusDays(30);
         }
 
         if (endDate == null) {
-            endDate =
-                    LocalDate.now();
+            endDate = LocalDate.now();
         }
 
+        // =====================================================
+        // VALIDATE DATE RANGE
+        // =====================================================
+
+        if (startDate.isAfter(endDate)) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Start date cannot be after end date."
+            );
+
+            return "redirect:/admin/reports";
+        }
+
+        // =====================================================
+        // SELECTED DATE RANGE
+        // =====================================================
+
+        model.addAttribute(
+                "startDate",
+                startDate
+        );
+
+        model.addAttribute(
+                "endDate",
+                endDate
+        );
 
         // =====================================================
         // SUMMARY
@@ -87,69 +109,57 @@ public class ReportsController {
                 reportsService.getTotalQuantitySold()
         );
 
-
         // =====================================================
-        // BEST SELLERS
+        // BEST SELLING PRODUCTS
         // =====================================================
 
         model.addAttribute(
                 "bestSellingProducts",
-                reportsService
-                        .getBestSellingProducts()
+                reportsService.getBestSellingProducts()
         );
 
-
         // =====================================================
-        // STATUS REPORTS
+        // ORDER STATUS REPORT
         // =====================================================
 
         model.addAttribute(
                 "orderStatusReport",
-                reportsService
-                        .getOrderStatusReport()
+                reportsService.getOrderStatusReport()
         );
+
+        // =====================================================
+        // PAYMENT STATUS REPORT
+        // =====================================================
 
         model.addAttribute(
                 "paymentStatusReport",
-                reportsService
-                        .getPaymentStatusReport()
+                reportsService.getPaymentStatusReport()
         );
 
-
         // =====================================================
-        // SALES REPORTS
+        // MONTHLY SALES
         // =====================================================
 
         model.addAttribute(
                 "monthlySalesReport",
-                reportsService
-                        .getMonthlySalesReport()
+                reportsService.getMonthlySalesReport()
         );
+
+        // =====================================================
+        // DAILY SALES
+        // =====================================================
 
         model.addAttribute(
                 "dailySalesReport",
-                reportsService
-                        .getDailySalesReport(
-                                startDate,
-                                endDate
-                        )
+                reportsService.getDailySalesReport(
+                        startDate,
+                        endDate
+                )
         );
-
 
         // =====================================================
-        // SELECTED DATE RANGE
+        // PAGE
         // =====================================================
-
-        model.addAttribute(
-                "startDate",
-                startDate
-        );
-
-        model.addAttribute(
-                "endDate",
-                endDate
-        );
-
 
         return "admin/reports";
     }

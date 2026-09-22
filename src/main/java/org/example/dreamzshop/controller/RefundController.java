@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
+
+import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,15 +21,11 @@ public class RefundController {
 
     private final RefundService refundService;
 
-    /*
-     * =========================================================
-     * CUSTOMER REFUNDS
-     * =========================================================
-     */
 
-    /**
-     * Customer refund history.
-     */
+    /* =========================================================
+       CUSTOMER REFUNDS
+       ========================================================= */
+
     @GetMapping("/customer/refunds")
     public String customerRefunds(
             Authentication authentication,
@@ -62,9 +61,7 @@ public class RefundController {
         return "customer/refunds";
     }
 
-    /**
-     * Customer refund details.
-     */
+
     @GetMapping("/customer/refunds/{id}")
     public String customerRefundDetails(
             @PathVariable Long id,
@@ -95,15 +92,10 @@ public class RefundController {
     }
 
 
-    /*
-     * =========================================================
-     * ADMIN REFUNDS
-     * =========================================================
-     */
+    /* =========================================================
+       ADMIN REFUNDS
+       ========================================================= */
 
-    /**
-     * Admin refund list.
-     */
     @GetMapping("/admin/refunds")
     public String adminRefunds(
             @RequestParam(required = false) RefundStatus status,
@@ -143,9 +135,11 @@ public class RefundController {
                     );
         }
 
-        /*
-         * Status counts.
-         */
+
+        /* =====================================================
+           STATUS COUNTS
+           ===================================================== */
+
         long pendingCount =
                 refundService
                         .getRefundsByStatus(
@@ -153,6 +147,7 @@ public class RefundController {
                                 PageRequest.of(0, 1)
                         )
                         .getTotalElements();
+
 
         long initiatedCount =
                 refundService
@@ -162,6 +157,7 @@ public class RefundController {
                         )
                         .getTotalElements();
 
+
         long processingCount =
                 refundService
                         .getRefundsByStatus(
@@ -169,6 +165,7 @@ public class RefundController {
                                 PageRequest.of(0, 1)
                         )
                         .getTotalElements();
+
 
         long completedCount =
                 refundService
@@ -178,6 +175,7 @@ public class RefundController {
                         )
                         .getTotalElements();
 
+
         long failedCount =
                 refundService
                         .getRefundsByStatus(
@@ -185,6 +183,7 @@ public class RefundController {
                                 PageRequest.of(0, 1)
                         )
                         .getTotalElements();
+
 
         model.addAttribute(
                 "refunds",
@@ -226,12 +225,15 @@ public class RefundController {
                 failedCount
         );
 
+
         return "admin/refunds";
     }
 
-    /**
-     * Admin refund details.
-     */
+
+    /* =========================================================
+       ADMIN REFUND DETAILS
+       ========================================================= */
+
     @GetMapping("/admin/refunds/{id}")
     public String adminRefundDetails(
             @PathVariable Long id,
@@ -262,15 +264,45 @@ public class RefundController {
         }
     }
 
-    /**
-     * Admin updates refund status.
-     */
+
+    /* =========================================================
+       FIX:
+       HANDLE DIRECT GET REQUEST TO /status
+       ========================================================= */
+
+    @GetMapping("/admin/refunds/{id}/status")
+    public String refundStatusGet(
+            @PathVariable Long id
+    ) {
+
+        /*
+         * This URL is supposed to be used by the POST form.
+         *
+         * If somebody:
+         * - refreshes the URL
+         * - opens it directly
+         * - pastes it into the browser
+         *
+         * redirect them safely back to refund details.
+         */
+
+        return "redirect:/admin/refunds/" + id;
+    }
+
+
+    /* =========================================================
+       ADMIN UPDATE REFUND STATUS
+       ========================================================= */
+
     @PostMapping("/admin/refunds/{id}/status")
     public String updateRefundStatus(
             @PathVariable Long id,
+
             @RequestParam RefundStatus status,
+
             @RequestParam(required = false)
             String transactionReference,
+
             @RequestParam(required = false)
             String remarks
     ) {
@@ -284,35 +316,53 @@ public class RefundController {
                     remarks
             );
 
+
             return "redirect:/admin/refunds/"
                     + id
-                    + "?success=Refund status updated successfully.";
+                    + "?success="
+                    + encodeMessage(
+                    "Refund status updated successfully."
+            );
+
 
         } catch (IllegalArgumentException ex) {
 
             return "redirect:/admin/refunds/"
                     + id
                     + "?error="
-                    + encodeMessage(ex.getMessage());
+                    + encodeMessage(
+                    ex.getMessage()
+            );
+
+        } catch (Exception ex) {
+
+            return "redirect:/admin/refunds/"
+                    + id
+                    + "?error="
+                    + encodeMessage(
+                    "Unable to update refund status."
+            );
         }
     }
 
 
-    /*
-     * =========================================================
-     * HELPER
-     * =========================================================
-     */
+    /* =========================================================
+       HELPER
+       ========================================================= */
 
     private String encodeMessage(
             String message
     ) {
 
-        if (message == null) {
+        if (message == null ||
+                message.trim().isEmpty()) {
+
             return "Something went wrong.";
         }
 
-        return message
-                .replace(" ", "+");
+        return UriUtils.encode(
+                message,
+                StandardCharsets.UTF_8
+        );
     }
 }
