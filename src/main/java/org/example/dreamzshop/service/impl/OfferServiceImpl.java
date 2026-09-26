@@ -281,42 +281,47 @@ public class OfferServiceImpl implements OfferService {
     public Offer getBestOffer(
             Product product
     ) {
+        if (product == null || product.getSellingPrice() == null) {
+            return null;
+        }
+        return getBestOffer(product, product.getSellingPrice(), product.getSellingPrice());
+    }
 
-        List<Offer> offers =
-                getEligibleOffers(
-                        product
-                );
+    @Override
+    @Transactional(readOnly = true)
+    public Offer getBestOffer(
+            Product product,
+            BigDecimal orderAmount,
+            BigDecimal itemAmount
+    ) {
 
-        if (offers.isEmpty()) {
-
+        if (product == null || orderAmount == null || itemAmount == null
+                || orderAmount.compareTo(BigDecimal.ZERO) <= 0
+                || itemAmount.compareTo(BigDecimal.ZERO) <= 0) {
             return null;
         }
 
+        List<Offer> offers = getEligibleOffers(product);
         Offer bestOffer = null;
-
-        BigDecimal bestDiscount =
-                BigDecimal.ZERO;
-
-        BigDecimal amount =
-                product.getSellingPrice();
+        BigDecimal bestDiscount = BigDecimal.ZERO;
 
         for (Offer offer : offers) {
+            BigDecimal minimum = offer.getMinimumOrderAmount() == null
+                    ? BigDecimal.ZERO
+                    : offer.getMinimumOrderAmount();
 
-            BigDecimal discount =
-                    calculateDiscount(
-                            offer,
-                            amount
-                    );
+            if (orderAmount.compareTo(minimum) < 0) {
+                continue;
+            }
 
-            if (discount.compareTo(
-                    bestDiscount
-            ) > 0) {
+            BigDecimal discount = calculateDiscount(
+                    offer,
+                    itemAmount
+            );
 
-                bestDiscount =
-                        discount;
-
-                bestOffer =
-                        offer;
+            if (discount.compareTo(bestDiscount) > 0) {
+                bestDiscount = discount;
+                bestOffer = offer;
             }
         }
 

@@ -1247,15 +1247,15 @@
     ====================================================== -->
 
     <div
-            th:if="${errorMessage}"
+            th:if="${error != null}"
             class="alert alert-danger alert-dismissible fade show custom-alert"
             role="alert">
 
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
 
-        <span th:text="${errorMessage}">
-            Something went wrong.
-        </span>
+        <span th:text="${error}">
+        Something went wrong.
+    </span>
 
         <button
                 type="button"
@@ -1464,6 +1464,13 @@
                                 type="hidden"
                                 name="orderId"
                                 th:value="${orderId}">
+
+                        <!-- ORDER ITEM ID -->
+
+                        <input
+                                type="hidden"
+                                name="orderItemId"
+                                th:value="${orderItemId}">
 
 
                         <!-- =================================================

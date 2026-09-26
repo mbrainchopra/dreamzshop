@@ -885,9 +885,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <aside class="admin-sidebar" id="adminSidebar">
 
@@ -979,10 +984,10 @@
                 <span>Returns</span>
             </a>
 
-            <a th:href="@{/admin/refunds}" class="sidebar-link">
-                <i class="bi bi-wallet2"></i>
-                <span>Refunds</span>
-            </a>
+<!--            <a th:href="@{/admin/refunds}" class="sidebar-link">-->
+<!--                <i class="bi bi-wallet2"></i>-->
+<!--                <span>Refunds</span>-->
+<!--            </a>-->
         </div>
 
         <div class="sidebar-section">
@@ -1503,6 +1508,8 @@
         }, 5000);
     })();
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

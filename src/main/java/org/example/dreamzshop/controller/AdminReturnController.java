@@ -130,7 +130,7 @@ public class AdminReturnController {
 
             model.addAttribute(
                     "statuses",
-                    ReturnRequestStatus.values()
+                    allowedNextStatuses(returnRequest.getStatus())
             );
 
             return "admin/return-details";
@@ -144,6 +144,36 @@ public class AdminReturnController {
 
             return "redirect:/admin/returns";
         }
+    }
+
+    private java.util.List<ReturnRequestStatus> allowedNextStatuses(
+            ReturnRequestStatus current
+    ) {
+        if (current == null) {
+            return java.util.List.of();
+        }
+
+        java.util.List<ReturnRequestStatus> next = switch (current) {
+            case REQUESTED -> java.util.List.of(
+                    ReturnRequestStatus.APPROVED,
+                    ReturnRequestStatus.REJECTED,
+                    ReturnRequestStatus.CANCELLED
+            );
+            case APPROVED -> java.util.List.of(
+                    ReturnRequestStatus.PICKUP_SCHEDULED,
+                    ReturnRequestStatus.CANCELLED
+            );
+            case PICKUP_SCHEDULED -> java.util.List.of(ReturnRequestStatus.PICKED_UP);
+            case PICKED_UP -> java.util.List.of(ReturnRequestStatus.RECEIVED);
+            case RECEIVED -> java.util.List.of(ReturnRequestStatus.REFUND_INITIATED);
+            case REFUND_INITIATED -> java.util.List.of(ReturnRequestStatus.COMPLETED);
+            case REJECTED, COMPLETED, CANCELLED -> java.util.List.of();
+        };
+
+        java.util.ArrayList<ReturnRequestStatus> statuses = new java.util.ArrayList<>();
+        statuses.add(current);
+        statuses.addAll(next);
+        return statuses;
     }
 
     @PostMapping("/{id}/status")

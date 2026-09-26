@@ -6,6 +6,12 @@ import org.example.dreamzshop.entity.Product;
 import org.example.dreamzshop.entity.ProductImage;
 import org.example.dreamzshop.enums.ProductStatus;
 import org.example.dreamzshop.repository.BrandRepository;
+import org.example.dreamzshop.repository.CartItemRepository;
+import org.example.dreamzshop.repository.OrderItemRepository;
+import org.example.dreamzshop.repository.ReviewRepository;
+import org.example.dreamzshop.repository.WishlistItemRepository;
+import org.example.dreamzshop.repository.OfferRepository;
+import org.example.dreamzshop.repository.InventoryTransactionRepository;
 import org.example.dreamzshop.repository.CategoryRepository;
 import org.example.dreamzshop.repository.ProductRepository;
 import org.example.dreamzshop.repository.SubCategoryRepository;
@@ -36,6 +42,12 @@ public class ProductController {
     private final BrandRepository brandRepository;
 
     private final ReviewService reviewService;
+    private final CartItemRepository cartItemRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ReviewRepository reviewRepository;
+    private final WishlistItemRepository wishlistItemRepository;
+    private final OfferRepository offerRepository;
+    private final InventoryTransactionRepository inventoryTransactionRepository;
 
 
     // =========================================================
@@ -172,7 +184,7 @@ public class ProductController {
         if (!validatePricing(
                 product,
                 result
-        )) {
+        ) || !validateCategoryRelationship(product, result)) {
 
             loadProductFormData(model);
 
@@ -236,7 +248,7 @@ public class ProductController {
         if (!validatePricing(
                 product,
                 result
-        )) {
+        ) || !validateCategoryRelationship(product, result)) {
 
             loadProductFormData(model);
 
@@ -364,20 +376,63 @@ public class ProductController {
 
     @PostMapping("/admin/products/delete/{id}")
     public String deleteProduct(
-            @PathVariable Long id) {
+            @PathVariable Long id
+    ) {
 
-        if (!productRepository.existsById(id)) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found."));
 
-            throw new IllegalArgumentException(
-                    "Product not found."
-            );
+        long orderReferences = orderItemRepository.countByProductId(id);
+        long cartReferences = cartItemRepository.countByProductId(id);
+        long reviewReferences = reviewRepository.countByProductId(id);
+        long wishlistReferences = wishlistItemRepository.countByProductId(id);
+        long offerReferences = offerRepository.findByProductId(id).size();
+        long inventoryReferences = inventoryTransactionRepository.countByProductId(id);
+
+        if (orderReferences > 0 || cartReferences > 0 || reviewReferences > 0
+                || wishlistReferences > 0 || offerReferences > 0 || inventoryReferences > 0) {
+            // Historical orders/reviews must remain readable.  Soft-delete instead.
+            product.setStatus(ProductStatus.INACTIVE);
+            product.setFeatured(false);
+            productRepository.save(product);
+
+            return "redirect:/admin/products?success=Product+has+existing+references+and+was+deactivated+instead+of+deleted";
         }
 
-        productRepository.deleteById(id);
-
+        productRepository.delete(product);
         return "redirect:/admin/products?success=Product+deleted+successfully";
     }
 
+    private boolean validateCategoryRelationship(
+            Product product,
+            BindingResult result
+    ) {
+        if (product.getCategory() == null || product.getCategory().getId() == null) {
+            result.rejectValue("category", "category.required", "Category is required");
+            return false;
+        }
+
+        if (product.getSubCategory() == null || product.getSubCategory().getId() == null) {
+            return true;
+        }
+
+        var subCategory = subCategoryRepository.findById(product.getSubCategory().getId())
+                .orElse(null);
+
+        if (subCategory == null || subCategory.getCategory() == null
+                || !product.getCategory().getId().equals(subCategory.getCategory().getId())) {
+            result.rejectValue(
+                    "subCategory",
+                    "subcategory.category.mismatch",
+                    "Selected subcategory does not belong to the selected category"
+            );
+            return false;
+        }
+
+        // Replace the detached relation with the managed entity.
+        product.setSubCategory(subCategory);
+        return true;
+    }
 
     // =========================================================
     // PUBLIC - PRODUCT LIST

@@ -50,6 +50,20 @@ public class ReturnRequest {
     private Order order;
 
     /*
+     * Specific item being returned.
+     *
+     * Return requests are product/item-level, so the database requires
+     * order_item_id for every return request.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "order_item_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_return_request_order_item")
+    )
+    private OrderItem orderItem;
+
+    /*
      * Reason selected by customer.
      */
     @NotBlank

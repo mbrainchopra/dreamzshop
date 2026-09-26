@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
@@ -21,1177 +22,289 @@
 
 
     <style>
-
-        :root {
-
-            --green: #16a34a;
-            --green-dark: #15803d;
-            --green-deep: #166534;
-            --green-light: #dcfce7;
-            --green-soft: #f0fdf4;
-
-            --text: #111827;
-            --muted: #6b7280;
-            --border: #e5e7eb;
-
-            --bg: #f7f8f6;
-
-            --yellow: #d97706;
-            --yellow-soft: #fffbeb;
-
-            --blue: #2563eb;
-            --blue-soft: #eff6ff;
-
-            --purple: #7c3aed;
-            --purple-soft: #f5f3ff;
-
-            --red: #dc2626;
-            --red-soft: #fef2f2;
-
-            --gray-soft: #f3f4f6;
-
-            --shadow:
-                    0 8px 28px rgba(0, 0, 0, .055);
-
-            --shadow-hover:
-                    0 15px 35px rgba(0, 0, 0, .09);
-        }
-
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-
-        body {
-
-            margin: 0;
-
-            background:
-                    radial-gradient(
-                            circle at top left,
-                            rgba(22, 163, 74, .045),
-                            transparent 30%
-                    ),
-                    var(--bg);
-
-            color: var(--text);
-
-            font-family:
-                    Inter,
-                    system-ui,
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Segoe UI",
-                    sans-serif;
-        }
-
-
-        a {
-            text-decoration: none;
-        }
-
-
-        /* =====================================================
-           PAGE
-        ===================================================== */
-
-        .return-page {
-
-            padding-top: 28px;
-
-            padding-bottom: 65px;
-        }
-
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
-        .page-header {
-
-            position: relative;
-
-            overflow: hidden;
-
-            padding: 23px 26px;
-
-            margin-bottom: 20px;
-
-            background: white;
-
-            border:
-                    1px solid var(--border);
-
-            border-radius: 18px;
-
-            box-shadow:
-                    var(--shadow);
-
-            animation:
-                    fadeUp .45s ease both;
-        }
-
-
-        .page-header::after {
-
-            content: "";
-
-            position: absolute;
-
-            width: 190px;
-
-            height: 190px;
-
-            right: -75px;
-
-            top: -105px;
-
-            border-radius: 50%;
-
-            background:
-                    rgba(22, 163, 74, .055);
-        }
-
-
-        .header-content {
-
-            position: relative;
-
-            z-index: 1;
-        }
-
-
-        .header-icon {
-
-            width: 44px;
-
-            height: 44px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            margin-bottom: 10px;
-
-            border-radius: 12px;
-
-            background:
-                    var(--green-light);
-
-            color:
-                    var(--green-deep);
-
-            font-size: 20px;
-        }
-
-
-        .page-title {
-
-            margin: 0;
-
-            color: var(--text);
-
-            font-size: 21px;
-
-            font-weight: 900;
-
-            letter-spacing: -.3px;
-        }
-
-
-        .request-number {
-
-            margin-top: 5px;
-
-            color: var(--muted);
-
-            font-size: 9px;
-        }
-
-
-        .request-number strong {
-
-            color: var(--text);
-
-            font-weight: 850;
-        }
-
-
-        /* =====================================================
-           ALERTS
-        ===================================================== */
-
-        .custom-alert {
-
-            border: none;
-
-            border-radius: 11px;
-
-            font-size: 9px;
-
-            font-weight: 650;
-
-            box-shadow:
-                    0 4px 15px rgba(0, 0, 0, .035);
-
-            animation:
-                    slideDown .35s ease both;
-        }
-
-
-        /* =====================================================
-           CARD
-        ===================================================== */
-
-        .details-card {
-
-            height: 100%;
-
-            padding: 22px;
-
-            background: white;
-
-            border:
-                    1px solid var(--border);
-
-            border-radius: 17px;
-
-            box-shadow:
-                    var(--shadow);
-
-            transition:
-                    box-shadow .22s ease,
-                    transform .22s ease;
-        }
-
-
-        .details-card:hover {
-
-            box-shadow:
-                    var(--shadow-hover);
-        }
-
-
-        .section-title {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            padding-bottom: 13px;
-
-            margin-bottom: 18px;
-
-            border-bottom:
-                    1px solid #f0f1f2;
-
-            color: var(--text);
-
-            font-size: 13px;
-
-            font-weight: 850;
-        }
-
-
-        .section-title i {
-
-            color:
-                    var(--green);
-
-            font-size: 15px;
-        }
-
-
-        /* =====================================================
-           INFORMATION GRID
-        ===================================================== */
-
-        .info-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                    repeat(2, 1fr);
-
-            gap: 13px;
-        }
-
-
-        .info-box {
-
-            padding: 13px;
-
-            background:
-                    #f8faf9;
-
-            border:
-                    1px solid #edf1ee;
-
-            border-radius: 11px;
-
-            transition:
-                    transform .2s ease,
-                    border-color .2s ease;
-        }
-
-
-        .info-box:hover {
-
-            transform:
-                    translateY(-2px);
-
-            border-color:
-                    #d6e8da;
-        }
-
-
-        .info-label {
-
-            margin-bottom: 4px;
-
-            color: #9ca3af;
-
-            font-size: 7px;
-
-            font-weight: 800;
-
-            text-transform: uppercase;
-
-            letter-spacing: .4px;
-        }
-
-
-        .info-value {
-
-            color: var(--text);
-
-            font-size: 10px;
-
-            font-weight: 800;
-
-            word-break: break-word;
-        }
-
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
-
-        .status-badge {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 5px;
-
-            padding:
-                    7px 11px;
-
-            border-radius: 30px;
-
-            font-size: 8px;
-
-            font-weight: 850;
-
-            white-space: nowrap;
-        }
-
-
-        .status-requested {
-
-            background:
-                    #fef3c7;
-
-            color:
-                    #92400e;
-        }
-
-
-        .status-approved {
-
-            background:
-                    var(--green-light);
-
-            color:
-                    var(--green-deep);
-        }
-
-
-        .status-rejected {
-
-            background:
-                    var(--red-soft);
-
-            color:
-                    #991b1b;
-        }
-
-
-        .status-pickup {
-
-            background:
-                    #e0f2fe;
-
-            color:
-                    #075985;
-        }
-
-
-        .status-received {
-
-            background:
-                    var(--blue-soft);
-
-            color:
-                    #1d4ed8;
-        }
-
-
-        .status-refund {
-
-            background:
-                    var(--purple-soft);
-
-            color:
-                    #6d28d9;
-        }
-
-
-        .status-completed {
-
-            background:
-                    var(--green-light);
-
-            color:
-                    var(--green-deep);
-        }
-
-
-        .status-cancelled {
-
-            background:
-                    var(--gray-soft);
-
-            color:
-                    #4b5563;
-        }
-
-
-        /* =====================================================
-           REASON
-        ===================================================== */
-
-        .reason-box {
-
-            padding: 15px;
-
-            background:
-                    #f8faf9;
-
-            border:
-                    1px solid #edf1ee;
-
-            border-radius: 12px;
-        }
-
-
-        .reason-title {
-
-            color: var(--text);
-
-            font-size: 11px;
-
-            font-weight: 850;
-        }
-
-
-        .reason-description {
-
-            margin-top: 9px;
-
-            color: #6b7280;
-
-            font-size: 9px;
-
-            line-height: 1.7;
-        }
-
-
-        /* =====================================================
-           REMARKS
-        ===================================================== */
-
-        .remarks-box {
-
-            display: flex;
-
-            align-items: flex-start;
-
-            gap: 10px;
-
-            padding: 14px;
-
-            background:
-                    var(--blue-soft);
-
-            border:
-                    1px solid #dbeafe;
-
-            border-radius: 12px;
-
-            color:
-                    #1e40af;
-
-            font-size: 9px;
-
-            line-height: 1.6;
-        }
-
-
-        .remarks-icon {
-
-            flex-shrink: 0;
-
-            font-size: 16px;
-        }
-
-
-        .remarks-title {
-
-            margin-bottom: 3px;
-
-            font-size: 9px;
-
-            font-weight: 850;
-        }
-
-
-        /* =====================================================
-           TIMELINE
-        ===================================================== */
-
-        .timeline {
-
-            position: relative;
-
-            padding-top: 2px;
-        }
-
-
-        .timeline-item {
-
-            position: relative;
-
-            min-height: 68px;
-
-            padding-left: 43px;
-
-            padding-bottom: 21px;
-        }
-
-
-        .timeline-item:last-child {
-
-            min-height: auto;
-
-            padding-bottom: 0;
-        }
-
-
-        .timeline-item::before {
-
-            content: "";
-
-            position: absolute;
-
-            left: 12px;
-
-            top: 18px;
-
-            width: 2px;
-
-            height: calc(100% - 3px);
-
-            background:
-                    #e5e7eb;
-        }
-
-
-        .timeline-item:last-child::before {
-
-            display: none;
-        }
-
-
-        .timeline-dot {
-
-            position: absolute;
-
-            left: 5px;
-
-            top: 1px;
-
-            width: 16px;
-
-            height: 16px;
-
-            border:
-                    3px solid white;
-
-            border-radius: 50%;
-
-            background:
-                    #d1d5db;
-
-            box-shadow:
-                    0 0 0 1px #d1d5db;
-        }
-
-
-        .timeline-item.active .timeline-dot {
-
-            background:
-                    var(--green);
-
-            box-shadow:
-                    0 0 0 1px var(--green),
-                    0 0 0 5px rgba(22, 163, 74, .08);
-        }
-
-
-        .timeline-item.danger .timeline-dot {
-
-            background:
-                    var(--red);
-
-            box-shadow:
-                    0 0 0 1px var(--red);
-        }
-
-
-        .timeline-item.cancelled .timeline-dot {
-
-            background:
-                    #6b7280;
-
-            box-shadow:
-                    0 0 0 1px #6b7280;
-        }
-
-
-        .timeline-label {
-
-            color: var(--text);
-
-            font-size: 10px;
-
-            font-weight: 800;
-        }
-
-
-        .timeline-item.active .timeline-label {
-
-            color:
-                    var(--green-deep);
-        }
-
-
-        .timeline-description {
-
-            margin-top: 3px;
-
-            color: #9ca3af;
-
-            font-size: 8px;
-
-            line-height: 1.55;
-        }
-
-
-        /* =====================================================
-           RELATED ORDER
-        ===================================================== */
-
-        .order-box {
-
-            padding: 14px;
-
-            background:
-                    #f8faf9;
-
-            border:
-                    1px solid #edf1ee;
-
-            border-radius: 12px;
-        }
-
-
-        .order-number {
-
-            color: var(--text);
-
-            font-size: 13px;
-
-            font-weight: 900;
-        }
-
-
-        .order-total {
-
-            margin-top: 4px;
-
-            color:
-                    var(--green-deep);
-
-            font-size: 17px;
-
-            font-weight: 950;
-        }
-
-
-        .order-status {
-
-            margin-top: 9px;
-        }
-
-
-        /* =====================================================
-           HELP
-        ===================================================== */
-
-        .help-box {
-
-            padding: 15px;
-
-            background:
-                    linear-gradient(
-                            135deg,
-                            #f8faf9,
-                            #f0fdf4
-                    );
-
-            border:
-                    1px solid #e1eee4;
-
-            border-radius: 12px;
-        }
-
-
-        .help-icon {
-
-            width: 35px;
-
-            height: 35px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            margin-bottom: 9px;
-
-            border-radius: 10px;
-
-            background:
-                    var(--green-light);
-
-            color:
-                    var(--green-deep);
-
-            font-size: 16px;
-        }
-
-
-        .help-title {
-
-            color: var(--text);
-
-            font-size: 10px;
-
-            font-weight: 850;
-        }
-
-
-        .help-text {
-
-            margin-top: 4px;
-
-            color: #9ca3af;
-
-            font-size: 8px;
-
-            line-height: 1.65;
-        }
-
-
-        /* =====================================================
-           BUTTONS
-        ===================================================== */
-
-        .btn {
-
-            min-height: 39px;
-
-            border-radius: 9px;
-
-            font-size: 9px;
-
-            font-weight: 800;
-
-            transition:
-                    transform .2s ease,
-                    box-shadow .2s ease,
-                    background .2s ease;
-        }
-
-
-        .btn-outline-primary {
-
-            color:
-                    var(--green-deep);
-
-            border-color:
-                    #b8ddc0;
-        }
-
-
-        .btn-outline-primary:hover {
-
-            color: white;
-
-            background:
-                    var(--green);
-
-            border-color:
-                    var(--green);
-
-            transform:
-                    translateY(-2px);
-
-            box-shadow:
-                    0 6px 15px rgba(22, 163, 74, .15);
-        }
-
-
-        .btn-danger {
-
-            border: none;
-
-            background:
-                    var(--red);
-
-            color: white;
-        }
-
-
-        .btn-danger:hover {
-
-            background:
-                    #b91c1c;
-
-            color: white;
-
-            transform:
-                    translateY(-2px);
-
-            box-shadow:
-                    0 7px 17px rgba(220, 38, 38, .15);
-        }
-
-
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
-        .modal-content {
-
-            border: none;
-
-            border-radius: 17px;
-
-            box-shadow:
-                    0 20px 60px rgba(0, 0, 0, .18);
-        }
-
-
-        .modal-header {
-
-            padding: 18px 20px;
-
-            border-bottom:
-                    1px solid #f0f1f2;
-        }
-
-
-        .modal-title {
-
-            font-size: 14px;
-
-            font-weight: 900;
-        }
-
-
-        .modal-body {
-
-            padding: 20px;
-
-            color: #4b5563;
-
-            font-size: 10px;
-
-            line-height: 1.7;
-        }
-
-
-        .modal-footer {
-
-            padding: 13px 20px;
-
-            border-top:
-                    1px solid #f0f1f2;
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .shop-footer {
-
-            padding:
-                    35px 0 18px;
-
-            background:
-                    #111827;
-
-            color: white;
-        }
-
-
-        .footer-brand {
-
-            font-size: 20px;
-
-            font-weight: 950;
-        }
-
-
-        .footer-brand span {
-
-            color:
-                    #4ade80;
-        }
-
-
-        .footer-text {
-
-            margin-top: 4px;
-
-            color: #9ca3af;
-
-            font-size: 8px;
-        }
-
-
-        .footer-services {
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            flex-wrap: wrap;
-
-            gap: 24px;
-
-            margin: 20px 0;
-        }
-
-
-        .footer-service {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-            color: #d1d5db;
-
-            font-size: 8px;
-
-            font-weight: 650;
-        }
-
-
-        .footer-service i {
-
-            color:
-                    #4ade80;
-
-            font-size: 12px;
-        }
-
-
-        .footer-bottom {
-
-            padding-top: 14px;
-
-            border-top:
-                    1px solid rgba(255,255,255,.08);
-
-            color: #6b7280;
-
-            font-size: 7px;
-
-            text-align: center;
-        }
-
-
-        /* =====================================================
-           ANIMATIONS
-        ===================================================== */
-
-        @keyframes fadeUp {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                        translateY(15px);
+        :root{
+            --green:#16a34a;
+            --green-dark:#15803d;
+            --green-light:#dcfce7;
+            --text:#111827;
+            --muted:#6b7280;
+            --border:#e5e7eb;
+            --bg:#f6f8f6;
+            --red:#dc2626;
+            --blue:#2563eb;
+            --purple:#7c3aed;
+            --shadow:0 3px 14px rgba(0,0,0,.045);
+        }
+        *{box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{
+            margin:0;
+            background:var(--bg);
+            color:var(--text);
+            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            font-size:12px;
+        }
+        a{text-decoration:none}
+
+        /* PAGE */
+        .return-page{
+            width:min(920px,calc(100% - 24px));
+            margin:0 auto;
+            padding:14px 0 28px;
+        }
+
+        /* HEADER */
+        .page-header{
+            padding:13px 16px;
+            margin-bottom:9px;
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:12px;
+            box-shadow:var(--shadow);
+        }
+        .header-content{gap:10px!important}
+        .header-icon{
+            width:32px;height:32px;
+            margin-bottom:4px;
+            border-radius:8px;
+            background:var(--green-light);
+            color:var(--green-dark);
+            font-size:15px;
+        }
+        .page-title{font-size:16px;font-weight:850;margin:0}
+        .request-number{margin-top:1px;color:var(--muted);font-size:7px}
+        .request-number strong{color:var(--text)}
+
+        /* ALERTS */
+        .custom-alert{
+            margin-bottom:9px;
+            padding:7px 10px;
+            border:0;
+            border-radius:8px;
+            font-size:8px;
+        }
+
+        /* ALL CONTENT SINGLE COLUMN */
+        .row.g-4{
+            --bs-gutter-x:0;
+            --bs-gutter-y:9px;
+            display:block;
+        }
+        .col-lg-8,.col-lg-4{
+            width:100%;
+            max-width:none;
+        }
+
+        /* CARDS */
+        .details-card{
+            height:auto;
+            padding:12px 14px;
+            margin-bottom:9px!important;
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:11px;
+            box-shadow:var(--shadow);
+        }
+        .section-title{
+            gap:6px;
+            padding-bottom:7px;
+            margin-bottom:8px;
+            border-bottom:1px solid #f0f1f2;
+            font-size:10px;
+            font-weight:850;
+        }
+        .section-title i{font-size:12px;color:var(--green)}
+
+        /* RETURN INFORMATION */
+        .info-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:7px;
+        }
+        .info-box{
+            padding:8px 9px;
+            background:#f8faf9;
+            border:1px solid #edf1ee;
+            border-radius:8px;
+        }
+        .info-label{
+            margin-bottom:2px;
+            color:#9ca3af;
+            font-size:6px;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.35px;
+        }
+        .info-value{font-size:8.5px;font-weight:800}
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
+            padding:4px 7px;
+            border-radius:20px;
+            font-size:7px;
+            font-weight:850;
+        }
+        .status-requested{background:#fef3c7;color:#92400e}
+        .status-approved,.status-completed{background:var(--green-light);color:var(--green-dark)}
+        .status-rejected{background:#fef2f2;color:#991b1b}
+        .status-pickup{background:#e0f2fe;color:#075985}
+        .status-received{background:#eff6ff;color:#1d4ed8}
+        .status-refund{background:#f5f3ff;color:#6d28d9}
+        .status-cancelled{background:#f3f4f6;color:#4b5563}
+
+        /* REASON / REMARKS */
+        .reason-box,.order-box{
+            padding:9px 10px;
+            background:#f8faf9;
+            border:1px solid #edf1ee;
+            border-radius:8px;
+        }
+        .reason-title{font-size:9px;font-weight:850}
+        .reason-description{margin-top:5px;color:#6b7280;font-size:8px;line-height:1.45}
+        .remarks-box{
+            display:flex;
+            gap:8px;
+            padding:9px 10px;
+            background:#eff6ff;
+            border:1px solid #dbeafe;
+            border-radius:8px;
+            color:#1e40af;
+            font-size:8px;
+            line-height:1.45;
+        }
+        .remarks-icon{font-size:13px}
+        .remarks-title{margin-bottom:2px;font-size:8px;font-weight:850}
+
+        /* HORIZONTAL PROGRESS - NO LONG VERTICAL TIMELINE */
+        .timeline{
+            display:grid;
+            grid-template-columns:repeat(6,minmax(0,1fr));
+            gap:0;
+            padding:2px 0 3px;
+        }
+        .timeline-item,.timeline-item:last-child{
+            position:relative;
+            min-height:0;
+            padding:0 5px;
+            text-align:center;
+        }
+        .timeline-item::before{
+            content:"";
+            position:absolute;
+            left:50%;
+            top:7px;
+            width:100%;
+            height:2px;
+            background:#e5e7eb;
+            z-index:0;
+        }
+        .timeline-item:last-child::before{display:none}
+        .timeline-dot{
+            position:relative;
+            left:auto;
+            top:auto;
+            width:14px;
+            height:14px;
+            margin:0 auto 5px;
+            display:block;
+            border:3px solid #fff;
+            border-radius:50%;
+            background:#d1d5db;
+            box-shadow:0 0 0 1px #d1d5db;
+            z-index:2;
+        }
+        .timeline-item.active .timeline-dot{
+            background:var(--green);
+            box-shadow:0 0 0 1px var(--green),0 0 0 4px rgba(22,163,74,.07);
+        }
+        .timeline-item.danger .timeline-dot{background:var(--red);box-shadow:0 0 0 1px var(--red)}
+        .timeline-item.cancelled .timeline-dot{background:#6b7280;box-shadow:0 0 0 1px #6b7280}
+        .timeline-label{font-size:7.5px;font-weight:800;line-height:1.25}
+        .timeline-item.active .timeline-label{color:var(--green-dark)}
+        .timeline-description{margin-top:2px;color:#9ca3af;font-size:6.5px;line-height:1.3}
+
+        /* RELATED ORDER + HELP BECOME COMPACT FULL-WIDTH CARDS */
+        .order-number{font-size:10px;font-weight:900}
+        .order-total{margin-top:2px;color:var(--green-dark);font-size:13px;font-weight:950}
+        .order-status{margin-top:5px}
+        .help-box{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:9px 10px;
+            background:linear-gradient(135deg,#f8faf9,#f0fdf4);
+            border:1px solid #e1eee4;
+            border-radius:8px;
+        }
+        .help-icon{
+            width:28px;height:28px;
+            flex:0 0 28px;
+            margin:0;
+            border-radius:7px;
+            background:var(--green-light);
+            color:var(--green-dark);
+            font-size:13px;
+        }
+        .help-title{font-size:8.5px;font-weight:850}
+        .help-text{margin-top:2px;color:#9ca3af;font-size:7px;line-height:1.4}
+
+        /* BUTTONS */
+        .btn{
+            min-height:31px;
+            padding:5px 9px;
+            border-radius:8px;
+            font-size:8px;
+            font-weight:800;
+        }
+        .btn-outline-primary{
+            color:var(--green-dark);
+            border-color:#b8ddc0;
+        }
+        .btn-outline-primary:hover{color:#fff;background:var(--green);border-color:var(--green)}
+        .btn-danger{border:0;background:var(--red);color:#fff}
+
+        /* CANCEL */
+        #cancelReturnModal .modal-content{border:0;border-radius:12px}
+        #cancelReturnModal .modal-header{padding:13px 15px}
+        #cancelReturnModal .modal-title{font-size:12px;font-weight:900}
+        #cancelReturnModal .modal-body{padding:14px;font-size:9px;line-height:1.5}
+        #cancelReturnModal .modal-footer{padding:9px 15px}
+
+        /* FOOTER */
+        .shop-footer{padding:16px 0 9px;background:#111827;color:#fff}
+        .footer-brand{font-size:16px;font-weight:950}
+        .footer-brand span{color:#4ade80}
+        .footer-text{margin-top:2px;color:#9ca3af;font-size:7px}
+        .footer-services{gap:13px;margin:9px 0}
+        .footer-service{font-size:7px}
+        .footer-service i{font-size:10px}
+        .footer-bottom{padding-top:7px;font-size:6px}
+
+        /* MOBILE */
+        @media(max-width:700px){
+            .return-page{width:calc(100% - 14px);padding:9px 0 20px}
+            .page-header{padding:11px 12px}
+            .page-title{font-size:14px}
+            .details-card{padding:10px 11px}
+            .info-grid{grid-template-columns:repeat(2,1fr)}
+            .timeline{
+                display:flex;
+                overflow-x:auto;
+                padding:2px 2px 8px;
+                scrollbar-width:thin;
             }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                        translateY(0);
+            .timeline-item,.timeline-item:last-child{
+                flex:0 0 105px;
             }
+            .timeline-item::before{display:block}
         }
-
-
-        @keyframes slideDown {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                        translateY(-8px);
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                        translateY(0);
-            }
+        @media(max-width:420px){
+            .info-grid{grid-template-columns:1fr 1fr}
+            .timeline-item,.timeline-item:last-child{flex-basis:92px}
+            .timeline-label{font-size:7px}
+            .timeline-description{font-size:6px}
         }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 767px) {
-
-            .return-page {
-
-                padding:
-                        15px 8px 45px;
-            }
-
-
-            .page-header {
-
-                padding: 19px;
-
-                border-radius: 15px;
-            }
-
-
-            .page-title {
-
-                font-size: 18px;
-            }
-
-
-            .details-card {
-
-                padding: 17px;
-
-                border-radius: 15px;
-            }
-
-
-            .info-grid {
-
-                grid-template-columns:
-                        1fr;
-            }
-
-
-            .footer-services {
-
-                gap: 13px;
-            }
-
-        }
-
-
-        @media (max-width: 480px) {
-
-            .page-header {
-
-                padding: 17px;
-            }
-
-
-            .header-icon {
-
-                width: 39px;
-
-                height: 39px;
-
-                font-size: 18px;
-            }
-
-
-            .timeline-item {
-
-                padding-left: 38px;
-            }
-
-
-            .timeline-item::before {
-
-                left: 10px;
-            }
-
-
-            .timeline-dot {
-
-                left: 3px;
-            }
-
-        }
-
     </style>
 
 </head>
@@ -1391,45 +504,99 @@
                         </div>
 
 
-                        <span
-                                class="status-badge"
-                                th:classappend="${returnRequest.status.name() == 'REQUESTED'
-                                    ? ' status-requested'
-                                    : returnRequest.status.name() == 'APPROVED'
-                                    ? ' status-approved'
-                                    : returnRequest.status.name() == 'REJECTED'
-                                    ? ' status-rejected'
-                                    : returnRequest.status.name() == 'PICKUP_SCHEDULED'
-                                    ? ' status-pickup'
-                                    : returnRequest.status.name() == 'PICKED_UP'
-                                    ? ' status-pickup'
-                                    : returnRequest.status.name() == 'RECEIVED'
-                                    ? ' status-received'
-                                    : returnRequest.status.name() == 'REFUND_INITIATED'
-                                    ? ' status-refund'
-                                    : returnRequest.status.name() == 'COMPLETED'
-                                    ? ' status-completed'
-                                    : ' status-cancelled'}">
+                        <span class="status-badge">
 
+    <!-- REQUESTED -->
+    <span
+            th:if="${returnRequest.status.name() == 'REQUESTED'}"
+            class="status-requested">
 
-                            <i
-                                    th:class="${returnRequest.status.name() == 'APPROVED'
-                                        || returnRequest.status.name() == 'COMPLETED'
-                                        ? 'bi bi-check-circle-fill'
-                                        : returnRequest.status.name() == 'REJECTED'
-                                        ? 'bi bi-x-circle-fill'
-                                        : returnRequest.status.name() == 'CANCELLED'
-                                        ? 'bi bi-slash-circle-fill'
-                                        : 'bi bi-clock-fill'}">
-                            </i>
+        <i class="bi bi-clock-fill"></i>
+        <span>REQUESTED</span>
 
+    </span>
 
-                            <span
-                                    th:text="${returnRequest.status.name().replace('_', ' ')}">
-                                REQUESTED
-                            </span>
+                            <!-- APPROVED -->
+    <span
+            th:if="${returnRequest.status.name() == 'APPROVED'}"
+            class="status-approved">
 
-                        </span>
+        <i class="bi bi-check-circle-fill"></i>
+        <span>APPROVED</span>
+
+    </span>
+
+                            <!-- REJECTED -->
+    <span
+            th:if="${returnRequest.status.name() == 'REJECTED'}"
+            class="status-rejected">
+
+        <i class="bi bi-x-circle-fill"></i>
+        <span>REJECTED</span>
+
+    </span>
+
+                            <!-- PICKUP SCHEDULED -->
+    <span
+            th:if="${returnRequest.status.name() == 'PICKUP_SCHEDULED'}"
+            class="status-pickup">
+
+        <i class="bi bi-clock-fill"></i>
+        <span>PICKUP SCHEDULED</span>
+
+    </span>
+
+                            <!-- PICKED UP -->
+    <span
+            th:if="${returnRequest.status.name() == 'PICKED_UP'}"
+            class="status-pickup">
+
+        <i class="bi bi-clock-fill"></i>
+        <span>PICKED UP</span>
+
+    </span>
+
+                            <!-- RECEIVED -->
+    <span
+            th:if="${returnRequest.status.name() == 'RECEIVED'}"
+            class="status-received">
+
+        <i class="bi bi-box-seam"></i>
+        <span>RECEIVED</span>
+
+    </span>
+
+                            <!-- REFUND INITIATED -->
+    <span
+            th:if="${returnRequest.status.name() == 'REFUND_INITIATED'}"
+            class="status-refund">
+
+        <i class="bi bi-cash-coin"></i>
+        <span>REFUND INITIATED</span>
+
+    </span>
+
+                            <!-- COMPLETED -->
+    <span
+            th:if="${returnRequest.status.name() == 'COMPLETED'}"
+            class="status-completed">
+
+        <i class="bi bi-check-circle-fill"></i>
+        <span>COMPLETED</span>
+
+    </span>
+
+                            <!-- CANCELLED -->
+    <span
+            th:if="${returnRequest.status.name() == 'CANCELLED'}"
+            class="status-cancelled">
+
+        <i class="bi bi-slash-circle-fill"></i>
+        <span>CANCELLED</span>
+
+    </span>
+
+</span>
 
                     </div>
 

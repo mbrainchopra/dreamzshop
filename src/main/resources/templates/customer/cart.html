@@ -1430,6 +1430,8 @@
                                         <form
                                                 th:action="@{/customer/cart/update}"
                                                 method="post">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
 
                                             <input
                                                     type="hidden"
@@ -1502,13 +1504,17 @@
 
                                         <form
                                                 th:action="@{/customer/cart/remove}"
-                                                method="post"
-                                                onsubmit="return confirmRemove();">
+                                                method="post">
 
                                             <input
                                                     type="hidden"
-                                                    name="productId"
-                                                    th:value="${item.product.id}">
+                                                    name="_csrf"
+                                                    th:value="${_csrf.token}">
+
+                                            <input
+                                                    type="hidden"
+                                                    name="cartItemId"
+                                                    th:value="${item.id}">
 
 
                                             <button
@@ -1552,6 +1558,8 @@
                                     th:action="@{/customer/cart/clear}"
                                     method="post"
                                     onsubmit="return confirmClear();">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
 
                                 <button
                                         type="submit"

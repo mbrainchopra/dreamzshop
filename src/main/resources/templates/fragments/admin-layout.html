@@ -26,7 +26,7 @@
             <div class="ds-nav-label">Sales</div>
             <a class="ds-nav-link" th:href="@{/admin/orders}" data-nav="orders"><span class="ds-nav-icon"><i class="bi bi-receipt-cutoff"></i></span><span>Orders</span></a>
             <a class="ds-nav-link" th:href="@{/admin/returns}" data-nav="returns"><span class="ds-nav-icon"><i class="bi bi-arrow-return-left"></i></span><span>Returns</span></a>
-            <a class="ds-nav-link" th:href="@{/admin/refunds}" data-nav="refunds"><span class="ds-nav-icon"><i class="bi bi-cash-coin"></i></span><span>Refunds</span></a>
+<!--            <a class="ds-nav-link" th:href="@{/admin/refunds}" data-nav="refunds"><span class="ds-nav-icon"><i class="bi bi-cash-coin"></i></span><span>Refunds</span></a>-->
 
             <div class="ds-nav-label">Marketing</div>
             <a class="ds-nav-link" th:href="@{/admin/coupons}" data-nav="coupons"><span class="ds-nav-icon"><i class="bi bi-ticket-perforated-fill"></i></span><span>Coupons</span></a>
@@ -40,8 +40,9 @@
             <div class="ds-nav-label">Insights</div>
             <a class="ds-nav-link" th:href="@{/admin/reports}" data-nav="reports"><span class="ds-nav-icon"><i class="bi bi-bar-chart-fill"></i></span><span>Reports</span></a>
 
-            <div class="ds-nav-label" sec:authorize="hasRole('ADMIN')">Administration</div>
-            <a class="ds-nav-link" th:href="@{/admin/staff}" data-nav="staff" sec:authorize="hasRole('ADMIN')"><span class="ds-nav-icon"><i class="bi bi-person-badge-fill"></i></span><span>Staff</span></a>
+<!--            <div class="ds-nav-label" sec:authorize="hasRole('ADMIN')">Administration</div>-->
+<!--            <a class="ds-nav-link" th:href="@{/admin/staff}" data-nav="staff" sec:authorize="hasRole('ADMIN')"><span class="ds-nav-icon"><i class="bi bi-person-badge-fill"></i></span><span>Staff</span></a>-->
+<!--      -->
         </div>
 
         <div class="ds-sidebar-footer">
@@ -50,6 +51,8 @@
                 <div class="ds-admin-avatar"><i class="bi bi-person-fill"></i></div>
                 <div class="ds-admin-info"><strong>Administrator</strong><small>Control Center</small></div>
                 <form th:action="@{/logout}" method="post" class="ms-auto">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
                     <button class="ds-logout" type="submit" title="Logout" aria-label="Logout"><i class="bi bi-box-arrow-right"></i></button>
                 </form>
             </div>

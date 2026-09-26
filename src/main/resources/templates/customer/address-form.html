@@ -1047,6 +1047,8 @@
                                 : '/customer/addresses/save'}"
                                 th:object="${address}"
                                 method="post">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
 
 
                             <!-- =================================================

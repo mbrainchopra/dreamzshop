@@ -1730,9 +1730,9 @@
                             <div class="mt-2"
                                  th:if="${order.orderStatus.name() == 'DELIVERED'}">
 
-                                <a th:href="@{/customer/orders/{orderId}/return/{itemId}
-                 (orderId=${order.id}, itemId=${item.id})}"
-                                   class="btn btn-sm btn-outline-danger">
+                                <a
+                                        th:href="@{/customer/returns/request/{orderId}/{orderItemId}(orderId=${order.id},orderItemId=${item.id})}"
+                                        class="btn btn-warning">
 
                                     <i class="bi bi-arrow-return-left me-1"></i>
 

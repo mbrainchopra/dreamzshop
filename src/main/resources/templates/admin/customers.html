@@ -1454,10 +1454,15 @@
 
     </style>
 
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 
 <!-- =========================================================
@@ -1707,6 +1712,8 @@
 
         <form action="/logout"
               method="post">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
 
             <button
                     type="submit"
@@ -2105,6 +2112,8 @@
                                     method="post"
                                     th:action="@{/admin/customers/{id}/toggle(id=${customer.id})}"
                                     style="display:inline;">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
 
                                 <button
                                         type="submit"
@@ -2281,6 +2290,8 @@
 
 </main>
 
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 

@@ -1478,9 +1478,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <div class="dreamz-sidebar-overlay" id="dreamzSidebarOverlay"></div>
 
@@ -1620,13 +1625,13 @@
 
         </a>
 
-        <a class="dreamz-link"
-           th:href="@{/admin/refunds}">
+<!--        <a class="dreamz-link"-->
+<!--           th:href="@{/admin/refunds}">-->
 
-            <i class="bi bi-cash-stack"></i>
-            <span>Refunds</span>
+<!--            <i class="bi bi-cash-stack"></i>-->
+<!--            <span>Refunds</span>-->
 
-        </a>
+<!--        </a>-->
 
         <div class="dreamz-section-title">
             Analytics
@@ -2240,6 +2245,8 @@
 
     });
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

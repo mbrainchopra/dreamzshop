@@ -14,4 +14,6 @@ public interface WishlistItemRepository
     );
 
     void deleteByWishlistId(Long wishlistId);
+
+    long countByProductId(Long productId);
 }

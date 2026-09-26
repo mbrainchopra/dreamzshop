@@ -1262,9 +1262,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <aside class="admin-sidebar" id="adminSidebar">
 
@@ -1411,13 +1416,13 @@
 
             </a>
 
-            <a th:href="@{/admin/refunds}"
-               class="sidebar-link active">
+<!--            <a th:href="@{/admin/refunds}"-->
+<!--               class="sidebar-link active">-->
 
-                <i class="bi bi-wallet2"></i>
-                <span>Refunds</span>
+<!--                <i class="bi bi-wallet2"></i>-->
+<!--                <span>Refunds</span>-->
 
-            </a>
+<!--            </a>-->
 
         </div>
 
@@ -2478,6 +2483,8 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

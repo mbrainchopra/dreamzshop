@@ -21,6 +21,8 @@ public interface InventoryTransactionRepository
             Pageable pageable
     );
 
+    long countByProductId(Long productId);
+
     List<InventoryTransaction> findTop20ByProductIdOrderByCreatedAtDesc(
             Long productId
     );

@@ -1335,9 +1335,14 @@
 
     </style>
 
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <div class="admin-shell">
 
@@ -1504,17 +1509,17 @@
 
             </a>
 
-            <a
-                    th:href="@{/admin/refunds}"
-                    class="sidebar-link">
+<!--            <a-->
+<!--                    th:href="@{/admin/refunds}"-->
+<!--                    class="sidebar-link">-->
 
-                <i class="bi bi-cash-coin"></i>
+<!--                <i class="bi bi-cash-coin"></i>-->
 
-                <span>
-                    Refunds
-                </span>
+<!--                <span>-->
+<!--                    Refunds-->
+<!--                </span>-->
 
-            </a>
+<!--            </a>-->
 
         </div>
 
@@ -1548,17 +1553,17 @@
 
             </a>
 
-            <a
-                    th:href="@{/admin/staff}"
-                    class="sidebar-link">
+<!--            <a-->
+<!--                    th:href="@{/admin/staff}"-->
+<!--                    class="sidebar-link">-->
 
-                <i class="bi bi-person-badge"></i>
+<!--                <i class="bi bi-person-badge"></i>-->
 
-                <span>
-                    Staff
-                </span>
+<!--                <span>-->
+<!--                    Staff-->
+<!--                </span>-->
 
-            </a>
+<!--            </a>-->
 
         </div>
 
@@ -2310,6 +2315,8 @@
     })();
 
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 

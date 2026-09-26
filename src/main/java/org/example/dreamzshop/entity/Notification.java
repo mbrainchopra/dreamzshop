@@ -11,6 +11,12 @@ import java.time.LocalDateTime;
 @Entity
 @Table(
         name = "notifications",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_notification_reference_key",
+                        columnNames = "reference_key"
+                )
+        },
         indexes = {
                 @Index(
                         name = "idx_notification_user",

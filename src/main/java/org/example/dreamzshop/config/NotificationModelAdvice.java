@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice(annotations = Controller.class)
 @RequiredArgsConstructor
@@ -21,7 +22,8 @@ public class NotificationModelAdvice {
     @ModelAttribute
     public void addNotificationData(
             Authentication authentication,
-            org.springframework.ui.Model model
+            org.springframework.ui.Model model,
+            HttpServletRequest request
     ) {
 
         /*
@@ -34,6 +36,13 @@ public class NotificationModelAdvice {
                 "unreadCount",
                 0L
         );
+
+        // The notification badge is customer-only. Avoid a DB count on every
+        // admin/staff request.
+        String requestUri = request.getRequestURI();
+        if (requestUri == null || !requestUri.startsWith("/customer/")) {
+            return;
+        }
 
 
         /*

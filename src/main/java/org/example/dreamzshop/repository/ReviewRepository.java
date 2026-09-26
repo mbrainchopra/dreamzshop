@@ -89,6 +89,8 @@ public interface ReviewRepository
             ReviewStatus status
     );
 
+    long countByProductId(Long productId);
+
 
     /*
      * Admin dashboard counts.

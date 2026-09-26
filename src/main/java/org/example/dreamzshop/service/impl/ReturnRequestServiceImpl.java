@@ -2,21 +2,31 @@ package org.example.dreamzshop.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dreamzshop.entity.Order;
+import org.example.dreamzshop.entity.OrderItem;
+import org.example.dreamzshop.entity.Product;
+import org.example.dreamzshop.entity.InventoryTransaction;
 import org.example.dreamzshop.entity.ReturnRequest;
 import org.example.dreamzshop.entity.User;
 import org.example.dreamzshop.enums.NotificationType;
+import org.example.dreamzshop.enums.InventoryTransactionType;
+import org.example.dreamzshop.enums.ProductStatus;
 import org.example.dreamzshop.enums.OrderStatus;
 import org.example.dreamzshop.enums.ReturnRequestStatus;
 import org.example.dreamzshop.repository.OrderRepository;
+import org.example.dreamzshop.repository.OrderItemRepository;
+import org.example.dreamzshop.repository.ProductRepository;
+import org.example.dreamzshop.repository.InventoryTransactionRepository;
 import org.example.dreamzshop.repository.ReturnRequestRepository;
 import org.example.dreamzshop.repository.UserRepository;
 import org.example.dreamzshop.service.NotificationService;
+import org.example.dreamzshop.service.RefundService;
 import org.example.dreamzshop.service.ReturnRequestService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -29,9 +39,17 @@ public class ReturnRequestServiceImpl
 
     private final OrderRepository orderRepository;
 
+    private final OrderItemRepository orderItemRepository;
+
     private final UserRepository userRepository;
 
+    private final ProductRepository productRepository;
+
+    private final InventoryTransactionRepository inventoryTransactionRepository;
+
     private final NotificationService notificationService;
+
+    private final RefundService refundService;
 
 
     // =========================================================
@@ -42,6 +60,7 @@ public class ReturnRequestServiceImpl
     public ReturnRequest createReturnRequest(
             String email,
             Long orderId,
+            Long orderItemId,
             String reason,
             String description
     ) {
@@ -53,6 +72,14 @@ public class ReturnRequestServiceImpl
 
             throw new IllegalArgumentException(
                     "Order ID is required"
+            );
+        }
+
+
+        if (orderItemId == null) {
+
+            throw new IllegalArgumentException(
+                    "Order item ID is required"
             );
         }
 
@@ -109,6 +136,28 @@ public class ReturnRequestServiceImpl
 
 
         // =====================================================
+        // VERIFY ORDER ITEM
+        // =====================================================
+
+        OrderItem orderItem =
+                orderItemRepository
+                        .findById(orderItemId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Order item not found"
+                                )
+                        );
+
+        if (orderItem.getOrder() == null
+                || !orderItem.getOrder().getId().equals(order.getId())) {
+
+            throw new IllegalArgumentException(
+                    "Invalid order item for this order"
+            );
+        }
+
+
+        // =====================================================
         // ONLY DELIVERED ORDERS
         // =====================================================
 
@@ -122,14 +171,14 @@ public class ReturnRequestServiceImpl
 
 
         // =====================================================
-        // ONE RETURN REQUEST PER ORDER
+        // ONE RETURN REQUEST PER ORDER ITEM
         // =====================================================
 
         if (returnRequestRepository
-                .existsByOrderId(orderId)) {
+                .existsByOrderItemId(orderItemId)) {
 
             throw new IllegalArgumentException(
-                    "A return request already exists for this order"
+                    "A return request already exists for this product"
             );
         }
 
@@ -142,6 +191,7 @@ public class ReturnRequestServiceImpl
                 ReturnRequest.builder()
                         .user(user)
                         .order(order)
+                        .orderItem(orderItem)
                         .reason(reason)
                         .description(description)
                         .status(
@@ -448,11 +498,21 @@ public class ReturnRequestServiceImpl
 
                 case PICKED_UP:
 
+                    // The item is still physically with the customer.
+                    order.setOrderStatus(
+                            OrderStatus.RETURN_REQUESTED
+                    );
+
+                    break;
+
                 case RECEIVED:
 
+                    // The returned goods have reached the seller.
                     order.setOrderStatus(
                             OrderStatus.RETURNED
                     );
+
+                    restoreReturnedItemStock(returnRequest.getOrderItem());
 
                     break;
 
@@ -476,6 +536,40 @@ public class ReturnRequestServiceImpl
                     order.setOrderStatus(
                             OrderStatus.REFUND_REQUESTED
                     );
+
+                    // Automatically create the refund record when
+                    // the return reaches REFUND_INITIATED.
+                    if (!refundService.existsForReturnRequest(
+                            returnRequest.getId()
+                    )) {
+
+                        OrderItem orderItem =
+                                returnRequest.getOrderItem();
+
+                        if (orderItem == null) {
+                            throw new IllegalArgumentException(
+                                    "Order item not found for refund."
+                            );
+                        }
+
+                        BigDecimal refundAmount =
+                                orderItem.getSubtotal();
+
+                        if (refundAmount == null
+                                || refundAmount.compareTo(BigDecimal.ZERO) <= 0) {
+
+                            throw new IllegalArgumentException(
+                                    "Invalid refund amount."
+                            );
+                        }
+
+                        refundService.createRefund(
+                                returnRequest.getId(),
+                                refundAmount,
+                                "BANK_TRANSFER",
+                                adminRemarks
+                        );
+                    }
 
                     break;
 
@@ -619,6 +713,57 @@ public class ReturnRequestServiceImpl
         }
     }
 
+
+    /**
+     * Only the product actually returned is restored to inventory.
+     */
+    private void restoreReturnedItemStock(OrderItem orderItem) {
+
+        if (orderItem == null) {
+            return;
+        }
+
+        Product product = orderItem.getProduct();
+        int quantity = orderItem.getQuantity() == null
+                ? 0
+                : orderItem.getQuantity();
+
+        if (product == null || quantity <= 0) {
+            return;
+        }
+
+        int previousStock = product.getStockQuantity() == null
+                ? 0
+                : product.getStockQuantity();
+
+        int newStock = previousStock + quantity;
+
+        product.setStockQuantity(newStock);
+
+        if (product.getStatus() == ProductStatus.OUT_OF_STOCK
+                && newStock > 0) {
+            product.setStatus(ProductStatus.ACTIVE);
+        }
+
+        productRepository.save(product);
+
+        inventoryTransactionRepository.save(
+                InventoryTransaction.builder()
+                        .product(product)
+                        .quantity(quantity)
+                        .previousStock(previousStock)
+                        .newStock(newStock)
+                        .type(InventoryTransactionType.RETURN)
+                        .reason(
+                                "Stock restored after return received "
+                                        + getOrderNumber(orderItem.getOrder())
+                        )
+                        .referenceNumber(
+                                getOrderNumber(orderItem.getOrder())
+                        )
+                        .build()
+        );
+    }
 
     // =========================================================
     // RETURN STATUS NOTIFICATION

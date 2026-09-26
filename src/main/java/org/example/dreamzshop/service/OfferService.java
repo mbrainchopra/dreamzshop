@@ -45,6 +45,16 @@ public interface OfferService {
             Product product
     );
 
+    /**
+     * Returns the best eligible offer when the whole cart/order amount
+     * satisfies the offer minimum-order requirement.
+     */
+    Offer getBestOffer(
+            Product product,
+            BigDecimal orderAmount,
+            BigDecimal itemAmount
+    );
+
     BigDecimal calculateDiscount(
             Offer offer,
             BigDecimal amount

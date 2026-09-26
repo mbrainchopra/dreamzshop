@@ -1006,9 +1006,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <aside class="admin-sidebar" id="adminSidebar">
 
@@ -1141,13 +1146,13 @@
 
         </a>
 
-        <a th:href="@{/admin/refunds}"
-           class="sidebar-link">
+<!--        <a th:href="@{/admin/refunds}"-->
+<!--           class="sidebar-link">-->
 
-            <i class="bi bi-cash-stack"></i>
-            <span>Refunds</span>
+<!--            <i class="bi bi-cash-stack"></i>-->
+<!--            <span>Refunds</span>-->
 
-        </a>
+<!--        </a>-->
 
         <div class="sidebar-section-title mt-2">
             Analytics
@@ -1204,6 +1209,9 @@
 </div>
 
 <main class="admin-main">
+
+    <div class="alert alert-success mx-4 mt-4" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger mx-4 mt-4" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <header class="topbar">
 
@@ -1774,6 +1782,8 @@
 
     });
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

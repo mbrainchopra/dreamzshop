@@ -2308,10 +2308,15 @@
 
     </style>
 
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 
 <!-- =========================================================
@@ -2545,16 +2550,16 @@
         </a>
 
 
-        <a class="dreamz-link"
-           th:href="@{/admin/refunds}">
+<!--        <a class="dreamz-link"-->
+<!--           th:href="@{/admin/refunds}">-->
 
-            <i class="bi bi-cash-stack"></i>
+<!--            <i class="bi bi-cash-stack"></i>-->
 
-            <span>
-                Refunds
-            </span>
+<!--            <span>-->
+<!--                Refunds-->
+<!--            </span>-->
 
-        </a>
+<!--        </a>-->
 
 
         <!-- ANALYTICS -->
@@ -3908,6 +3913,8 @@
 
 </script>
 
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 

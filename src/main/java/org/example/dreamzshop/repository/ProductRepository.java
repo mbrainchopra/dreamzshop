@@ -95,6 +95,8 @@ public interface ProductRepository
 
     long countByStatus(ProductStatus status);
 
+    long countByCategoryId(Long categoryId);
+
     long countByFeaturedTrue();
 
     long countByStockQuantity(Integer stockQuantity);

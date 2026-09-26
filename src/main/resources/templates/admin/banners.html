@@ -1034,9 +1034,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -1130,10 +1135,10 @@
                 <span>Returns</span>
             </a>
 
-            <a th:href="@{/admin/refunds}" class="sidebar-link">
-                <i class="bi bi-cash-stack"></i>
-                <span>Refunds</span>
-            </a>
+<!--            <a th:href="@{/admin/refunds}" class="sidebar-link">-->
+<!--                <i class="bi bi-cash-stack"></i>-->
+<!--                <span>Refunds</span>-->
+<!--            </a>-->
         </div>
 
         <div class="sidebar-section">
@@ -1696,6 +1701,8 @@
         return window.confirm("Are you sure you want to delete this banner?");
     }
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

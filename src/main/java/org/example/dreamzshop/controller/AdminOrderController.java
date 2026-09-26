@@ -113,7 +113,7 @@ public class AdminOrderController {
 
         model.addAttribute(
                 "statuses",
-                OrderStatus.values()
+                allowedNextStatuses(order.getOrderStatus())
         );
 
         return "admin/order-details";
@@ -151,4 +151,25 @@ public class AdminOrderController {
 
         return "redirect:/admin/orders/" + id;
     }
+    private java.util.List<OrderStatus> allowedNextStatuses(OrderStatus current) {
+        if (current == null) {
+            return java.util.List.of();
+        }
+
+        java.util.List<OrderStatus> next = switch (current) {
+            case PENDING -> java.util.List.of(OrderStatus.CONFIRMED, OrderStatus.CANCELLED);
+            case CONFIRMED -> java.util.List.of(OrderStatus.PROCESSING, OrderStatus.CANCELLED);
+            case PROCESSING -> java.util.List.of(OrderStatus.PACKED, OrderStatus.CANCELLED);
+            case PACKED -> java.util.List.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED);
+            case SHIPPED -> java.util.List.of(OrderStatus.OUT_FOR_DELIVERY);
+            case OUT_FOR_DELIVERY -> java.util.List.of(OrderStatus.DELIVERED);
+            case DELIVERED, RETURN_REQUESTED, RETURNED, REFUND_REQUESTED, REFUNDED, CANCELLED -> java.util.List.of();
+        };
+
+        java.util.ArrayList<OrderStatus> statuses = new java.util.ArrayList<>();
+        statuses.add(current);
+        statuses.addAll(next);
+        return statuses;
+    }
+
 }

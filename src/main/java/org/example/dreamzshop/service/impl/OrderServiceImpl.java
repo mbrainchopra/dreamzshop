@@ -276,7 +276,11 @@ public class OrderServiceImpl implements OrderService {
 
 
             BigDecimal unitPrice =
-                    product.getSellingPrice();
+                    cartItem.getUnitPrice();
+
+            if (unitPrice == null) {
+                unitPrice = product.getSellingPrice();
+            }
 
 
             BigDecimal itemSubtotal =
@@ -597,89 +601,120 @@ public class OrderServiceImpl implements OrderService {
     ) {
 
         if (newStatus == null) {
+            throw new IllegalArgumentException("Order status is required");
+        }
 
+        Order order = getOrderById(orderId);
+        OrderStatus currentStatus = order.getOrderStatus();
+
+        if (currentStatus == newStatus) {
+            return;
+        }
+
+        if (!isValidOrderStatusTransition(currentStatus, newStatus)) {
             throw new IllegalArgumentException(
-                    "Order status is required"
+                    "Invalid order status transition: "
+                            + currentStatus + " → " + newStatus
             );
         }
 
-
-        Order order =
-                getOrderById(orderId);
-
-
-        OrderStatus currentStatus =
-                order.getOrderStatus();
-
-
-        if (currentStatus == OrderStatus.CANCELLED) {
-
-            throw new IllegalArgumentException(
-                    "Cancelled order cannot be updated"
-            );
+        // Cancellation before shipment returns the reserved stock.
+        if (newStatus == OrderStatus.CANCELLED) {
+            restoreStockForCancelledOrder(order);
         }
 
-
-        if (currentStatus == OrderStatus.DELIVERED
-                && newStatus != OrderStatus.RETURN_REQUESTED
-                && newStatus != OrderStatus.RETURNED
-                && newStatus != OrderStatus.REFUND_REQUESTED
-                && newStatus != OrderStatus.REFUNDED) {
-
-            throw new IllegalArgumentException(
-                    "Delivered order cannot move to this status"
-            );
-        }
-
-
-        // =====================================================
-        // ONLY CREATE STATUS NOTIFICATION WHEN STATUS CHANGES
-        // =====================================================
-
-        boolean statusChanged =
-                currentStatus != newStatus;
-
-
-        order.setOrderStatus(
-                newStatus
-        );
-
-
-        // =====================================================
-        // COD PAYMENT SUCCESS ON DELIVERY
-        // =====================================================
+        order.setOrderStatus(newStatus);
 
         if (newStatus == OrderStatus.DELIVERED
-                && order.getPaymentMethod()
-                == PaymentMethod.COD) {
-
-            order.setPaymentStatus(
-                    PaymentStatus.SUCCESS
-            );
+                && order.getPaymentMethod() == PaymentMethod.COD) {
+            order.setPaymentStatus(PaymentStatus.SUCCESS);
         }
 
+        if (newStatus == OrderStatus.CANCELLED
+                && order.getPaymentMethod() == PaymentMethod.COD) {
+            order.setPaymentStatus(PaymentStatus.PENDING);
+        }
 
-        order.setUpdatedAt(
-                LocalDateTime.now()
-        );
-
-
+        order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
+        createStatusNotification(order, newStatus);
+    }
 
+    private boolean isValidOrderStatusTransition(
+            OrderStatus current,
+            OrderStatus next
+    ) {
+        if (current == null || next == null) {
+            return false;
+        }
 
-        // =====================================================
-        // STATUS NOTIFICATION
-        // =====================================================
+        return switch (current) {
+            case PENDING ->
+                    next == OrderStatus.CONFIRMED
+                            || next == OrderStatus.CANCELLED;
+            case CONFIRMED ->
+                    next == OrderStatus.PROCESSING
+                            || next == OrderStatus.CANCELLED;
+            case PROCESSING ->
+                    next == OrderStatus.PACKED
+                            || next == OrderStatus.CANCELLED;
+            case PACKED ->
+                    next == OrderStatus.SHIPPED
+                            || next == OrderStatus.CANCELLED;
+            case SHIPPED ->
+                    next == OrderStatus.OUT_FOR_DELIVERY;
+            case OUT_FOR_DELIVERY ->
+                    next == OrderStatus.DELIVERED;
+            // Return/refund statuses are controlled by their dedicated workflows.
+            case DELIVERED, RETURN_REQUESTED, RETURNED, REFUND_REQUESTED,
+                 CANCELLED, REFUNDED -> false;
+        };
+    }
 
-        if (statusChanged) {
+    private void restoreStockForCancelledOrder(Order order) {
+        if (order.getItems() == null) {
+            return;
+        }
 
-            createStatusNotification(
-                    order,
-                    newStatus
+        for (OrderItem orderItem : order.getItems()) {
+            Product product = orderItem.getProduct();
+            if (product == null) {
+                continue;
+            }
+
+            int previousStock = product.getStockQuantity() == null
+                    ? 0
+                    : product.getStockQuantity();
+            int quantity = orderItem.getQuantity() == null
+                    ? 0
+                    : orderItem.getQuantity();
+
+            if (quantity <= 0) {
+                continue;
+            }
+
+            int newStock = previousStock + quantity;
+            product.setStockQuantity(newStock);
+
+            if (newStock > 0 && product.getStatus() == ProductStatus.OUT_OF_STOCK) {
+                product.setStatus(ProductStatus.ACTIVE);
+            }
+
+            productRepository.save(product);
+
+            inventoryTransactionRepository.save(
+                    InventoryTransaction.builder()
+                            .product(product)
+                            .quantity(quantity)
+                            .previousStock(previousStock)
+                            .newStock(newStock)
+                            .type(InventoryTransactionType.CANCELLED_ORDER)
+                            .reason("Stock restored after order cancellation " + order.getOrderNumber())
+                            .referenceNumber(order.getOrderNumber())
+                            .build()
             );
         }
     }
-
 
     // =========================================================
     // CUSTOMER - CANCEL ORDER

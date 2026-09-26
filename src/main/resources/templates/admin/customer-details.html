@@ -892,9 +892,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 <!-- =========================================================
      SIDEBAR
      ========================================================= -->
@@ -971,11 +976,6 @@
         <a th:href="@{/admin/customers}" class="sidebar-link active">
             <i class="bi bi-people-fill"></i>
             <span>Customers</span>
-        </a>
-
-        <a th:href="@{/admin/users}" class="sidebar-link">
-            <i class="bi bi-person-badge-fill"></i>
-            <span>Users</span>
         </a>
 
         <div class="sidebar-section">Reports</div>
@@ -1461,6 +1461,8 @@
 
     });
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

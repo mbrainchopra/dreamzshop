@@ -61,6 +61,18 @@ public class CustomerOrderController {
         return "customer/orders";
     }
 
+    /**
+     * Compatibility route for older return-detail links.
+     * Redirects to the canonical customer return URL.
+     */
+    @GetMapping("/{orderId}/return/{returnId}")
+    public String legacyReturnDetails(
+            @PathVariable Long orderId,
+            @PathVariable Long returnId
+    ) {
+        return "redirect:/customer/returns/" + returnId;
+    }
+
     @GetMapping("/{id}")
     public String orderDetails(
             @PathVariable Long id,

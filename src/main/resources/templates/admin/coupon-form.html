@@ -1004,9 +1004,14 @@
             }
         }
     </style>
+
+    <link rel="stylesheet" th:href="@{/css/admin-common.css}">
 </head>
 
 <body>
+
+<div th:replace="~{fragments/admin-layout :: admin-layout}"></div>
+
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -1083,10 +1088,6 @@
     <div class="sidebar-section">Customers</div>
 
     <nav class="sidebar-menu">
-        <a th:href="@{/admin/users}" class="sidebar-link">
-            <i class="bi bi-people-fill"></i>
-            <span>Customers</span>
-        </a>
 
         <a th:href="@{/admin/reviews}" class="sidebar-link">
             <i class="bi bi-star-fill"></i>
@@ -1098,10 +1099,10 @@
             <span>Returns</span>
         </a>
 
-        <a th:href="@{/admin/refunds}" class="sidebar-link">
-            <i class="bi bi-wallet2"></i>
-            <span>Refunds</span>
-        </a>
+<!--        <a th:href="@{/admin/refunds}" class="sidebar-link">-->
+<!--            <i class="bi bi-wallet2"></i>-->
+<!--            <span>Refunds</span>-->
+<!--        </a>-->
     </nav>
 
     <div class="sidebar-section">Analytics</div>
@@ -1996,6 +1997,8 @@
 
     });
 </script>
+
+<script th:src="@{/js/admin-common.js}"></script>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dreamzshop.entity.Category;
 import org.example.dreamzshop.repository.CategoryRepository;
+import org.example.dreamzshop.repository.ProductRepository;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     // ===============================
     // LIST CATEGORIES
@@ -170,7 +173,10 @@ public class CategoryController {
     // ===============================
 
     @PostMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable Long id) {
+    public String deleteCategory(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes
+    ) {
 
         Category category =
                 categoryRepository.findById(id)
@@ -180,7 +186,23 @@ public class CategoryController {
                                 )
                         );
 
-        categoryRepository.delete(category);
+        long productCount = productRepository.countByCategoryId(id);
+
+        if (productCount > 0) {
+            category.setEnabled(false);
+            category.setUpdatedAt(java.time.LocalDateTime.now());
+            categoryRepository.save(category);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Category contains " + productCount + " product(s), so it was disabled instead of deleted."
+            );
+        } else {
+            categoryRepository.delete(category);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Category deleted successfully."
+            );
+        }
 
         return "redirect:/admin/categories";
     }

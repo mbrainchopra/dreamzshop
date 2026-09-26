@@ -59,76 +59,56 @@ public class PricingServiceImpl
                 BigDecimal.ZERO;
 
         /*
-         * Calculate product-level prices.
-         *
-         * Example:
-         *
-         * Product selling price = ₹1,000
-         * Offer = 10%
-         * Offer discount = ₹100
-         * Effective price = ₹900
+         * Use the cart item's price snapshot as the source of truth.
+         * Product.sellingPrice may have changed since the item was added.
          */
         for (CartItem item : cart.getItems()) {
-
-            if (item.getProduct() == null) {
-                continue;
-            }
-
-            Product product =
-                    item.getProduct();
-
-            if (product.getSellingPrice() == null
+            if (item == null
+                    || item.getProduct() == null
+                    || item.getUnitPrice() == null
                     || item.getQuantity() == null
                     || item.getQuantity() <= 0) {
-
                 continue;
             }
 
-            BigDecimal sellingPrice =
-                    product.getSellingPrice();
+            BigDecimal unitPrice = item.getUnitPrice();
+            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+            originalSubtotal = originalSubtotal.add(unitPrice.multiply(quantity));
+        }
 
-            BigDecimal quantity =
-                    BigDecimal.valueOf(
-                            item.getQuantity()
-                    );
+        originalSubtotal = money(originalSubtotal);
 
-            BigDecimal itemOriginalAmount =
-                    sellingPrice.multiply(
-                            quantity
-                    );
+        /*
+         * Apply product/category/brand/global offers only when the
+         * cart subtotal satisfies the offer's minimum order amount.
+         */
+        for (CartItem item : cart.getItems()) {
+            if (item == null
+                    || item.getProduct() == null
+                    || item.getUnitPrice() == null
+                    || item.getQuantity() == null
+                    || item.getQuantity() <= 0) {
+                continue;
+            }
 
-            originalSubtotal =
-                    originalSubtotal.add(
-                            itemOriginalAmount
-                    );
+            Product product = item.getProduct();
+            BigDecimal itemAmount = item.getUnitPrice()
+                    .multiply(BigDecimal.valueOf(item.getQuantity()));
 
             BigDecimal itemOfferDiscount =
-                    calculateProductOfferDiscount(
-                            product,
-                            itemOriginalAmount
-                    );
+                    calculateProductOfferDiscount(product, itemAmount, originalSubtotal);
 
-            offerDiscount =
-                    offerDiscount.add(
-                            itemOfferDiscount
-                    );
+            offerDiscount = offerDiscount.add(itemOfferDiscount);
 
-            BigDecimal itemAfterOffer =
-                    itemOriginalAmount
-                            .subtract(
-                                    itemOfferDiscount
-                            )
-                            .max(
-                                    BigDecimal.ZERO
-                            );
+            BigDecimal itemAfterOffer = itemAmount
+                    .subtract(itemOfferDiscount)
+                    .max(BigDecimal.ZERO);
 
-            taxableAmount =
-                    taxableAmount.add(
-                            calculateTaxableAmount(
-                                    product,
-                                    itemAfterOffer
-                            )
-                    );
+            if (product.isTaxable()
+                    && product.getTaxPercentage() != null
+                    && product.getTaxPercentage().compareTo(BigDecimal.ZERO) > 0) {
+                taxableAmount = taxableAmount.add(itemAfterOffer);
+            }
         }
 
         originalSubtotal =
@@ -213,7 +193,8 @@ public class PricingServiceImpl
                 calculateTaxAfterCoupon(
                         cart,
                         couponDiscount,
-                        subtotalAfterOffers
+                        subtotalAfterOffers,
+                        originalSubtotal
                 );
 
         /*
@@ -275,7 +256,8 @@ public class PricingServiceImpl
 
     private BigDecimal calculateProductOfferDiscount(
             Product product,
-            BigDecimal itemAmount
+            BigDecimal itemAmount,
+            BigDecimal orderAmount
     ) {
 
         if (product == null
@@ -287,17 +269,11 @@ public class PricingServiceImpl
             return BigDecimal.ZERO;
         }
 
-        /*
-         * getBestOffer() already considers:
-         *
-         * Product
-         * Category
-         * Brand
-         * Global
-         */
         var offer =
                 offerService.getBestOffer(
-                        product
+                        product,
+                        orderAmount,
+                        itemAmount
                 );
 
         if (offer == null) {
@@ -334,7 +310,8 @@ public class PricingServiceImpl
     private BigDecimal calculateTaxAfterCoupon(
             Cart cart,
             BigDecimal couponDiscount,
-            BigDecimal subtotalAfterOffers
+            BigDecimal subtotalAfterOffers,
+            BigDecimal originalSubtotal
     ) {
 
         if (cart == null
@@ -374,13 +351,13 @@ public class PricingServiceImpl
                     .compareTo(BigDecimal.ZERO) <= 0
                     || item.getQuantity() == null
                     || item.getQuantity() <= 0
-                    || product.getSellingPrice() == null) {
+                    || item.getUnitPrice() == null) {
 
                 continue;
             }
 
             BigDecimal itemAmount =
-                    product.getSellingPrice()
+                    item.getUnitPrice()
                             .multiply(
                                     BigDecimal.valueOf(
                                             item.getQuantity()
@@ -390,7 +367,8 @@ public class PricingServiceImpl
             BigDecimal itemOfferDiscount =
                     calculateProductOfferDiscount(
                             product,
-                            itemAmount
+                            itemAmount,
+                            originalSubtotal
                     );
 
             BigDecimal itemAfterOffer =

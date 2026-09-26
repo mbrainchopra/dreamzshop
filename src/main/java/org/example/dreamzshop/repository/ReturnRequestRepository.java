@@ -38,6 +38,10 @@ public interface ReturnRequestRepository
             Long orderId
     );
 
+    boolean existsByOrderItemId(
+            Long orderItemId
+    );
+
     boolean existsByOrderIdAndUserId(
             Long orderId,
             Long userId

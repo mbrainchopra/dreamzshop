@@ -10,6 +10,7 @@ public interface ReturnRequestService {
     ReturnRequest createReturnRequest(
             String email,
             Long orderId,
+            Long orderItemId,
             String reason,
             String description
     );
