@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
@@ -22,288 +21,680 @@
 
 
     <style>
-        :root{
-            --green:#16a34a;
-            --green-dark:#15803d;
-            --green-light:#dcfce7;
-            --text:#111827;
-            --muted:#6b7280;
-            --border:#e5e7eb;
-            --bg:#f6f8f6;
-            --red:#dc2626;
-            --blue:#2563eb;
-            --purple:#7c3aed;
-            --shadow:0 3px 14px rgba(0,0,0,.045);
-        }
-        *{box-sizing:border-box}
-        html{scroll-behavior:smooth}
-        body{
-            margin:0;
-            background:var(--bg);
-            color:var(--text);
-            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-            font-size:12px;
-        }
-        a{text-decoration:none}
-
-        /* PAGE */
-        .return-page{
-            width:min(920px,calc(100% - 24px));
-            margin:0 auto;
-            padding:14px 0 28px;
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-light: #dcfce7;
+            --green-soft: #f0fdf4;
+            --text: #111827;
+            --muted: #6b7280;
+            --light-muted: #9ca3af;
+            --border: #e5e7eb;
+            --bg: #f5f7f6;
+            --red: #dc2626;
+            --blue: #2563eb;
+            --purple: #7c3aed;
+            --shadow: 0 4px 18px rgba(15, 23, 42, .06);
+            --shadow-hover: 0 8px 24px rgba(15, 23, 42, .09);
         }
 
-        /* HEADER */
-        .page-header{
-            padding:13px 16px;
-            margin-bottom:9px;
-            background:#fff;
-            border:1px solid var(--border);
-            border-radius:12px;
-            box-shadow:var(--shadow);
-        }
-        .header-content{gap:10px!important}
-        .header-icon{
-            width:32px;height:32px;
-            margin-bottom:4px;
-            border-radius:8px;
-            background:var(--green-light);
-            color:var(--green-dark);
-            font-size:15px;
-        }
-        .page-title{font-size:16px;font-weight:850;margin:0}
-        .request-number{margin-top:1px;color:var(--muted);font-size:7px}
-        .request-number strong{color:var(--text)}
-
-        /* ALERTS */
-        .custom-alert{
-            margin-bottom:9px;
-            padding:7px 10px;
-            border:0;
-            border-radius:8px;
-            font-size:8px;
+        * {
+            box-sizing: border-box
         }
 
-        /* ALL CONTENT SINGLE COLUMN */
-        .row.g-4{
-            --bs-gutter-x:0;
-            --bs-gutter-y:9px;
-            display:block;
-        }
-        .col-lg-8,.col-lg-4{
-            width:100%;
-            max-width:none;
+        html {
+            scroll-behavior: smooth
         }
 
-        /* CARDS */
-        .details-card{
-            height:auto;
-            padding:12px 14px;
-            margin-bottom:9px!important;
-            background:#fff;
-            border:1px solid var(--border);
-            border-radius:11px;
-            box-shadow:var(--shadow);
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .section-title{
-            gap:6px;
-            padding-bottom:7px;
-            margin-bottom:8px;
-            border-bottom:1px solid #f0f1f2;
-            font-size:10px;
-            font-weight:850;
-        }
-        .section-title i{font-size:12px;color:var(--green)}
 
-        /* RETURN INFORMATION */
-        .info-grid{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:7px;
+        a {
+            text-decoration: none
         }
-        .info-box{
-            padding:8px 9px;
-            background:#f8faf9;
-            border:1px solid #edf1ee;
-            border-radius:8px;
-        }
-        .info-label{
-            margin-bottom:2px;
-            color:#9ca3af;
-            font-size:6px;
-            font-weight:800;
-            text-transform:uppercase;
-            letter-spacing:.35px;
-        }
-        .info-value{font-size:8.5px;font-weight:800}
-        .status-badge{
-            display:inline-flex;
-            align-items:center;
-            gap:4px;
-            padding:4px 7px;
-            border-radius:20px;
-            font-size:7px;
-            font-weight:850;
-        }
-        .status-requested{background:#fef3c7;color:#92400e}
-        .status-approved,.status-completed{background:var(--green-light);color:var(--green-dark)}
-        .status-rejected{background:#fef2f2;color:#991b1b}
-        .status-pickup{background:#e0f2fe;color:#075985}
-        .status-received{background:#eff6ff;color:#1d4ed8}
-        .status-refund{background:#f5f3ff;color:#6d28d9}
-        .status-cancelled{background:#f3f4f6;color:#4b5563}
 
-        /* REASON / REMARKS */
-        .reason-box,.order-box{
-            padding:9px 10px;
-            background:#f8faf9;
-            border:1px solid #edf1ee;
-            border-radius:8px;
+        .return-page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 24px 0 42px;
         }
-        .reason-title{font-size:9px;font-weight:850}
-        .reason-description{margin-top:5px;color:#6b7280;font-size:8px;line-height:1.45}
-        .remarks-box{
-            display:flex;
-            gap:8px;
-            padding:9px 10px;
-            background:#eff6ff;
-            border:1px solid #dbeafe;
-            border-radius:8px;
-            color:#1e40af;
-            font-size:8px;
-            line-height:1.45;
-        }
-        .remarks-icon{font-size:13px}
-        .remarks-title{margin-bottom:2px;font-size:8px;font-weight:850}
 
-        /* HORIZONTAL PROGRESS - NO LONG VERTICAL TIMELINE */
-        .timeline{
-            display:grid;
-            grid-template-columns:repeat(6,minmax(0,1fr));
-            gap:0;
-            padding:2px 0 3px;
-        }
-        .timeline-item,.timeline-item:last-child{
-            position:relative;
-            min-height:0;
-            padding:0 5px;
-            text-align:center;
-        }
-        .timeline-item::before{
-            content:"";
-            position:absolute;
-            left:50%;
-            top:7px;
-            width:100%;
-            height:2px;
-            background:#e5e7eb;
-            z-index:0;
-        }
-        .timeline-item:last-child::before{display:none}
-        .timeline-dot{
-            position:relative;
-            left:auto;
-            top:auto;
-            width:14px;
-            height:14px;
-            margin:0 auto 5px;
-            display:block;
-            border:3px solid #fff;
-            border-radius:50%;
-            background:#d1d5db;
-            box-shadow:0 0 0 1px #d1d5db;
-            z-index:2;
-        }
-        .timeline-item.active .timeline-dot{
-            background:var(--green);
-            box-shadow:0 0 0 1px var(--green),0 0 0 4px rgba(22,163,74,.07);
-        }
-        .timeline-item.danger .timeline-dot{background:var(--red);box-shadow:0 0 0 1px var(--red)}
-        .timeline-item.cancelled .timeline-dot{background:#6b7280;box-shadow:0 0 0 1px #6b7280}
-        .timeline-label{font-size:7.5px;font-weight:800;line-height:1.25}
-        .timeline-item.active .timeline-label{color:var(--green-dark)}
-        .timeline-description{margin-top:2px;color:#9ca3af;font-size:6.5px;line-height:1.3}
+        /* =========================
+           HEADER
+        ========================= */
 
-        /* RELATED ORDER + HELP BECOME COMPACT FULL-WIDTH CARDS */
-        .order-number{font-size:10px;font-weight:900}
-        .order-total{margin-top:2px;color:var(--green-dark);font-size:13px;font-weight:950}
-        .order-status{margin-top:5px}
-        .help-box{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:9px 10px;
-            background:linear-gradient(135deg,#f8faf9,#f0fdf4);
-            border:1px solid #e1eee4;
-            border-radius:8px;
+        .page-header {
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
         }
-        .help-icon{
-            width:28px;height:28px;
-            flex:0 0 28px;
-            margin:0;
-            border-radius:7px;
-            background:var(--green-light);
-            color:var(--green-dark);
-            font-size:13px;
+
+        .header-content {
+            gap: 18px !important;
         }
-        .help-title{font-size:8.5px;font-weight:850}
-        .help-text{margin-top:2px;color:#9ca3af;font-size:7px;line-height:1.4}
 
-        /* BUTTONS */
-        .btn{
-            min-height:31px;
-            padding:5px 9px;
-            border-radius:8px;
-            font-size:8px;
-            font-weight:800;
+        .header-icon {
+            width: 46px;
+            height: 46px;
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            font-size: 20px;
         }
-        .btn-outline-primary{
-            color:var(--green-dark);
-            border-color:#b8ddc0;
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -.3px;
         }
-        .btn-outline-primary:hover{color:#fff;background:var(--green);border-color:var(--green)}
-        .btn-danger{border:0;background:var(--red);color:#fff}
 
-        /* CANCEL */
-        #cancelReturnModal .modal-content{border:0;border-radius:12px}
-        #cancelReturnModal .modal-header{padding:13px 15px}
-        #cancelReturnModal .modal-title{font-size:12px;font-weight:900}
-        #cancelReturnModal .modal-body{padding:14px;font-size:9px;line-height:1.5}
-        #cancelReturnModal .modal-footer{padding:9px 15px}
+        .request-number {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
 
-        /* FOOTER */
-        .shop-footer{padding:16px 0 9px;background:#111827;color:#fff}
-        .footer-brand{font-size:16px;font-weight:950}
-        .footer-brand span{color:#4ade80}
-        .footer-text{margin-top:2px;color:#9ca3af;font-size:7px}
-        .footer-services{gap:13px;margin:9px 0}
-        .footer-service{font-size:7px}
-        .footer-service i{font-size:10px}
-        .footer-bottom{padding-top:7px;font-size:6px}
+        .request-number strong {
+            color: var(--text);
+        }
 
-        /* MOBILE */
-        @media(max-width:700px){
-            .return-page{width:calc(100% - 14px);padding:9px 0 20px}
-            .page-header{padding:11px 12px}
-            .page-title{font-size:14px}
-            .details-card{padding:10px 11px}
-            .info-grid{grid-template-columns:repeat(2,1fr)}
-            .timeline{
-                display:flex;
-                overflow-x:auto;
-                padding:2px 2px 8px;
-                scrollbar-width:thin;
+        /* =========================
+           ALERTS
+        ========================= */
+
+        .custom-alert {
+            margin-bottom: 16px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .row.g-4 {
+            --bs-gutter-x: 20px;
+            --bs-gutter-y: 20px;
+        }
+
+        .col-lg-8 {
+            width: 66.666667%;
+        }
+
+        .col-lg-4 {
+            width: 33.333333%;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .details-card {
+            height: auto;
+            padding: 20px;
+            margin-bottom: 20px !important;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+
+        .details-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #eef0f1;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .section-title i {
+            font-size: 17px;
+            color: var(--green);
+        }
+
+        /* =========================
+           RETURN INFORMATION
+        ========================= */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-box {
+            padding: 13px 14px;
+            background: #f8faf9;
+            border: 1px solid #edf1ee;
+            border-radius: 10px;
+        }
+
+        .info-label {
+            margin-bottom: 4px;
+            color: var(--light-muted);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .45px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-requested {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved,
+        .status-completed {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-pickup {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .status-received {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status-refund {
+            background: #f5f3ff;
+            color: #6d28d9;
+        }
+
+        .status-cancelled {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        /* =========================
+           REASON / REMARKS
+        ========================= */
+
+        .reason-box,
+        .order-box {
+            padding: 14px;
+            background: #f8faf9;
+            border: 1px solid #edf1ee;
+            border-radius: 10px;
+        }
+
+        .reason-title {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .reason-description {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .remarks-box {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            color: #1e40af;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .remarks-icon {
+            font-size: 18px;
+            flex: 0 0 auto;
+        }
+
+        .remarks-title {
+            margin-bottom: 3px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           RETURN TIMELINE
+        ========================= */
+
+        .timeline {
+            position: relative;
+            display: grid;
+            grid-template-columns:repeat(7, minmax(0, 1fr));
+            gap: 0;
+            padding: 10px 0 4px;
+        }
+
+        .timeline-item {
+            position: relative;
+            min-width: 0;
+            padding: 0 7px;
+            text-align: center;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 10px;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 0;
+        }
+
+        .timeline-item:first-child::before {
+            left: 50%;
+        }
+
+        .timeline-item:last-child::before {
+            right: 50%;
+        }
+
+        .timeline-dot {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin: 0 auto 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            background: #d1d5db;
+            box-shadow: 0 0 0 1px #d1d5db;
+            z-index: 2;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--green);
+            box-shadow: 0 0 0 1px var(--green),
+            0 0 0 5px rgba(22, 163, 74, .08);
+        }
+
+        .timeline-item.danger .timeline-dot {
+            background: var(--red);
+            box-shadow: 0 0 0 1px var(--red);
+        }
+
+        .timeline-item.cancelled .timeline-dot {
+            background: #6b7280;
+            box-shadow: 0 0 0 1px #6b7280;
+        }
+
+        .timeline-label {
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .timeline-item.active .timeline-label {
+            color: var(--green-dark);
+        }
+
+        .timeline-description {
+            margin-top: 5px;
+            color: #9ca3af;
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        /* =========================
+           RELATED ORDER
+        ========================= */
+
+        .order-number {
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .order-total {
+            margin-top: 3px;
+            color: var(--green-dark);
+            font-size: 19px;
+            font-weight: 900;
+        }
+
+        .order-status {
+            margin-top: 6px;
+        }
+
+        /* =========================
+           HELP
+        ========================= */
+
+        .help-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8faf9, #f0fdf4);
+            border: 1px solid #e1eee4;
+            border-radius: 10px;
+        }
+
+        .help-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            font-size: 18px;
+        }
+
+        .help-title {
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .help-text {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .btn {
+            min-height: 38px;
+            padding: 8px 13px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .btn-outline-primary {
+            color: var(--green-dark);
+            border-color: #b8ddc0;
+        }
+
+        .btn-outline-primary:hover {
+            color: #fff;
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .btn-danger {
+            border: 0;
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            color: #fff;
+        }
+
+        /* =========================
+           CANCEL MODAL
+        ========================= */
+
+        #cancelReturnModal .modal-content {
+            border: 0;
+            border-radius: 14px;
+        }
+
+        #cancelReturnModal .modal-header {
+            padding: 17px 20px;
+        }
+
+        #cancelReturnModal .modal-title {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        #cancelReturnModal .modal-body {
+            padding: 18px 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        #cancelReturnModal .modal-footer {
+            padding: 12px 20px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .shop-footer {
+            padding: 28px 0 16px;
+            background: #111827;
+            color: #fff;
+        }
+
+        .footer-brand {
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .footer-brand span {
+            color: #4ade80;
+        }
+
+        .footer-text {
+            margin-top: 4px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .footer-services {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin: 18px 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-service {
+            font-size: 11px;
+        }
+
+        .footer-service i {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+
+        .footer-bottom {
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, .08);
+            font-size: 10px;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 991.98px) {
+
+            .return-page {
+                width: min(760px, calc(100% - 24px));
+                padding-top: 18px;
             }
-            .timeline-item,.timeline-item:last-child{
-                flex:0 0 105px;
+
+            .col-lg-8,
+            .col-lg-4 {
+                width: 100%;
             }
-            .timeline-item::before{display:block}
+
+            .timeline {
+                overflow-x: auto;
+                display: flex;
+                padding: 10px 5px 12px;
+                scrollbar-width: thin;
+            }
+
+            .timeline-item {
+                flex: 0 0 135px;
+            }
+
+            .timeline-item::before {
+                display: block;
+            }
         }
-        @media(max-width:420px){
-            .info-grid{grid-template-columns:1fr 1fr}
-            .timeline-item,.timeline-item:last-child{flex-basis:92px}
-            .timeline-label{font-size:7px}
-            .timeline-description{font-size:6px}
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .return-page {
+                width: calc(100% - 16px);
+                padding: 10px 0 25px;
+            }
+
+            .page-header {
+                padding: 15px;
+                border-radius: 13px;
+            }
+
+            .header-content {
+                align-items: flex-start !important;
+            }
+
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+
+            .request-number {
+                font-size: 11px;
+            }
+
+            .details-card {
+                padding: 15px;
+                margin-bottom: 14px !important;
+                border-radius: 13px;
+            }
+
+            .section-title {
+                font-size: 14px;
+            }
+
+            .info-grid {
+                grid-template-columns:1fr 1fr;
+                gap: 9px;
+            }
+
+            .info-box {
+                padding: 11px;
+            }
+
+            .info-label {
+                font-size: 9px;
+            }
+
+            .info-value {
+                font-size: 12px;
+            }
+
+            .status-badge {
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+
+            .reason-title {
+                font-size: 13px;
+            }
+
+            .reason-description,
+            .remarks-box {
+                font-size: 11px;
+            }
+
+            .timeline {
+                margin: 0 -5px;
+            }
+
+            .timeline-item {
+                flex-basis: 125px;
+            }
+
+            .timeline-label {
+                font-size: 10px;
+            }
+
+            .timeline-description {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .info-grid {
+                grid-template-columns:1fr;
+            }
+
+            .timeline-item {
+                flex-basis: 115px;
+            }
+
+            .page-header .btn {
+                width: 100%;
+            }
         }
     </style>
 
@@ -503,102 +894,127 @@
 
                         </div>
 
+                        <div>
 
-                        <span class="status-badge">
-
-    <!-- REQUESTED -->
-    <span
-            th:if="${returnRequest.status.name() == 'REQUESTED'}"
-            class="status-requested">
+                            <!-- REQUESTED -->
+                            <span
+                                    th:case="'REQUESTED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-requested">
 
         <i class="bi bi-clock-fill"></i>
+
         <span>REQUESTED</span>
 
     </span>
 
+
                             <!-- APPROVED -->
-    <span
-            th:if="${returnRequest.status.name() == 'APPROVED'}"
-            class="status-approved">
+                            <span
+                                    th:case="'APPROVED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-approved">
 
         <i class="bi bi-check-circle-fill"></i>
+
         <span>APPROVED</span>
 
     </span>
 
+
                             <!-- REJECTED -->
-    <span
-            th:if="${returnRequest.status.name() == 'REJECTED'}"
-            class="status-rejected">
+                            <span
+                                    th:case="'REJECTED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-rejected">
 
         <i class="bi bi-x-circle-fill"></i>
+
         <span>REJECTED</span>
 
     </span>
 
-                            <!-- PICKUP SCHEDULED -->
-    <span
-            th:if="${returnRequest.status.name() == 'PICKUP_SCHEDULED'}"
-            class="status-pickup">
 
-        <i class="bi bi-clock-fill"></i>
+                            <!-- PICKUP SCHEDULED -->
+                            <span
+                                    th:case="'PICKUP_SCHEDULED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-pickup">
+
+        <i class="bi bi-calendar-check-fill"></i>
+
         <span>PICKUP SCHEDULED</span>
 
     </span>
 
-                            <!-- PICKED UP -->
-    <span
-            th:if="${returnRequest.status.name() == 'PICKED_UP'}"
-            class="status-pickup">
 
-        <i class="bi bi-clock-fill"></i>
+                            <!-- PICKED UP -->
+                            <span
+                                    th:case="'PICKED_UP'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-pickup">
+
+        <i class="bi bi-box-seam-fill"></i>
+
         <span>PICKED UP</span>
 
     </span>
 
+
                             <!-- RECEIVED -->
-    <span
-            th:if="${returnRequest.status.name() == 'RECEIVED'}"
-            class="status-received">
+                            <span
+                                    th:case="'RECEIVED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-received">
 
         <i class="bi bi-box-seam"></i>
+
         <span>RECEIVED</span>
 
     </span>
 
+
                             <!-- REFUND INITIATED -->
-    <span
-            th:if="${returnRequest.status.name() == 'REFUND_INITIATED'}"
-            class="status-refund">
+                            <span
+                                    th:case="'REFUND_INITIATED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-refund">
 
         <i class="bi bi-cash-coin"></i>
+
         <span>REFUND INITIATED</span>
 
     </span>
 
+
                             <!-- COMPLETED -->
-    <span
-            th:if="${returnRequest.status.name() == 'COMPLETED'}"
-            class="status-completed">
+                            <span
+                                    th:case="'COMPLETED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-completed">
 
         <i class="bi bi-check-circle-fill"></i>
+
         <span>COMPLETED</span>
 
     </span>
 
+
                             <!-- CANCELLED -->
-    <span
-            th:if="${returnRequest.status.name() == 'CANCELLED'}"
-            class="status-cancelled">
+                            <span
+                                    th:case="'CANCELLED'"
+                                    th:switch="${returnRequest.status.name()}"
+                                    class="status-badge status-cancelled">
 
         <i class="bi bi-slash-circle-fill"></i>
+
         <span>CANCELLED</span>
 
     </span>
 
-</span>
+                        </div>
 
-                    </div>
+                        </span>                    </div>
 
 
                     <!-- CREATED -->
@@ -1453,3 +1869,4 @@
 </body>
 
 </html>
+

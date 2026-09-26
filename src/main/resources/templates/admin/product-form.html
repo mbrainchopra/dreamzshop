@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
@@ -678,6 +679,35 @@
             backdrop-filter: blur(2px);
         }
 
+
+        /* =====================================================
+           PRODUCT IMAGE LIST
+           ===================================================== */
+
+        .image-row {
+            width: 100%;
+        }
+
+        .image-row .form-control {
+            flex: 1;
+        }
+
+        .remove-image-btn {
+            width: 43px;
+            min-width: 43px;
+            height: 43px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #imageList code {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            padding: 2px 5px;
+            border-radius: 5px;
+        }
+
         @media (max-width: 991.98px) {
             .admin-sidebar {
                 transform: translateX(-100%);
@@ -911,10 +941,10 @@
                 <span>Returns</span>
             </a>
 
-<!--            <a th:href="@{/admin/refunds}" class="sidebar-link">-->
-<!--                <i class="bi bi-wallet2"></i>-->
-<!--                <span>Refunds</span>-->
-<!--            </a>-->
+            <a th:href="@{/admin/refunds}" class="sidebar-link">
+                <i class="bi bi-wallet2"></i>
+                <span>Refunds</span>
+            </a>
         </div>
 
         <div class="sidebar-section">
@@ -1675,22 +1705,21 @@
                 </div>
 
             </section>
-
             <section class="form-section">
 
                 <div class="section-header">
 
                     <span class="section-icon">
-                        <i class="bi bi-image-fill"></i>
+                        <i class="bi bi-images"></i>
                     </span>
 
                     <div>
                         <h2 class="section-heading">
-                            Product Image
+                            Product Images
                         </h2>
 
                         <p class="section-description">
-                            Set the main image displayed for this product.
+                            Add multiple local image paths. The first image will be used as the main image.
                         </p>
                     </div>
 
@@ -1698,23 +1727,82 @@
 
                 <div class="section-body">
 
-                    <label class="form-label">
-                        Main Image URL
-                    </label>
+                    <div id="imageList">
 
-                    <input
-                            type="text"
-                            class="form-control"
-                            th:field="*{mainImage}"
-                            placeholder="https://example.com/product-image.jpg">
+                        <!-- Existing images while editing -->
+                        <th:block th:if="${product.images != null and !product.images.isEmpty()}">
 
-                    <div class="form-text">
-                        Image upload system will be added in the next module.
+                            <div
+                                    class="image-row d-flex align-items-center gap-2 mb-2"
+                                    th:each="image : ${product.images}">
+
+                                <input
+                                        type="text"
+                                        name="imageUrls"
+                                        class="form-control"
+                                        th:value="${image.imageUrl}"
+                                        placeholder="/uploads/product-image.jpg">
+
+                                <button
+                                        type="button"
+                                        class="btn btn-danger remove-image-btn"
+                                        onclick="removeImage(this)"
+                                        title="Remove image">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
+                            </div>
+
+                        </th:block>
+
+                        <!-- First empty image field for a new product -->
+                        <div
+                                class="image-row d-flex align-items-center gap-2 mb-2"
+                                th:if="${product.images == null or product.images.isEmpty()}">
+
+                            <input
+                                    type="text"
+                                    name="imageUrls"
+                                    class="form-control"
+                                    placeholder="/uploads/product-image.jpg">
+
+                            <button
+                                    type="button"
+                                    class="btn btn-danger remove-image-btn"
+                                    onclick="removeImage(this)"
+                                    title="Remove image">
+
+                                <i class="bi bi-trash"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                            type="button"
+                            class="btn btn-outline-success mt-2"
+                            onclick="addImage()">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Image
+
+                    </button>
+
+                    <div class="form-text mt-2">
+                        Example:
+                        <code>/uploads/iphone-front.jpg</code>
+                        or
+                        <code>/uploads/iphone-back.jpg</code>
                     </div>
 
                 </div>
 
             </section>
+
 
             <section class="form-section">
 
@@ -1897,6 +1985,84 @@
         });
 
     })();
+
+
+    // =========================================================
+    // PRODUCT IMAGE MANAGEMENT
+    // =========================================================
+
+    function addImage() {
+
+        const imageList = document.getElementById("imageList");
+
+        if (!imageList) {
+            return;
+        }
+
+        const row = document.createElement("div");
+
+        row.className =
+            "image-row d-flex align-items-center gap-2 mb-2";
+
+        row.innerHTML = `
+            <input
+                type="text"
+                name="imageUrls"
+                class="form-control"
+                placeholder="/uploads/product-image.jpg">
+
+            <button
+                type="button"
+                class="btn btn-danger remove-image-btn"
+                onclick="removeImage(this)"
+                title="Remove image">
+
+                <i class="bi bi-trash"></i>
+
+            </button>
+        `;
+
+        imageList.appendChild(row);
+    }
+
+
+    function removeImage(button) {
+
+        if (!button) {
+            return;
+        }
+
+        const row = button.closest(".image-row");
+
+        if (!row) {
+            return;
+        }
+
+        const imageList = document.getElementById("imageList");
+
+        if (!imageList) {
+            return;
+        }
+
+        const rows =
+            imageList.querySelectorAll(".image-row");
+
+        // Always keep one input available.
+        if (rows.length === 1) {
+
+            const input =
+                row.querySelector('input[name="imageUrls"]');
+
+            if (input) {
+                input.value = "";
+                input.focus();
+            }
+
+            return;
+        }
+
+        row.remove();
+    }
 </script>
 
 <script th:src="@{/js/admin-common.js}"></script>

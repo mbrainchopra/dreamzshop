@@ -22,12 +22,12 @@
             <a class="ds-nav-link" th:href="@{/admin/subcategories}" data-nav="subcategories"><span class="ds-nav-icon"><i class="bi bi-diagram-2-fill"></i></span><span>Subcategories</span></a>
             <a class="ds-nav-link" th:href="@{/admin/brands}" data-nav="brands"><span class="ds-nav-icon"><i class="bi bi-tags-fill"></i></span><span>Brands</span></a>
             <a class="ds-nav-link" th:href="@{/admin/inventory}" data-nav="inventory"><span class="ds-nav-icon"><i class="bi bi-boxes"></i></span><span>Inventory</span></a>
+            <a class="ds-nav-link" th:href="@{/admin/image-upload}" data-nav="image-upload"><span class="ds-nav-icon"><i class="bi bi-cloud-arrow-up-fill"></i></span><span>Image Upload</span></a>
 
             <div class="ds-nav-label">Sales</div>
             <a class="ds-nav-link" th:href="@{/admin/orders}" data-nav="orders"><span class="ds-nav-icon"><i class="bi bi-receipt-cutoff"></i></span><span>Orders</span></a>
             <a class="ds-nav-link" th:href="@{/admin/returns}" data-nav="returns"><span class="ds-nav-icon"><i class="bi bi-arrow-return-left"></i></span><span>Returns</span></a>
-<!--            <a class="ds-nav-link" th:href="@{/admin/refunds}" data-nav="refunds"><span class="ds-nav-icon"><i class="bi bi-cash-coin"></i></span><span>Refunds</span></a>-->
-
+          
             <div class="ds-nav-label">Marketing</div>
             <a class="ds-nav-link" th:href="@{/admin/coupons}" data-nav="coupons"><span class="ds-nav-icon"><i class="bi bi-ticket-perforated-fill"></i></span><span>Coupons</span></a>
 
@@ -40,10 +40,7 @@
             <div class="ds-nav-label">Insights</div>
             <a class="ds-nav-link" th:href="@{/admin/reports}" data-nav="reports"><span class="ds-nav-icon"><i class="bi bi-bar-chart-fill"></i></span><span>Reports</span></a>
 
-<!--            <div class="ds-nav-label" sec:authorize="hasRole('ADMIN')">Administration</div>-->
-<!--            <a class="ds-nav-link" th:href="@{/admin/staff}" data-nav="staff" sec:authorize="hasRole('ADMIN')"><span class="ds-nav-icon"><i class="bi bi-person-badge-fill"></i></span><span>Staff</span></a>-->
-<!--      -->
-        </div>
+         </div>
 
         <div class="ds-sidebar-footer">
             <a class="ds-store-link" th:href="@{/}"><i class="bi bi-shop"></i><span>View Store</span><i class="bi bi-arrow-up-right ms-auto"></i></a>

@@ -42,11 +42,17 @@ public class ProductController {
     private final BrandRepository brandRepository;
 
     private final ReviewService reviewService;
+
     private final CartItemRepository cartItemRepository;
+
     private final OrderItemRepository orderItemRepository;
+
     private final ReviewRepository reviewRepository;
+
     private final WishlistItemRepository wishlistItemRepository;
+
     private final OfferRepository offerRepository;
+
     private final InventoryTransactionRepository inventoryTransactionRepository;
 
 
@@ -124,6 +130,7 @@ public class ProductController {
                 status
         );
 
+        // Product status dropdown
         model.addAttribute(
                 "statuses",
                 ProductStatus.values()
@@ -144,6 +151,7 @@ public class ProductController {
         Product product =
                 new Product();
 
+        // Default status
         product.setStatus(
                 ProductStatus.ACTIVE
         );
@@ -171,6 +179,10 @@ public class ProductController {
     public String saveProduct(
             @Valid @ModelAttribute("product") Product product,
             BindingResult result,
+            @RequestParam(
+                    value = "imageUrls",
+                    required = false
+            ) List<String> imageUrls,
             Model model) {
 
         if (result.hasErrors()) {
@@ -184,13 +196,30 @@ public class ProductController {
         if (!validatePricing(
                 product,
                 result
-        ) || !validateCategoryRelationship(product, result)) {
+        ) || !validateCategoryRelationship(
+                product,
+                result
+        )) {
 
             loadProductFormData(model);
 
             return "admin/product-form";
         }
 
+
+        // =====================================================
+        // PRODUCT IMAGES
+        // =====================================================
+
+        addProductImages(
+                product,
+                imageUrls
+        );
+
+
+        // =====================================================
+        // SAVE PRODUCT
+        // =====================================================
 
         productRepository.save(product);
 
@@ -235,6 +264,10 @@ public class ProductController {
             @PathVariable Long id,
             @Valid @ModelAttribute("product") Product product,
             BindingResult result,
+            @RequestParam(
+                    value = "imageUrls",
+                    required = false
+            ) List<String> imageUrls,
             Model model) {
 
         if (result.hasErrors()) {
@@ -248,7 +281,10 @@ public class ProductController {
         if (!validatePricing(
                 product,
                 result
-        ) || !validateCategoryRelationship(product, result)) {
+        ) || !validateCategoryRelationship(
+                product,
+                result
+        )) {
 
             loadProductFormData(model);
 
@@ -264,6 +300,10 @@ public class ProductController {
                                 )
                         );
 
+
+        // =====================================================
+        // BASIC INFORMATION
+        // =====================================================
 
         existingProduct.setName(
                 product.getName()
@@ -285,6 +325,11 @@ public class ProductController {
                 product.getShortDescription()
         );
 
+
+        // =====================================================
+        // CATEGORY
+        // =====================================================
+
         existingProduct.setCategory(
                 product.getCategory()
         );
@@ -296,6 +341,11 @@ public class ProductController {
         existingProduct.setBrand(
                 product.getBrand()
         );
+
+
+        // =====================================================
+        // PRICING
+        // =====================================================
 
         existingProduct.setMrp(
                 product.getMrp()
@@ -313,6 +363,11 @@ public class ProductController {
                 product.getTaxPercentage()
         );
 
+
+        // =====================================================
+        // INVENTORY
+        // =====================================================
+
         existingProduct.setStockQuantity(
                 product.getStockQuantity()
         );
@@ -320,6 +375,11 @@ public class ProductController {
         existingProduct.setMinimumStockLevel(
                 product.getMinimumStockLevel()
         );
+
+
+        // =====================================================
+        // UNIT / WEIGHT
+        // =====================================================
 
         existingProduct.setUnit(
                 product.getUnit()
@@ -333,6 +393,11 @@ public class ProductController {
                 product.getWeightUnit()
         );
 
+
+        // =====================================================
+        // PRODUCT SETTINGS
+        // =====================================================
+
         existingProduct.setStatus(
                 product.getStatus()
         );
@@ -345,9 +410,10 @@ public class ProductController {
                 product.isTaxable()
         );
 
-        existingProduct.setMainImage(
-                product.getMainImage()
-        );
+
+        // =====================================================
+        // SEO
+        // =====================================================
 
         existingProduct.setMetaTitle(
                 product.getMetaTitle()
@@ -362,11 +428,130 @@ public class ProductController {
         );
 
 
+        // =====================================================
+        // PRODUCT IMAGES
+        // =====================================================
+
+        updateProductImages(
+                existingProduct,
+                imageUrls
+        );
+
+
+        // =====================================================
+        // SAVE
+        // =====================================================
+
         productRepository.save(
                 existingProduct
         );
 
         return "redirect:/admin/products?success=Product+updated+successfully";
+    }
+
+
+    // =========================================================
+    // PRODUCT IMAGE - ADD
+    // =========================================================
+
+    private void addProductImages(
+            Product product,
+            List<String> imageUrls) {
+
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return;
+        }
+
+        int sortOrder = 0;
+
+        for (String url : imageUrls) {
+
+            if (url == null || url.trim().isEmpty()) {
+                continue;
+            }
+
+            String cleanUrl = url.trim();
+
+            ProductImage image =
+                    ProductImage.builder()
+                            .product(product)
+                            .imageUrl(cleanUrl)
+                            .altText(product.getName())
+                            .primaryImage(sortOrder == 0)
+                            .sortOrder(sortOrder)
+                            .enabled(true)
+                            .build();
+
+            product.addImage(image);
+
+            sortOrder++;
+        }
+
+        // First image becomes main image
+        if (!product.getImages().isEmpty()) {
+
+            product.setMainImage(
+                    product.getImages()
+                            .get(0)
+                            .getImageUrl()
+            );
+        }
+    }
+
+
+    // =========================================================
+    // PRODUCT IMAGE - UPDATE
+    // =========================================================
+
+    private void updateProductImages(
+            Product product,
+            List<String> imageUrls) {
+
+        // Remove existing images
+        product.getImages().clear();
+
+        int sortOrder = 0;
+
+        if (imageUrls != null) {
+
+            for (String url : imageUrls) {
+
+                if (url == null || url.trim().isEmpty()) {
+                    continue;
+                }
+
+                String cleanUrl = url.trim();
+
+                ProductImage image =
+                        ProductImage.builder()
+                                .product(product)
+                                .imageUrl(cleanUrl)
+                                .altText(product.getName())
+                                .primaryImage(sortOrder == 0)
+                                .sortOrder(sortOrder)
+                                .enabled(true)
+                                .build();
+
+                product.addImage(image);
+
+                sortOrder++;
+            }
+        }
+
+
+        // First image becomes main image
+        if (!product.getImages().isEmpty()) {
+
+            product.setMainImage(
+                    product.getImages()
+                            .get(0)
+                            .getImageUrl()
+            );
+
+        } else {
+
+            product.setMainImage(null);
+        }
     }
 
 
@@ -379,60 +564,127 @@ public class ProductController {
             @PathVariable Long id
     ) {
 
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found."));
+        Product product =
+                productRepository.findById(id)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Product not found."
+                                )
+                        );
 
-        long orderReferences = orderItemRepository.countByProductId(id);
-        long cartReferences = cartItemRepository.countByProductId(id);
-        long reviewReferences = reviewRepository.countByProductId(id);
-        long wishlistReferences = wishlistItemRepository.countByProductId(id);
-        long offerReferences = offerRepository.findByProductId(id).size();
-        long inventoryReferences = inventoryTransactionRepository.countByProductId(id);
+        long orderReferences =
+                orderItemRepository.countByProductId(id);
 
-        if (orderReferences > 0 || cartReferences > 0 || reviewReferences > 0
-                || wishlistReferences > 0 || offerReferences > 0 || inventoryReferences > 0) {
-            // Historical orders/reviews must remain readable.  Soft-delete instead.
-            product.setStatus(ProductStatus.INACTIVE);
+        long cartReferences =
+                cartItemRepository.countByProductId(id);
+
+        long reviewReferences =
+                reviewRepository.countByProductId(id);
+
+        long wishlistReferences =
+                wishlistItemRepository.countByProductId(id);
+
+        long offerReferences =
+                offerRepository.findByProductId(id).size();
+
+        long inventoryReferences =
+                inventoryTransactionRepository.countByProductId(id);
+
+
+        if (orderReferences > 0
+                || cartReferences > 0
+                || reviewReferences > 0
+                || wishlistReferences > 0
+                || offerReferences > 0
+                || inventoryReferences > 0) {
+
+            // Historical references must remain readable.
+            // Soft delete instead.
+
+            product.setStatus(
+                    ProductStatus.INACTIVE
+            );
+
             product.setFeatured(false);
+
             productRepository.save(product);
 
             return "redirect:/admin/products?success=Product+has+existing+references+and+was+deactivated+instead+of+deleted";
         }
 
+
         productRepository.delete(product);
+
         return "redirect:/admin/products?success=Product+deleted+successfully";
     }
 
+
+    // =========================================================
+    // VALIDATE CATEGORY RELATIONSHIP
+    // =========================================================
+
     private boolean validateCategoryRelationship(
             Product product,
-            BindingResult result
-    ) {
-        if (product.getCategory() == null || product.getCategory().getId() == null) {
-            result.rejectValue("category", "category.required", "Category is required");
+            BindingResult result) {
+
+        if (product.getCategory() == null
+                || product.getCategory().getId() == null) {
+
+            result.rejectValue(
+                    "category",
+                    "category.required",
+                    "Category is required"
+            );
+
             return false;
         }
 
-        if (product.getSubCategory() == null || product.getSubCategory().getId() == null) {
+
+        if (product.getSubCategory() == null
+                || product.getSubCategory().getId() == null) {
+
             return true;
         }
 
-        var subCategory = subCategoryRepository.findById(product.getSubCategory().getId())
-                .orElse(null);
 
-        if (subCategory == null || subCategory.getCategory() == null
-                || !product.getCategory().getId().equals(subCategory.getCategory().getId())) {
+        var subCategory =
+                subCategoryRepository
+                        .findById(
+                                product.getSubCategory().getId()
+                        )
+                        .orElse(null);
+
+
+        if (subCategory == null
+                || subCategory.getCategory() == null
+                || !product.getCategory()
+                .getId()
+                .equals(
+                        subCategory
+                                .getCategory()
+                                .getId()
+                )) {
+
             result.rejectValue(
                     "subCategory",
                     "subcategory.category.mismatch",
                     "Selected subcategory does not belong to the selected category"
             );
+
             return false;
         }
 
-        // Replace the detached relation with the managed entity.
-        product.setSubCategory(subCategory);
+
+        // Replace detached relation
+        // with managed entity.
+
+        product.setSubCategory(
+                subCategory
+        );
+
         return true;
     }
+
 
     // =========================================================
     // PUBLIC - PRODUCT LIST
@@ -579,13 +831,11 @@ public class ProductController {
                         .findByEnabledTrueOrderByNameAsc()
         );
 
-
         model.addAttribute(
                 "subCategories",
                 subCategoryRepository
                         .findByOrderByNameAsc()
         );
-
 
         model.addAttribute(
                 "brands",
@@ -805,6 +1055,13 @@ public class ProductController {
                 brandRepository
                         .findByOrderByNameAsc()
         );
+
+        // IMPORTANT:
+        // Required for product status dropdown.
+        model.addAttribute(
+                "statuses",
+                ProductStatus.values()
+        );
     }
 
 
@@ -822,7 +1079,9 @@ public class ProductController {
         if (product.getMrp() != null
                 && product.getSellingPrice() != null
                 && product.getSellingPrice()
-                .compareTo(product.getMrp()) > 0) {
+                .compareTo(
+                        product.getMrp()
+                ) > 0) {
 
             result.rejectValue(
                     "sellingPrice",
@@ -837,7 +1096,9 @@ public class ProductController {
         if (product.getTaxPercentage() != null
                 && (
                 product.getTaxPercentage()
-                        .compareTo(BigDecimal.ZERO) < 0
+                        .compareTo(
+                                BigDecimal.ZERO
+                        ) < 0
                         ||
                         product.getTaxPercentage()
                                 .compareTo(

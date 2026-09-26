@@ -1727,16 +1727,43 @@
                                 </div>
 
                             </div>
-                            <div class="mt-2"
-                                 th:if="${order.orderStatus.name() == 'DELIVERED'}">
+                            <!-- =================================================
+           ITEM ACTIONS
+           RETURN + POST REVIEW
+      ================================================== -->
+
+                            <div
+                                    class="mt-2 d-flex align-items-center gap-2 flex-wrap"
+                                    th:if="${order.orderStatus.name() == 'DELIVERED'}">
+
+                                <!-- RETURN PRODUCT -->
 
                                 <a
-                                        th:href="@{/customer/returns/request/{orderId}/{orderItemId}(orderId=${order.id},orderItemId=${item.id})}"
-                                        class="btn btn-warning">
+                                        th:href="@{/customer/returns/request/{orderId}/{orderItemId}(
+                orderId=${order.id},
+                orderItemId=${item.id}
+            )}"
+                                        class="btn btn-warning btn-sm">
 
                                     <i class="bi bi-arrow-return-left me-1"></i>
 
                                     Return Product
+
+                                </a>
+
+
+                                <!-- POST REVIEW -->
+
+                                <a
+                                        th:href="@{/customer/reviews/write(
+                orderId=${order.id},
+                productId=${item.product.id}
+            )}"
+                                        class="btn btn-outline-warning btn-sm">
+
+                                    <i class="bi bi-star-fill me-1"></i>
+
+                                    Post Review
 
                                 </a>
 

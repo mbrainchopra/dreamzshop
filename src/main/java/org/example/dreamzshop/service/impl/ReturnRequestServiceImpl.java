@@ -19,14 +19,12 @@ import org.example.dreamzshop.repository.InventoryTransactionRepository;
 import org.example.dreamzshop.repository.ReturnRequestRepository;
 import org.example.dreamzshop.repository.UserRepository;
 import org.example.dreamzshop.service.NotificationService;
-import org.example.dreamzshop.service.RefundService;
 import org.example.dreamzshop.service.ReturnRequestService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -48,8 +46,6 @@ public class ReturnRequestServiceImpl
     private final InventoryTransactionRepository inventoryTransactionRepository;
 
     private final NotificationService notificationService;
-
-    private final RefundService refundService;
 
 
     // =========================================================
@@ -536,40 +532,6 @@ public class ReturnRequestServiceImpl
                     order.setOrderStatus(
                             OrderStatus.REFUND_REQUESTED
                     );
-
-                    // Automatically create the refund record when
-                    // the return reaches REFUND_INITIATED.
-                    if (!refundService.existsForReturnRequest(
-                            returnRequest.getId()
-                    )) {
-
-                        OrderItem orderItem =
-                                returnRequest.getOrderItem();
-
-                        if (orderItem == null) {
-                            throw new IllegalArgumentException(
-                                    "Order item not found for refund."
-                            );
-                        }
-
-                        BigDecimal refundAmount =
-                                orderItem.getSubtotal();
-
-                        if (refundAmount == null
-                                || refundAmount.compareTo(BigDecimal.ZERO) <= 0) {
-
-                            throw new IllegalArgumentException(
-                                    "Invalid refund amount."
-                            );
-                        }
-
-                        refundService.createRefund(
-                                returnRequest.getId(),
-                                refundAmount,
-                                "BANK_TRANSFER",
-                                adminRemarks
-                        );
-                    }
 
                     break;
 

@@ -74,7 +74,7 @@ public class SecurityConfig {
                                 "/", "/login", "/register",
                                 "/products", "/products/**",
                                 "/css/**", "/js/**", "/images/**",
-                                "/favicon.ico", "/error", "/webjars/**"
+                                "/favicon.ico", "/error", "/webjars/**", "/uploads/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/staff/**").hasAnyRole("ADMIN", "STAFF")

@@ -984,10 +984,10 @@
                 <span>Returns</span>
             </a>
 
-<!--            <a th:href="@{/admin/refunds}" class="sidebar-link">-->
-<!--                <i class="bi bi-wallet2"></i>-->
-<!--                <span>Refunds</span>-->
-<!--            </a>-->
+            <a th:href="@{/admin/refunds}" class="sidebar-link">
+                <i class="bi bi-wallet2"></i>
+                <span>Refunds</span>
+            </a>
         </div>
 
         <div class="sidebar-section">
@@ -1143,15 +1143,17 @@
                         <div class="col-lg-6">
 
                             <label class="form-label">
-                                Image URL <span class="text-danger">*</span>
+                                Image Path <span class="text-danger">*</span>
                             </label>
 
                             <input
-                                    type="url"
+                                    type="text"
                                     name="imageUrl"
                                     class="form-control"
-                                    placeholder="https://example.com/image.jpg"
+                                    placeholder="/uploads/your-image.jpg"
                                     required>
+
+                            <small class="text-muted d-block mt-2">Upload it from <strong>Admin → Image Upload</strong>, then paste the copied local path here.</small>
 
                         </div>
 

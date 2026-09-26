@@ -1768,10 +1768,10 @@
             <span>Returns</span>
         </a>
 
-<!--        <a class="sidebar-link" th:href="@{/admin/refunds}">-->
-<!--            <i class="bi bi-cash-stack"></i>-->
-<!--            <span>Refunds</span>-->
-<!--        </a>-->
+        <a class="sidebar-link" th:href="@{/admin/refunds}">
+            <i class="bi bi-cash-stack"></i>
+            <span>Refunds</span>
+        </a>
 
         <div class="sidebar-section-title mt-3">Analytics</div>
 
@@ -2094,7 +2094,7 @@
                                 <label class="field-label" for="imageUrl">
 
                                     <span class="field-label-left">
-                                        Image URL
+                                        Image Path
                                         <span class="required">*</span>
                                     </span>
 
@@ -2108,17 +2108,19 @@
                                             class="styled-input"
                                             id="imageUrl"
                                             maxlength="1000"
-                                            placeholder="https://example.com/banner.jpg"
+                                            placeholder="/uploads/banner.jpg"
                                             required
                                             th:field="*{imageUrl}"
-                                            type="url">
+                                            type="text">
 
                                 </div>
 
                                 <div class="field-bottom">
                                     <span>Recommended: wide landscape artwork.</span>
-                                    <span>HTTPS preferred</span>
+                                    <span>Use local /uploads/ path</span>
                                 </div>
+
+                                <div class="small text-muted mt-2">Upload it from <strong>Admin → Image Upload</strong>, then paste the copied local path here.</div>
 
                                 <div
                                         class="validation-error"
