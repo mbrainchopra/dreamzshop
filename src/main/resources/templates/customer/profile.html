@@ -91,7 +91,58 @@
 
             padding-bottom: 65px;
         }
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
 
+        .logout-section {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logout-section form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            min-width: 140px;
+            height: 40px;
+
+            padding: 0 18px;
+
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+
+            background: #fff;
+            color: #dc2626;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition: all .2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #b91c1c;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 6px 15px rgba(220, 38, 38, .10);
+        }
+
+        .logout-btn i {
+            font-size: 14px;
+        }
 
         /* =====================================================
            PAGE HEADER
@@ -1822,7 +1873,31 @@
         </div>
 
     </div>
+    <!-- LOGOUT -->
+    <div class="logout-section">
 
+        <form
+                th:action="@{/logout}"
+                method="post">
+
+            <input
+                    type="hidden"
+                    th:name="${_csrf.parameterName}"
+                    th:value="${_csrf.token}">
+
+            <button
+                    type="submit"
+                    class="logout-btn">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>Logout</span>
+
+            </button>
+
+        </form>
+
+    </div>
 
 </main>
 

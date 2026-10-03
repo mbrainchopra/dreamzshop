@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -1052,6 +1053,21 @@
                 scroll-behavior: auto !important;
             }
         }
+
+        /* Inventory action modal */
+        .inventory-modal-content{border:0;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(15,23,42,.20)}
+        .inventory-modal-content .modal-header{border-bottom:1px solid #eef1ef;padding:17px 20px}
+        .inventory-modal-content .modal-title{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px;font-weight:800}
+        .inventory-modal-content .modal-body{padding:20px}
+        .inventory-product-summary{display:grid;grid-template-columns:1fr 140px;gap:12px;margin-bottom:18px;padding:13px;border:1px solid #e5e7eb;border-radius:11px;background:#f8faf9}
+        .summary-label{margin-bottom:4px;color:#94a3b8;font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+        .summary-value{overflow:hidden;color:var(--ink);font-size:11px;font-weight:750;text-overflow:ellipsis;white-space:nowrap}
+        .inventory-modal-content .form-label{margin-bottom:6px;color:#374151;font-size:10px;font-weight:750}
+        .inventory-modal-content .form-control{min-height:42px;border:1px solid #dfe5e1;border-radius:9px;font-size:11px;box-shadow:none}
+        .inventory-modal-content .form-control:focus{border-color:#86efac;box-shadow:0 0 0 3px rgba(34,197,94,.09)}
+        .inventory-modal-content textarea.form-control{min-height:88px;resize:vertical}
+        .inventory-modal-content .btn{min-height:42px;border-radius:9px;font-size:11px;font-weight:750}
+        @media(max-width:575px){.inventory-product-summary{grid-template-columns:1fr}}
     </style>
 
     <link rel="stylesheet" th:href="@{/css/admin-common.css}">
@@ -1202,38 +1218,7 @@
 
 <div class="admin-main">
 
-    <header class="admin-topbar">
 
-        <div class="topbar-left">
-
-            <button type="button"
-                    class="mobile-sidebar-btn"
-                    id="sidebarToggle"
-                    aria-label="Open admin navigation">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <div>
-                <h1 class="topbar-title">Inventory Management</h1>
-                <p class="topbar-subtitle">Monitor stock levels and manage product inventory</p>
-            </div>
-
-        </div>
-
-        <div class="topbar-right">
-
-            <a th:href="@{/}" class="view-store">
-                <i class="bi bi-shop"></i>
-                <span>View Store</span>
-            </a>
-
-            <div class="topbar-avatar" title="Administrator">
-                <i class="bi bi-person-fill"></i>
-            </div>
-
-        </div>
-
-    </header>
 
     <main class="dashboard-content">
 
@@ -1525,43 +1510,51 @@
 
                             <div class="action-buttons">
 
+                                <!-- Inventory History -->
                                 <a th:href="@{/admin/inventory/product/{id}(id=${product.id})}"
                                    class="action-btn view-btn"
                                    title="Inventory History"
                                    aria-label="Inventory History">
-
                                     <i class="bi bi-clock-history"></i>
-
                                 </a>
 
+                                <!-- Stock In -->
                                 <button type="button"
-                                        class="action-btn in-btn disabled-action"
+                                        class="action-btn in-btn"
                                         title="Add Stock"
                                         aria-label="Add Stock"
-                                        disabled>
-
+                                        th:attr="
+                data-product-id=${product.id},
+                data-product-name=${product.name},
+                data-current-stock=${product.stockQuantity}"
+                                        onclick="openStockModal('IN', this)">
                                     <i class="bi bi-plus-lg"></i>
-
                                 </button>
 
+                                <!-- Stock Out -->
                                 <button type="button"
-                                        class="action-btn out-btn disabled-action"
+                                        class="action-btn out-btn"
                                         title="Remove Stock"
                                         aria-label="Remove Stock"
-                                        disabled>
-
+                                        th:attr="
+                data-product-id=${product.id},
+                data-product-name=${product.name},
+                data-current-stock=${product.stockQuantity}"
+                                        onclick="openStockModal('OUT', this)">
                                     <i class="bi bi-dash-lg"></i>
-
                                 </button>
 
+                                <!-- Adjust -->
                                 <button type="button"
-                                        class="action-btn adjust-btn disabled-action"
+                                        class="action-btn adjust-btn"
                                         title="Adjust Stock"
                                         aria-label="Adjust Stock"
-                                        disabled>
-
+                                        th:attr="
+                data-product-id=${product.id},
+                data-product-name=${product.name},
+                data-current-stock=${product.stockQuantity}"
+                                        onclick="openStockModal('ADJUST', this)">
                                     <i class="bi bi-sliders"></i>
-
                                 </button>
 
                             </div>
@@ -1603,6 +1596,392 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<style>
+    .inventory-modal-content {
+        border: 0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, .20);
+    }
+
+    .inventory-modal-content .modal-header {
+        border-bottom: 1px solid #eef2f0;
+        padding: 18px 20px;
+    }
+
+    .inventory-modal-content .modal-title {
+        font-weight: 800;
+        color: #17211b;
+        font-size: 17px;
+    }
+
+    .inventory-modal-content .modal-title i {
+        margin-right: 7px;
+    }
+
+    .inventory-modal-content .modal-body {
+        padding: 20px;
+    }
+
+    .inventory-product-summary {
+        display: grid;
+        grid-template-columns: 1fr 130px;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding: 14px;
+        border: 1px solid #e8eee9;
+        border-radius: 12px;
+        background: #f8faf9;
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 4px;
+    }
+
+    .summary-value {
+        color: #17211b;
+        font-size: 14px;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .inventory-modal-content .form-label {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .inventory-modal-content .form-control {
+        min-height: 42px;
+        border-radius: 9px;
+    }
+
+    .inventory-modal-content textarea.form-control {
+        min-height: auto;
+    }
+
+    .inventory-modal-content .btn {
+        min-height: 43px;
+        border-radius: 9px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 575px) {
+        .inventory-product-summary {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- INVENTORY ACTION MODAL -->
+<div class="modal fade" id="inventoryActionModal" tabindex="-1"
+     aria-labelledby="inventoryActionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content inventory-modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="inventoryActionModalLabel">
+                    <i class="bi bi-box-seam"></i> Inventory Action
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="inventory-product-summary">
+                    <div>
+                        <div class="summary-label">Product</div>
+                        <div class="summary-value" id="inventoryProductName">—</div>
+                    </div>
+                    <div>
+                        <div class="summary-label">Current Stock</div>
+                        <div class="summary-value" id="inventoryCurrentStock">0</div>
+                    </div>
+                </div>
+
+                <!-- ADD STOCK -->
+                <form id="stockInForm"
+                      th:action="@{/admin/inventory/stock-in}"
+                      method="post" class="inventory-action-form d-none">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+                    <input type="hidden" name="productId" id="stockInProductId">
+
+                    <div class="mb-3">
+                        <label for="stockInQuantity" class="form-label">Quantity</label>
+                        <input type="number"
+                               name="quantity"
+                               id="stockInQuantity"
+                               class="form-control"
+                               min="1"
+                               step="1"
+                               required
+                               autocomplete="off"
+                               placeholder="Enter quantity">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="stockInReason" class="form-label">Reason</label>
+                        <textarea name="reason"
+                                  id="stockInReason"
+                                  class="form-control"
+                                  rows="3"
+                                  maxlength="500"
+                                  placeholder="Enter reason (optional)"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-plus-lg"></i> Add Stock
+                    </button>
+                </form>
+
+                <!-- REMOVE STOCK -->
+                <form id="stockOutForm"
+                      th:action="@{/admin/inventory/stock-out}"
+                      method="post" class="inventory-action-form d-none">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+                    <input type="hidden" name="productId" id="stockOutProductId">
+
+                    <div class="mb-3">
+                        <label for="stockOutQuantity" class="form-label">Quantity</label>
+                        <input type="number"
+                               name="quantity"
+                               id="stockOutQuantity"
+                               class="form-control"
+                               min="1"
+                               step="1"
+                               required
+                               autocomplete="off"
+                               placeholder="Enter quantity">
+                        <div class="form-text">
+                            Maximum available stock:
+                            <strong id="stockOutMax">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="stockOutReason" class="form-label">Reason</label>
+                        <textarea name="reason"
+                                  id="stockOutReason"
+                                  class="form-control"
+                                  rows="3"
+                                  maxlength="500"
+                                  placeholder="Enter reason (optional)"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-dash-lg"></i> Remove Stock
+                    </button>
+                </form>
+
+                <!-- ADJUST STOCK -->
+                <form id="adjustForm"
+                      th:action="@{/admin/inventory/adjust}"
+                      method="post" class="inventory-action-form d-none">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+                    <input type="hidden" name="productId" id="adjustProductId">
+
+                    <div class="mb-3">
+                        <label for="adjustNewStock" class="form-label">New Stock Quantity</label>
+                        <input type="number"
+                               name="newStock"
+                               id="adjustNewStock"
+                               class="form-control"
+                               min="0"
+                               step="1"
+                               required
+                               autocomplete="off"
+                               placeholder="Enter new stock">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="adjustReason" class="form-label">Reason</label>
+                        <textarea name="reason"
+                                  id="adjustReason"
+                                  class="form-control"
+                                  rows="3"
+                                  maxlength="500"
+                                  placeholder="Enter reason (optional)"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-sliders"></i> Adjust Stock
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        'use strict';
+
+        function getElement(id) {
+            return document.getElementById(id);
+        }
+
+        function resetInventoryForms() {
+            const forms = document.querySelectorAll('.inventory-action-form');
+
+            forms.forEach(function (form) {
+                form.reset();
+                form.classList.add('d-none');
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            });
+        }
+
+        function openStockModal(type, button) {
+            if (!button) {
+                return;
+            }
+
+            const productId = button.getAttribute('data-product-id');
+            const productName = button.getAttribute('data-product-name') || 'Product';
+            const stockValue = button.getAttribute('data-current-stock');
+            const currentStock = Math.max(0, parseInt(stockValue || '0', 10) || 0);
+
+            if (!productId) {
+                console.error('Inventory: product ID is missing.');
+                return;
+            }
+
+            const modalElement = getElement('inventoryActionModal');
+            const productNameElement = getElement('inventoryProductName');
+            const currentStockElement = getElement('inventoryCurrentStock');
+            const maxStockElement = getElement('stockOutMax');
+            const inForm = getElement('stockInForm');
+            const outForm = getElement('stockOutForm');
+            const adjustForm = getElement('adjustForm');
+            const titleElement = getElement('inventoryActionModalLabel');
+
+            if (!modalElement || !inForm || !outForm || !adjustForm) {
+                console.error('Inventory modal elements are missing.');
+                return;
+            }
+
+            resetInventoryForms();
+
+            productNameElement.textContent = productName;
+            currentStockElement.textContent = currentStock;
+            maxStockElement.textContent = currentStock;
+
+            getElement('stockInProductId').value = productId;
+            getElement('stockOutProductId').value = productId;
+            getElement('adjustProductId').value = productId;
+
+            if (type === 'IN') {
+                titleElement.innerHTML = '<i class="bi bi-plus-circle text-success"></i> Add Stock';
+                inForm.classList.remove('d-none');
+                getElement('stockInQuantity').focus();
+            } else if (type === 'OUT') {
+                titleElement.innerHTML = '<i class="bi bi-dash-circle text-danger"></i> Remove Stock';
+                outForm.classList.remove('d-none');
+
+                const quantity = getElement('stockOutQuantity');
+                quantity.max = String(currentStock);
+
+                if (currentStock === 0) {
+                    quantity.disabled = true;
+                } else {
+                    quantity.disabled = false;
+                }
+            } else if (type === 'ADJUST') {
+                titleElement.innerHTML = '<i class="bi bi-sliders text-primary"></i> Adjust Stock';
+                adjustForm.classList.remove('d-none');
+                getElement('adjustNewStock').value = currentStock;
+            } else {
+                return;
+            }
+
+            if (window.bootstrap && bootstrap.Modal) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
+            } else {
+                console.error('Bootstrap Modal is not loaded.');
+            }
+        }
+
+        // Keep this function globally accessible for inline handlers.
+        window.openStockModal = openStockModal;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Extra protection: wire buttons through JS as well.
+            document.addEventListener('click', function (event) {
+                const button = event.target.closest('.in-btn, .out-btn, .adjust-btn');
+
+                if (!button) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                if (button.classList.contains('in-btn')) {
+                    openStockModal('IN', button);
+                } else if (button.classList.contains('out-btn')) {
+                    openStockModal('OUT', button);
+                } else if (button.classList.contains('adjust-btn')) {
+                    openStockModal('ADJUST', button);
+                }
+            });
+
+            const stockOutQuantity = getElement('stockOutQuantity');
+
+            if (stockOutQuantity) {
+                stockOutQuantity.addEventListener('input', function () {
+                    const max = parseInt(this.max || '0', 10) || 0;
+                    const value = parseInt(this.value || '0', 10) || 0;
+
+                    if (max > 0 && value > max) {
+                        this.value = max;
+                    }
+                });
+            }
+
+            document.querySelectorAll('.inventory-action-form').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    const submitButton = form.querySelector('button[type="submit"]');
+
+                    if (!submitButton) {
+                        return;
+                    }
+
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        form.reportValidity();
+                        return;
+                    }
+
+                    submitButton.disabled = true;
+                    submitButton.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-1"></span> Processing...';
+                });
+            });
+        });
+    })();
+</script>
 
 <script>
     (() => {

@@ -52,7 +52,393 @@
         a {
             text-decoration: none;
         }
+        /* =====================================================
+           CATEGORY LAYOUT SWITCHER
+        ===================================================== */
 
+        .category-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .category-layout-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 11px;
+        }
+
+        .category-layout-btn {
+            width: 36px;
+            height: 34px;
+
+            border: 0;
+            border-radius: 8px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: transparent;
+            color: #6b7280;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            transition: .2s ease;
+        }
+
+        .category-layout-btn:hover {
+            color: #111827;
+            background: #ffffff;
+        }
+
+        .category-layout-btn.active {
+            background: #ffffff;
+            color: #16a34a;
+
+            box-shadow:
+                    0 2px 8px rgba(0,0,0,.08);
+        }
+
+
+        /* =====================================================
+           LAYOUT 1 — GRID
+        ===================================================== */
+
+        .category-grid.layout-grid {
+            display: grid;
+
+            grid-template-columns:
+        repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+        .category-grid.layout-grid
+        .category-showcase-card {
+            height: 270px;
+        }
+
+
+        /* =====================================================
+           LAYOUT 2 — COMPACT
+        ===================================================== */
+
+        .category-grid.layout-compact {
+            display: grid;
+
+            grid-template-columns:
+        repeat(3, 1fr);
+
+            gap: 14px;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-card {
+
+            height: 130px;
+
+            border-radius: 15px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 10px;
+
+            background: #ffffff;
+
+            border:
+                    1px solid #e5e7eb;
+
+            box-shadow:
+                    0 4px 15px rgba(0,0,0,.05);
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-image,
+        .category-grid.layout-compact
+        .category-showcase-placeholder {
+
+            width: 110px;
+            height: 110px;
+
+            flex-shrink: 0;
+
+            border-radius: 11px;
+
+            object-fit: cover;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-placeholder {
+            font-size: 32px;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-overlay {
+            display: none;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-content {
+
+            position: relative;
+
+            left: auto;
+            right: auto;
+            bottom: auto;
+
+            flex: 1;
+
+            padding: 0 14px;
+
+            display: block;
+
+            color: #111827;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-name {
+
+            margin: 0 0 6px;
+
+            color: #111827;
+
+            font-size: 17px;
+        }
+
+        .category-grid.layout-compact
+        .category-shop-text {
+
+            color: #16a34a;
+
+            font-size: 12px;
+        }
+
+        .category-grid.layout-compact
+        .category-arrow {
+
+            position: absolute;
+
+            right: 12px;
+            bottom: 12px;
+
+            width: 30px;
+            height: 30px;
+
+            background: #f0fdf4;
+
+            border: 0;
+
+            color: #16a34a;
+        }
+
+        .category-grid.layout-compact
+        .category-showcase-card:hover
+        .category-arrow {
+
+            background: #16a34a;
+
+            color: white;
+
+            transform: translateX(3px);
+        }
+
+
+        /* =====================================================
+           LAYOUT 3 — MINIMAL
+        ===================================================== */
+
+        .category-grid.layout-minimal {
+
+            display: grid;
+
+            grid-template-columns:
+        repeat(6, 1fr);
+
+            gap: 14px;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-card {
+
+            height: 155px;
+
+            border-radius: 16px;
+
+            background: #f9fafb;
+
+            border:
+                    1px solid #e5e7eb;
+
+            box-shadow: none;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-image,
+        .category-grid.layout-minimal
+        .category-showcase-placeholder {
+
+            width: 72px;
+            height: 72px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-placeholder {
+
+            font-size: 28px;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-overlay {
+
+            display: none;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-content {
+
+            position: relative;
+
+            left: auto;
+            right: auto;
+            bottom: auto;
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 10px;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-name {
+
+            margin: 0;
+
+            color: #111827;
+
+            font-size: 14px;
+
+            font-weight: 750;
+        }
+
+        .category-grid.layout-minimal
+        .category-shop-text {
+
+            display: none;
+        }
+
+        .category-grid.layout-minimal
+        .category-arrow {
+
+            display: none;
+        }
+
+        .category-grid.layout-minimal
+        .category-showcase-card:hover {
+
+            transform: translateY(-4px);
+
+            background: #ffffff;
+
+            border-color: #bbf7d0;
+
+            box-shadow:
+                    0 10px 25px rgba(0,0,0,.08);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 991px) {
+
+            .category-grid.layout-grid {
+                grid-template-columns:
+            repeat(3, 1fr);
+            }
+
+            .category-grid.layout-compact {
+                grid-template-columns:
+            repeat(2, 1fr);
+            }
+
+            .category-grid.layout-minimal {
+                grid-template-columns:
+            repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 767px) {
+
+            .category-header-actions {
+                width: 100%;
+
+                justify-content: space-between;
+
+                margin-top: 15px;
+            }
+
+            .category-grid.layout-grid {
+                grid-template-columns:
+            repeat(2, 1fr);
+
+                gap: 13px;
+            }
+
+            .category-grid.layout-compact {
+                grid-template-columns:
+            1fr;
+            }
+
+            .category-grid.layout-minimal {
+                grid-template-columns:
+            repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 575px) {
+
+            .category-grid.layout-minimal {
+                grid-template-columns:
+            repeat(2, 1fr);
+            }
+
+            .category-grid.layout-compact
+            .category-showcase-card {
+                height: 105px;
+            }
+
+            .category-grid.layout-compact
+            .category-showcase-image,
+            .category-grid.layout-compact
+            .category-showcase-placeholder {
+                width: 85px;
+                height: 85px;
+            }
+
+        }
 
         /* =====================================================
            DYNAMIC BANNER
@@ -2125,55 +2511,89 @@
      SHOP BY CATEGORY
 ========================================================= -->
 
+<!-- =========================================================
+     SHOP BY CATEGORY
+========================================================= -->
+
 <section class="category-showcase-section">
 
     <div class="container">
 
-
+        <!-- CATEGORY HEADER -->
         <div class="category-section-header">
 
-
-            <div>
+            <!-- LEFT -->
+            <div class="category-heading">
 
                 <span class="category-eyebrow">
-
-                    <i
-                            class="bi bi-grid-3x3-gap-fill">
-                    </i>
-
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
                     EXPLORE COLLECTIONS
-
                 </span>
 
-
                 <h2 class="category-section-title">
-
                     Shop by Category
-
                 </h2>
 
-
                 <p class="category-section-subtitle">
-
-                    Find everything you need,
-                    all in one place.
-
+                    Find everything you need, all in one place.
                 </p>
 
             </div>
 
 
-            <a
-                    th:href="@{/products}"
+            <!-- RIGHT -->
+            <div class="category-header-actions">
 
-                    class="category-view-all">
+                <!-- LAYOUT SWITCHER -->
+                <div class="category-layout-switcher">
 
-                View All
+                    <button
+                            type="button"
+                            class="category-layout-btn active"
+                            data-layout="grid"
+                            title="Grid Layout">
 
-                <i class="bi bi-arrow-right"></i>
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
 
-            </a>
+                    </button>
 
+
+                    <button
+                            type="button"
+                            class="category-layout-btn"
+                            data-layout="compact"
+                            title="Compact Layout">
+
+                        <i class="bi bi-layout-text-sidebar"></i>
+
+                    </button>
+
+
+                    <button
+                            type="button"
+                            class="category-layout-btn"
+                            data-layout="minimal"
+                            title="Minimal Layout">
+
+                        <i class="bi bi-list-ul"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- VIEW ALL -->
+                <a
+                        th:href="@{/products}"
+                        class="category-view-all">
+
+                    <span>View All</span>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </div>
 
         </div>
 
@@ -2185,8 +2605,8 @@
         <div
                 th:if="${categories != null
                         and !categories.isEmpty()}"
-
-                class="category-grid">
+                class="category-grid layout-grid"
+                id="categoryGrid">
 
 
             <a
@@ -2210,7 +2630,7 @@
                         class="category-showcase-image">
 
 
-                <!-- FALLBACK IMAGE -->
+                <!-- FALLBACK -->
 
                 <div
                         th:unless="${category.image != null
@@ -2218,31 +2638,24 @@
 
                         class="category-showcase-placeholder">
 
-                    <i
-                            class="bi bi-grid-3x3-gap">
-                    </i>
+                    <i class="bi bi-grid-3x3-gap"></i>
 
                 </div>
 
 
-                <!-- GRADIENT -->
+                <!-- OVERLAY -->
 
-                <div
-                        class="category-showcase-overlay">
-                </div>
+                <div class="category-showcase-overlay"></div>
 
 
-                <!-- CATEGORY CONTENT -->
+                <!-- CONTENT -->
 
-                <div
-                        class="category-showcase-content">
-
+                <div class="category-showcase-content">
 
                     <div>
 
                         <h3
                                 class="category-showcase-name"
-
                                 th:text="${category.name}">
 
                             Category
@@ -2250,40 +2663,31 @@
                         </h3>
 
 
-                        <span
-                                class="category-shop-text">
+                        <span class="category-shop-text">
 
                             Shop Now
 
-                            <i
-                                    class="bi bi-arrow-up-right">
-                            </i>
+                            <i class="bi bi-arrow-up-right"></i>
 
                         </span>
 
                     </div>
 
 
-                    <span
-                            class="category-arrow">
+                    <span class="category-arrow">
 
-                        <i
-                                class="bi bi-arrow-right">
-                        </i>
+                        <i class="bi bi-arrow-right"></i>
 
                     </span>
 
-
                 </div>
 
-
             </a>
-
 
         </div>
 
 
-        <!-- EMPTY CATEGORY STATE -->
+        <!-- EMPTY CATEGORY -->
 
         <div
                 th:if="${categories == null
@@ -2291,32 +2695,22 @@
 
                 class="category-empty">
 
+            <div class="category-empty-icon">
 
-            <div
-                    class="category-empty-icon">
-
-                <i
-                        class="bi bi-grid-3x3-gap">
-                </i>
+                <i class="bi bi-grid-3x3-gap"></i>
 
             </div>
-
 
             <h3>
                 Categories coming soon
             </h3>
 
-
             <p>
-
                 Explore our products while
                 we prepare more collections.
-
             </p>
 
-
         </div>
-
 
     </div>
 
@@ -3276,7 +3670,90 @@
 <!-- =========================================================
      BOOTSTRAP JS
 ========================================================= -->
+<script>
 
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const categoryGrid =
+            document.getElementById("categoryGrid");
+
+        const layoutButtons =
+            document.querySelectorAll(".category-layout-btn");
+
+        if (!categoryGrid || layoutButtons.length === 0) {
+            return;
+        }
+
+
+        function changeCategoryLayout(layout) {
+
+            categoryGrid.classList.remove(
+                "layout-grid",
+                "layout-compact",
+                "layout-minimal"
+            );
+
+            categoryGrid.classList.add(
+                "layout-" + layout
+            );
+
+
+            layoutButtons.forEach(function (button) {
+
+                button.classList.remove("active");
+
+                if (button.dataset.layout === layout) {
+                    button.classList.add("active");
+                }
+
+            });
+
+
+            localStorage.setItem(
+                "dreamzCategoryLayout",
+                layout
+            );
+        }
+
+
+        layoutButtons.forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                const layout =
+                    this.dataset.layout;
+
+                changeCategoryLayout(layout);
+
+            });
+
+        });
+
+
+        // Restore previously selected layout
+        const savedLayout =
+            localStorage.getItem(
+                "dreamzCategoryLayout"
+            );
+
+
+        if (
+            savedLayout === "grid" ||
+            savedLayout === "compact" ||
+            savedLayout === "minimal"
+        ) {
+
+            changeCategoryLayout(savedLayout);
+
+        } else {
+
+            changeCategoryLayout("grid");
+
+        }
+
+    });
+
+</script>
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
